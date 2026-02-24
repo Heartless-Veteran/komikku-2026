@@ -1,8 +1,17 @@
 package eu.kanade.domain
 
+import mihon.domain.recommendation.interactor.ClearOldRecommendations
+import mihon.domain.recommendation.interactor.GetBecauseYouReadRecommendations
+import mihon.domain.recommendation.interactor.GetReadingHistory
+import mihon.domain.recommendation.interactor.GetRecommendations
+import mihon.domain.recommendation.interactor.SyncMangaTags
+import mihon.domain.recommendation.interactor.TrackReadingHistory
+import mihon.domain.recommendation.interactor.UpdateRecommendationsCache
+import mihon.domain.recommendation.repository.RecommendationsRepository
 import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorRepositoryImpl
 import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorWithRelationsRepositoryImpl
 import tachiyomi.data.libraryUpdateErrorMessage.LibraryUpdateErrorMessageRepositoryImpl
+import tachiyomi.data.recommendations.RecommendationsRepositoryImpl
 import tachiyomi.domain.libraryUpdateError.interactor.DeleteLibraryUpdateErrors
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrorWithRelations
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrors
@@ -36,5 +45,16 @@ class KMKDomainModule : InjektModule {
         addFactory { GetLibraryUpdateErrors(get()) }
         addFactory { DeleteLibraryUpdateErrors(get()) }
         addFactory { InsertLibraryUpdateErrors(get()) }
+
+        // KMK --> AI Recommendations
+        addSingletonFactory<RecommendationsRepository> { RecommendationsRepositoryImpl(get()) }
+        addFactory { GetRecommendations(get()) }
+        addFactory { GetBecauseYouReadRecommendations(get()) }
+        addFactory { TrackReadingHistory(get()) }
+        addFactory { GetReadingHistory(get()) }
+        addFactory { SyncMangaTags(get()) }
+        addFactory { UpdateRecommendationsCache(get()) }
+        addFactory { ClearOldRecommendations(get()) }
+        // KMK <--
     }
 }

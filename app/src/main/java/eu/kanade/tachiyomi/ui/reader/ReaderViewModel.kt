@@ -97,6 +97,8 @@ import tachiyomi.domain.history.interactor.UpsertHistory
 import tachiyomi.domain.history.model.HistoryUpdate
 import tachiyomi.domain.library.service.LibraryPreferences
 import tachiyomi.domain.manga.interactor.GetFlatMetadataById
+import mihon.domain.recommendation.interactor.TrackReadingHistory
+import mihon.domain.recommendation.interactor.SyncMangaTags
 import tachiyomi.domain.manga.interactor.GetManga
 import tachiyomi.domain.manga.interactor.GetMergedMangaById
 import tachiyomi.domain.manga.interactor.GetMergedReferencesById
@@ -139,6 +141,10 @@ class ReaderViewModel @JvmOverloads constructor(
     private val getMergedReferencesById: GetMergedReferencesById = Injekt.get(),
     private val getMergedChaptersByMangaId: GetMergedChaptersByMangaId = Injekt.get(),
     // SY <--
+    // KMK --> AI Recommendations
+    private val trackReadingHistory: TrackReadingHistory = Injekt.get(),
+    private val syncMangaTags: SyncMangaTags = Injekt.get(),
+    // KMK <--
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(State())
@@ -907,6 +913,7 @@ class ReaderViewModel @JvmOverloads constructor(
 
     /**
      * Saves the chapter last read history if incognito mode isn't on.
+     * Also tracks reading history for AI recommendations.
      */
     suspend fun updateHistory() {
         getCurrentChapter()?.let { readerChapter ->
@@ -917,7 +924,52 @@ class ReaderViewModel @JvmOverloads constructor(
             val sessionReadDuration = chapterReadStartTime?.let { endTime.time - it } ?: 0
 
             upsertHistory.await(HistoryUpdate(chapterId, endTime, sessionReadDuration))
+            
+            // KMK --> AI Recommendations: Track reading history
+            trackReadingHistoryForRecommendations(sessionReadDuration, endTime)
+            // KMK <--
+            
             chapterReadStartTime = null
+        }
+    }
+    
+    /**
+     * Track reading history for AI recommendations.
+     * Called when a chapter is read to update the recommendation engine.
+     */
+    private suspend fun trackReadingHistoryForRecommendations(
+        sessionReadDuration: Long,
+        endTime: Date,
+    ) {
+        try {
+            val currentManga = manga ?: return
+            val chapters = if (currentManga.source == MERGED_SOURCE_ID) {
+                getMergedChaptersByMangaId.await(currentManga.id, applyFilter = false)
+            } else {
+                getChaptersByMangaId.await(currentManga.id, applyFilter = false)
+            }
+            
+            val chaptersRead = chapters.count { it.read }
+            val totalChapters = chapters.size
+            
+            // Track reading history
+            trackReadingHistory.await(
+                mangaId = currentManga.id,
+                chaptersRead = chaptersRead,
+                totalChapters = totalChapters,
+                timeSpent = sessionReadDuration,
+            )
+            
+            // Sync manga tags for recommendation matching
+            syncMangaTags.await(
+                mangaId = currentManga.id,
+                genres = currentManga.genre,
+                author = currentManga.author ?: "",
+                status = currentManga.status,
+            )
+        } catch (e: Exception) {
+            // Don't let recommendation tracking errors affect the reading experience
+            logcat { "Error tracking reading history: ${e.message}" }
         }
     }
 

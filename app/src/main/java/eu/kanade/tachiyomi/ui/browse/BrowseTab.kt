@@ -28,6 +28,7 @@ import eu.kanade.tachiyomi.ui.browse.feed.FeedScreenModel
 import eu.kanade.tachiyomi.ui.browse.feed.feedTab
 import eu.kanade.tachiyomi.ui.browse.migration.sources.migrateSourceTab
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen
+import eu.kanade.tachiyomi.ui.browse.recommendations.recommendationsTab
 import eu.kanade.tachiyomi.ui.browse.source.sourcesTab
 import eu.kanade.tachiyomi.ui.main.MainActivity
 import kotlinx.collections.immutable.persistentListOf
@@ -88,6 +89,7 @@ data object BrowseTab : Tab {
         val tabs = when {
             hideFeedTab ->
                 persistentListOf(
+                    recommendationsTab(),
                     sourcesTab(),
                     extensionsTab(extensionsScreenModel),
                     migrateSourceTab(),
@@ -95,6 +97,7 @@ data object BrowseTab : Tab {
 
             feedTabInFront ->
                 persistentListOf(
+                    recommendationsTab(),
                     feedTab(
                         // KMK -->
                         feedScreenModel,
@@ -108,6 +111,7 @@ data object BrowseTab : Tab {
 
             else ->
                 persistentListOf(
+                    recommendationsTab(),
                     sourcesTab(),
                     feedTab(
                         // KMK -->
