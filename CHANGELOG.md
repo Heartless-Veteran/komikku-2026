@@ -1,136 +1,45 @@
-# Komikku 2026 - Change Log
+# 📋 Changelog
 
-## Project Overview
-Fork of Komikku manga reader with Perfect Viewer features, AI recommendations, Gallery view, and Dynamic theming.
+All notable changes to Komikku 2026 will be documented here.
 
-**Repository:** https://github.com/Heartless-Veteran/komikku-2026
-**Base:** Komikku (original)
-**Version:** 0.1.0-alpha
-**Started:** 2026-02-24
+The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
-## Changes Made
+## [Unreleased]
 
-### 1. Project Setup
+### Added
+- `SECURITY.md` — security policy with private reporting instructions and response timeline
+- `assets/` folder with design token and colour-scheme reference
+- Issue templates, PR template, and `FUNDING.yml` updated to reference this fork
 
-#### Files Created
-- `PROJECT_PLAN.md` - Project roadmap and feature phases
-- `VERSION` - Version information and feature list
-- `README.md` - Complete rewrite with our features
-- `CHANGELOG.md` - This file
-
-#### Documentation (`docs/`)
-- `FEATURE_READING_MODES.md` - Perfect Viewer scale modes
-- `FEATURE_RECOMMENDATIONS.md` - AI recommendation system
-- `FEATURE_GALLERY_VIEW.md` - Gallery view specification
-- `FEATURE_DYNAMIC_THEME.md` - Dynamic theming from covers
-
-### 2. GitHub Setup
-
-#### Workflows (`.github/workflows/`)
-- `build-debug.yml` - CI for debug builds
-- `ai-assistant.yml` - Webhook for @kimi mentions
-- `build_pull_request.yml` - Original PR checks (kept)
-- `build_release.yml` - Original release (kept)
-
-#### Issues Created
-| # | Title | Type | Status |
-|---|-------|------|--------|
-| 3 | Perfect Viewer Reading Modes | Feature | Open |
-| 4 | AI Recommendations | Feature | Open |
-| 5 | Gallery View | Feature | Open |
-| 6 | Dynamic Theming | Feature | Open |
-| 7 | Refactor large ViewModels | Improvement | Open |
-| 8 | Extract hardcoded URLs | Improvement | Open |
-| 9 | Address TODO/FIXME comments | Improvement | Open |
-| 10 | Optimize ReaderActivity | Improvement | Open |
-
-### 3. Code Changes
-
-#### ScaleMode Infrastructure
-**Files Modified:**
-- `app/src/main/java/eu/kanade/tachiyomi/ui/reader/viewer/ScaleMode.kt` (NEW)
-  - Enum with 5 modes: FIT_SCREEN, FIT_WIDTH, FIT_HEIGHT, ORIGINAL_SIZE, SMART_CROP
-  
-- `app/src/main/java/eu/kanade/tachiyomi/ui/reader/viewer/ViewerConfig.kt`
-  - Added `scaleMode` property
-  - Added preference listener for scale mode changes
-  
-- `app/src/main/java/eu/kanade/tachiyomi/ui/reader/setting/ReaderPreferences.kt`
-  - Added `scaleMode()` preference
-
-#### App Rebranding
-- `i18n/src/commonMain/moko-resources/base/strings.xml`
-  - Changed `app_name` from "Komikku" to "Komikku 2026"
-
-#### Build Configuration
-- `app/google-services.json` (NEW)
-  - Dummy Firebase config for debug builds
-
-### 4. Infrastructure
-
-#### ngrok Tunnel
-- URL: `https://toxically-shredless-winfred.ngrok-free.dev`
-- Purpose: GitHub webhook receiver
-- Status: Active
-
-#### Webhook Server
-- Port: 18790
-- File: `webhook-server-v2.js`
-- Purpose: Receive GitHub events and forward to OpenClaw
+### Changed
+- `README.md` completely rewritten with ASCII banner, shields.io badges, feature tables, and project structure tree
+- `CONTRIBUTING.md` rewritten with project-specific guidance, dev setup steps, and PR checklist
+- `CHANGELOG.md` converted to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format
+- `CODE_OF_CONDUCT.md` given a table of contents and section divider
+- Documentation reorganised: `PROJECT_PLAN.md`, `SCALE_MODES_IMPLEMENTATION.md`, `TEST_SUMMARY.md`, `SECURITY_VULNERABILITIES.md` moved to `docs/`
+- Spurious empty file `1` removed
 
 ---
 
-## Git Branches
+## [0.1.0-alpha] — 2026-02-24
 
-| Branch | Purpose | Status |
-|--------|---------|--------|
-| `master` | Main branch with all changes | Active |
-| `feature/perfect-viewer-modes` | Scale mode development | Merged to master |
-
----
-
-## In Progress
-
-### Subagent Tasks (2 hour runtime)
-- Implementing PagerViewer scale mode logic
-- Adding UI toggle in reader toolbar
-- Testing each scale mode
-
----
-
-## Next Steps
-
-1. Complete scale mode implementation
-2. Test all 5 scale modes
-3. Merge to master when stable
-4. Start Phase 2: AI Recommendations
+### Added
+- Initial fork of [Komikku](https://github.com/komikku-app/komikku)
+- Project roadmap (`docs/PROJECT_PLAN.md`)
+- Feature specification documents in `docs/`
+- CI workflow for debug builds (`.github/workflows/build-debug.yml`)
+- App rebranded to **Komikku 2026** (`app_name` updated in strings.xml)
+- `ScaleMode` enum with `toSubsamplingScaleType()` conversion helper (in progress)
+- `scaleMode` preference in `ReaderPreferences` (in progress)
+- AI-powered recommendation system scaffold (in progress)
+- Reading history tracker (in progress)
 
 ---
 
 ## Credits
 
-- Original Komikku: https://github.com/komikku-app/komikku
-- Perfect Viewer: Inspiration for reading modes
-- Development: Heartless-Veteran with Kimi AI assistance
-## 2026-02-24 - Phase 2 Complete
-
-### AI Recommendations (Phase 2) - MERGED
-- ✅ Reading history tracking
-- ✅ Genre-based recommendation algorithm  
-- ✅ "For You" tab in Browse
-- ✅ "Because you read" suggestions
-- ✅ Weekly background updates
-- ✅ Cached recommendations
-
-### Security
-- ⚠️ 20 vulnerabilities detected (inherited from base repo)
-- 📋 Action plan created
-
-### Master Branch Now Contains:
-- Phase 1: Perfect Viewer Scale Modes
-- Phase 2: AI Recommendations
-- Refactoring: ReadingHistoryTracker
-- Dependency management setup
-
+- [Komikku](https://github.com/komikku-app/komikku) — upstream project
+- Perfect Viewer — inspiration for reading modes
+- All upstream contributors and translators
