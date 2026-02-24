@@ -2,7 +2,9 @@
 
 This directory contains visual assets for the Komikku 2026 project.
 
-## Structure
+## Planned Structure
+
+When assets are added, they should be organised as follows:
 
 ```
 assets/

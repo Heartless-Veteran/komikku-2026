@@ -9,25 +9,17 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 ## [Unreleased]
 
 ### Added
-- Perfect Viewer–style reading scale modes (Fit Screen, Fit Width, Fit Height, Original Size, Smart Crop)
-- `ScaleMode` enum with `toSubsamplingScaleType()` conversion helper
-- Scale mode toggle button in the reader toolbar
-- `scaleMode` preference in `ReaderPreferences`
-- AI-powered recommendation system: genre-based matching, "For You" tab, "Because you read" suggestions
-- Reading history tracker with weekly background refresh
-- Cached recommendations for offline access
-- Gallery view: full chapter thumbnail grid with direct page navigation
-- Dynamic theming: accent colours extracted from manga cover via Android Palette API
+- `SECURITY.md` — security policy with private reporting instructions and response timeline
+- `assets/` folder with design token and colour-scheme reference
+- Issue templates, PR template, and `FUNDING.yml` updated to reference this fork
 
 ### Changed
-- App rebranded to **Komikku 2026** (`app_name` updated in strings.xml)
-- `README.md` completely rewritten with feature overview and build instructions
-- Documentation reorganised into `docs/` folder
-- Improved CONTRIBUTING.md with project-specific guidance
-
-### Security
-- 20 security vulnerabilities inherited from upstream base repository identified
-- Action plan documented in `docs/SECURITY_VULNERABILITIES.md`
+- `README.md` completely rewritten with ASCII banner, shields.io badges, feature tables, and project structure tree
+- `CONTRIBUTING.md` rewritten with project-specific guidance, dev setup steps, and PR checklist
+- `CHANGELOG.md` converted to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format
+- `CODE_OF_CONDUCT.md` given a table of contents and section divider
+- Documentation reorganised: `PROJECT_PLAN.md`, `SCALE_MODES_IMPLEMENTATION.md`, `TEST_SUMMARY.md`, `SECURITY_VULNERABILITIES.md` moved to `docs/`
+- Spurious empty file `1` removed
 
 ---
 
@@ -38,6 +30,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 - Project roadmap (`docs/PROJECT_PLAN.md`)
 - Feature specification documents in `docs/`
 - CI workflow for debug builds (`.github/workflows/build-debug.yml`)
+- App rebranded to **Komikku 2026** (`app_name` updated in strings.xml)
+- `ScaleMode` enum with `toSubsamplingScaleType()` conversion helper (in progress)
+- `scaleMode` preference in `ReaderPreferences` (in progress)
+- AI-powered recommendation system scaffold (in progress)
+- Reading history tracker (in progress)
 
 ---
 

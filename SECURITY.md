@@ -12,15 +12,15 @@
 
 ## 🐛 Reporting a Vulnerability
 
-If you discover a security vulnerability in Komikku 2026, please **do not** open a public issue.
+If you discover a security vulnerability in Komikku 2026, please **do not** open a public issue containing vulnerability details or exploit information.
 
-Instead, please report it through one of the following channels:
+Instead, please report it through the following channel:
 
-1. **GitHub Private Vulnerability Reporting** *(preferred)*
+1. **GitHub Private Vulnerability Reporting** *(preferred and required for actual vulnerabilities)*
    Use the [Security Advisories](https://github.com/Heartless-Veteran/komikku-2026/security/advisories/new) page to report privately.
 
-2. **Direct Contact**
-   Open a [GitHub Issue](https://github.com/Heartless-Veteran/komikku-2026/issues) marked as **[SECURITY]** in the title if private reporting is unavailable.
+2. **Non-sensitive security questions or suggestions**
+   For general security-related questions, hardening suggestions, or discussions that do **not** include sensitive details or exploitable information, you may open a [public GitHub Issue](https://github.com/Heartless-Veteran/komikku-2026/issues) marked as **[SECURITY]** in the title.
 
 ---
 

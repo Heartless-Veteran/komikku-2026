@@ -18,7 +18,7 @@
 [![Android](https://img.shields.io/badge/Android-5.0%2B-34d399?style=for-the-badge&logo=android&logoColor=white&labelColor=1a0533)](https://developer.android.com)
 [![Kotlin](https://img.shields.io/badge/Kotlin-100%25-f97316?style=for-the-badge&logo=kotlin&logoColor=white&labelColor=1a0533)](https://kotlinlang.org)
 
-*A feature-rich fork of [Komikku](https://github.com/komikku-app/komikku) with Perfect Viewer reading modes, AI-powered recommendations, gallery browsing, and dynamic theming.*
+*A fork of [Komikku](https://github.com/komikku-app/komikku) with enhanced reading modes, AI-powered recommendations, gallery browsing, and dynamic theming — in active development.*
 
 </div>
 
@@ -26,7 +26,7 @@
 
 ## 📖 Table of Contents
 
-- [✨ New Features](#-new-features)
+- [✨ Features](#-features)
 - [📚 Core Features](#-core-features)
 - [🛠️ Tech Stack](#️-tech-stack)
 - [🚀 Building](#-building)
@@ -37,10 +37,13 @@
 
 ---
 
-## ✨ New Features
+## ✨ Features
 
-### 📐 Perfect Viewer Reading Modes
-> *Customize how every page is rendered — your manga, your way.*
+### 🚧 In Development
+
+> These features are actively being built. Status is tracked in [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md).
+
+#### 📐 Perfect Viewer Reading Modes
 
 | Mode | Description |
 |------|-------------|
@@ -50,21 +53,21 @@
 | **Original Size** | Display at native resolution — no scaling |
 | **Smart Crop** | Automatically crop white/black margins |
 
-### 🤖 AI Recommendations
-> *Discover your next favourite manga with intelligent suggestions.*
-
-- Personalized suggestions based on your reading history
+#### 🤖 AI Recommendations
+- Personalised suggestions based on your reading history
 - Similar manga finder powered by tag-based matching
 - Curated picks that adapt as your library grows
 
-### 🖼️ Gallery View
+### 📅 Planned
+
+#### 🖼️ Gallery View
 > *See the whole chapter at a glance.*
 
 - Grid thumbnail view of all pages in a chapter
 - Tap any thumbnail to jump directly to that page
 - Fast, smooth scrolling with lazy-loaded previews
 
-### 🎨 Dynamic Theming
+#### 🎨 Dynamic Theming
 > *Let the manga set the mood.*
 
 - Automatically extracts colour palette from the manga cover
@@ -142,12 +145,16 @@ komikku-2026/
 ├── source-local/           # Local file source implementation
 ├── i18n/                   # Translations (upstream)
 ├── i18n-kmk/               # Komikku-specific translations
-├── docs/                   # Feature documentation & planning
+├── docs/                   # Documentation & planning
+│   ├── DEPENDENCY_MANAGEMENT.md
+│   ├── FEATURE_DYNAMIC_THEME.md
+│   ├── FEATURE_GALLERY_VIEW.md
 │   ├── FEATURE_READING_MODES.md
 │   ├── FEATURE_RECOMMENDATIONS.md
-│   ├── FEATURE_GALLERY_VIEW.md
-│   ├── FEATURE_DYNAMIC_THEME.md
-│   └── PROJECT_PLAN.md
+│   ├── PROJECT_PLAN.md
+│   ├── SCALE_MODES_IMPLEMENTATION.md
+│   ├── SECURITY_VULNERABILITIES.md
+│   └── TEST_SUMMARY.md
 └── .github/                # CI/CD workflows and templates
 ```
 
