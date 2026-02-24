@@ -1,0 +1,202 @@
+import java.util.Date;
+
+-- Table to track user's reading history for recommendation purposes
+CREATE TABLE reading_history (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    manga_id INTEGER NOT NULL UNIQUE,
+    chapters_read INTEGER NOT NULL DEFAULT 0,
+    total_chapters INTEGER NOT NULL DEFAULT 0,
+    time_spent INTEGER NOT NULL DEFAULT 0,
+    last_read INTEGER AS Date,
+    rating REAL DEFAULT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas(_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX reading_history_manga_id_index ON reading_history(manga_id);
+CREATE INDEX reading_history_last_read_index ON reading_history(last_read);
+
+-- Table to store manga tags/genres for recommendation matching
+CREATE TABLE manga_tags (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    manga_id INTEGER NOT NULL UNIQUE,
+    genres TEXT NOT NULL DEFAULT '',
+    themes TEXT DEFAULT '',
+    author TEXT DEFAULT '',
+    status INTEGER DEFAULT 0,
+    popularity INTEGER DEFAULT 0,
+    FOREIGN KEY(manga_id) REFERENCES mangas(_id)
+    ON DELETE CASCADE
+);
+
+CREATE INDEX manga_tags_manga_id_index ON manga_tags(manga_id);
+CREATE INDEX manga_tags_genres_index ON manga_tags(genres);
+
+-- Table to cache recommendations for performance
+CREATE TABLE recommendations_cache (
+    _id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    manga_id INTEGER NOT NULL,
+    recommended_manga_id INTEGER NOT NULL,
+    score REAL NOT NULL DEFAULT 0.0,
+    reason TEXT DEFAULT '',
+    generated_at INTEGER AS Date NOT NULL,
+    FOREIGN KEY(manga_id) REFERENCES mangas(_id) ON DELETE CASCADE,
+    FOREIGN KEY(recommended_manga_id) REFERENCES mangas(_id) ON DELETE CASCADE,
+    UNIQUE(manga_id, recommended_manga_id)
+);
+
+CREATE INDEX recommendations_cache_manga_id_index ON recommendations_cache(manga_id);
+CREATE INDEX recommendations_cache_score_index ON recommendations_cache(score DESC);
+CREATE INDEX recommendations_cache_generated_at_index ON recommendations_cache(generated_at);
+
+-- Queries for reading_history
+
+upsertReadingHistory:
+INSERT INTO reading_history(manga_id, chapters_read, total_chapters, time_spent, last_read, rating)
+VALUES (:mangaId, :chaptersRead, :totalChapters, :timeSpent, :lastRead, :rating)
+ON CONFLICT(manga_id)
+DO UPDATE
+SET
+    chapters_read = :chaptersRead,
+    total_chapters = :totalChapters,
+    time_spent = reading_history.time_spent + :timeSpent,
+    last_read = :lastRead,
+    rating = COALESCE(:rating, reading_history.rating)
+WHERE manga_id = :mangaId;
+
+getReadingHistoryByMangaId:
+SELECT * FROM reading_history WHERE manga_id = :mangaId;
+
+getAllReadingHistory:
+SELECT * FROM reading_history ORDER BY last_read DESC;
+
+getTopGenresFromHistory:
+SELECT mt.genres, SUM(rh.time_spent) as total_time
+FROM reading_history rh
+JOIN manga_tags mt ON rh.manga_id = mt.manga_id
+WHERE rh.time_spent > 60000
+GROUP BY mt.genres
+ORDER BY total_time DESC
+LIMIT 10;
+
+getRecentlyReadMangaIds:
+SELECT manga_id FROM reading_history
+WHERE last_read > :since
+ORDER BY last_read DESC;
+
+getMostReadMangaIds:
+SELECT manga_id FROM reading_history
+WHERE time_spent > :minTimeSpent
+ORDER BY time_spent DESC
+LIMIT :limit;
+
+-- Queries for manga_tags
+
+upsertMangaTags:
+INSERT INTO manga_tags(manga_id, genres, themes, author, status, popularity)
+VALUES (:mangaId, :genres, :themes, :author, :status, :popularity)
+ON CONFLICT(manga_id)
+DO UPDATE
+SET
+    genres = :genres,
+    themes = :themes,
+    author = :author,
+    status = :status,
+    popularity = :popularity
+WHERE manga_id = :mangaId;
+
+getMangaTagsByMangaId:
+SELECT * FROM manga_tags WHERE manga_id = :mangaId;
+
+getAllMangaTags:
+SELECT * FROM manga_tags;
+
+getMangaTagsByGenre:
+SELECT * FROM manga_tags WHERE genres LIKE '%' || :genre || '%';
+
+-- Queries for recommendations_cache
+
+insertRecommendationCache:
+INSERT INTO recommendations_cache(manga_id, recommended_manga_id, score, reason, generated_at)
+VALUES (:mangaId, :recommendedMangaId, :score, :reason, :generatedAt)
+ON CONFLICT(manga_id, recommended_manga_id)
+DO UPDATE
+SET
+    score = :score,
+    reason = :reason,
+    generated_at = :generatedAt;
+
+getCachedRecommendations:
+SELECT rc.*, m.title, m.thumbnail_url, m.author, m.status
+FROM recommendations_cache rc
+JOIN mangas m ON rc.recommended_manga_id = m._id
+WHERE rc.manga_id = :mangaId
+ORDER BY rc.score DESC
+LIMIT :limit;
+
+getAllCachedRecommendations:
+SELECT rc.*, m.title, m.thumbnail_url
+FROM recommendations_cache rc
+JOIN mangas m ON rc.recommended_manga_id = m._id
+ORDER BY rc.score DESC
+LIMIT :limit;
+
+deleteOldRecommendations:
+DELETE FROM recommendations_cache WHERE generated_at < :olderThan;
+
+deleteRecommendationsForManga:
+DELETE FROM recommendations_cache WHERE manga_id = :mangaId;
+
+clearAllRecommendationsCache:
+DELETE FROM recommendations_cache;
+
+-- Complex queries for recommendation algorithm
+
+getUnreadMangaWithSimilarGenres:
+SELECT 
+    mt.*,
+    m.title,
+    m.thumbnail_url,
+    m.status,
+    (
+        SELECT COUNT(*) FROM manga_tags mt2
+        WHERE mt2.manga_id IN (
+            SELECT manga_id FROM reading_history WHERE time_spent > 60000
+        )
+        AND (
+            ',' || mt2.genres || ',' LIKE '%,' || TRIM(SUBSTR(mt.genres, 1, INSTR(mt.genres || ',', ',') - 1)) || ',%'
+            OR ',' || mt2.genres || ',' LIKE '%,' || TRIM(SUBSTR(mt.genres, INSTR(mt.genres, ',') + 1, 
+                CASE WHEN INSTR(SUBSTR(mt.genres, INSTR(mt.genres, ',') + 1), ',') > 0 
+                THEN INSTR(SUBSTR(mt.genres, INSTR(mt.genres, ',') + 1), ',') - 1 
+                ELSE LENGTH(mt.genres) - INSTR(mt.genres, ',') END)) || ',%'
+        )
+    ) as genre_match_count
+FROM manga_tags mt
+JOIN mangas m ON mt.manga_id = m._id
+WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 60000)
+AND m.favorite = 0
+ORDER BY genre_match_count DESC, mt.popularity DESC
+LIMIT :limit;
+
+getRecommendationCandidates:
+SELECT 
+    mt.manga_id,
+    mt.genres,
+    mt.themes,
+    mt.author,
+    mt.popularity,
+    m.title,
+    m.thumbnail_url,
+    m.status,
+    CASE 
+        WHEN mt.genres IN (SELECT genres FROM manga_tags WHERE manga_id IN 
+            (SELECT manga_id FROM reading_history ORDER BY time_spent DESC LIMIT 10))
+        THEN 1.0
+        ELSE 0.0
+    END as genre_similarity
+FROM manga_tags mt
+JOIN mangas m ON mt.manga_id = m._id
+WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 30000)
+AND m.favorite = 0
+ORDER BY genre_similarity DESC, mt.popularity DESC
+LIMIT :limit;
