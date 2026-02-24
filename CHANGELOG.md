@@ -114,3 +114,23 @@ Fork of Komikku manga reader with Perfect Viewer features, AI recommendations, G
 - Original Komikku: https://github.com/komikku-app/komikku
 - Perfect Viewer: Inspiration for reading modes
 - Development: Heartless-Veteran with Kimi AI assistance
+## 2026-02-24 - Phase 2 Complete
+
+### AI Recommendations (Phase 2) - MERGED
+- ✅ Reading history tracking
+- ✅ Genre-based recommendation algorithm  
+- ✅ "For You" tab in Browse
+- ✅ "Because you read" suggestions
+- ✅ Weekly background updates
+- ✅ Cached recommendations
+
+### Security
+- ⚠️ 20 vulnerabilities detected (inherited from base repo)
+- 📋 Action plan created
+
+### Master Branch Now Contains:
+- Phase 1: Perfect Viewer Scale Modes
+- Phase 2: AI Recommendations
+- Refactoring: ReadingHistoryTracker
+- Dependency management setup
+
