@@ -1,0 +1,37 @@
+name: AI Assistant
+
+on:
+  issues:
+    types: [opened]
+  issue_comment:
+    types: [created]
+
+jobs:
+  ai-response:
+    runs-on: ubuntu-latest
+    permissions: {}
+    if: github.event_name == 'issues' || contains(github.event.comment.body, '@kimi')
+
+    steps:
+      - name: Send to OpenClaw webhook
+        env:
+          WEBHOOK_URL: ${{ secrets.OPENCLAW_WEBHOOK_URL }}
+          TOKEN: ${{ secrets.OPENCLAW_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+          COMMENT_BODY: ${{ github.event.comment.body }}
+          SENDER: ${{ github.event.sender.login }}
+        run: |
+          BODY="${COMMENT_BODY:-$ISSUE_BODY}"
+          curl -X POST "$WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $TOKEN" \
+            -d "$(jq -n \
+              --arg event "$EVENT_NAME" \
+              --argjson number "${ISSUE_NUMBER:-0}" \
+              --arg title "$ISSUE_TITLE" \
+              --arg body "$BODY" \
+              --arg sender "$SENDER" \
+              '{event: $event, number: $number, title: $title, body: $body, sender: $sender}')"
