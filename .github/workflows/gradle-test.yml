@@ -1,0 +1,79 @@
+name: Gradle Test
+
+on:
+  # Run tests on PRs to verify code doesn't break before merge
+  pull_request:
+    types: [opened, synchronize]
+    # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
+    branches: [master]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+  # Run tests after merge and collect coverage as canonical source of truth
+  push:
+    # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
+    branches: [master]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - 'gradle.properties'
+      - 'settings.gradle.kts'
+      - 'build.gradle.kts'
+  # Allow manual trigger for debugging
+  workflow_dispatch:
+
+# Cancel older runs when new commits are pushed to the same PR/branch
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v3
+
+      - name: Make gradlew executable
+        run: chmod +x gradlew
+
+      - name: Create dummy google-services.json
+        run: |
+          if [ ! -f app/google-services.json ]; then
+            echo '{}' > app/google-services.json
+          fi
+
+      - name: Run unit tests
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew testReleaseUnitTest
+          else
+            ./gradlew testReleaseUnitTest jacocoTestReport
+            mkdir -p coverage
+            find . -name "lcov.info" | head -1 | xargs -I{} cp {} coverage/lcov.info || \
+            find . -name "*.xml" -path "*/jacoco/*.xml" | head -1 | xargs -I{} cp {} coverage/lcov.info || \
+            touch coverage/lcov.info
+          fi
+
+      - name: Upload coverage report
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
