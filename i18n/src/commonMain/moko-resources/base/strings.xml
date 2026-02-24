@@ -1048,4 +1048,14 @@
     <string name="migrationListScreen.migrateDialog.cancelLabel">Cancel</string>
     <string name="migrationListScreen.progressDialog.cancelLabel">Cancel</string>
     <string name="migrationListScreen.matchWithoutChapterToast">No chapters found, this entry cannot be used for migration</string>
+
+    <!-- Recommendations -->
+    <string name="browse_recommendations">For You</string>
+    <string name="recommendations_for_you">For You</string>
+    <string name="recommendations_personalized">Personalized for you</string>
+    <string name="recommendations_because_you_read">Because you read</string>
+    <string name="recommendations_empty_title">No recommendations yet</string>
+    <string name="recommendations_empty_message">Read more manga to get personalized recommendations</string>
+    <string name="recommendations_error_title">Failed to load recommendations</string>
+    <string name="action_refresh">Refresh</string>
 </resources>
