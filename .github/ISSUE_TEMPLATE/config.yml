@@ -1,8 +1,11 @@
 blank_issues_enabled: false
 contact_links:
+  - name: 🔒 Security Vulnerabilities
+    url: https://github.com/Heartless-Veteran/komikku-2026/security/advisories/new
+    about: Please report security vulnerabilities privately
   - name: ❌ Help with Extensions
     url: https://komikku-app.github.io/docs/faq/browse/extensions
-    about: For extension-related questions/issues
-  - name: 🖥️ Komikku website
+    about: For extension-related questions/issues (upstream Komikku resources)
+  - name: 🖥️ Komikku upstream website
     url: https://komikku-app.github.io/
     about: Guides, troubleshooting, and answers to common questions

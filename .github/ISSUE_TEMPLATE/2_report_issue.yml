@@ -1,5 +1,5 @@
 name: 🐞 Issue report
-description: Report an issue in Komikku
+description: Report an issue in Komikku 2026
 labels: [bug]
 body:
   - type: textarea
@@ -42,17 +42,17 @@ body:
     attributes:
       label: Crash logs
       description: |
-        If you're experiencing crashes, if possible, go to the app's **More → Settings → Advanced** page, press **Dump crash logs** and share the crash logs here.
+        If you're experiencing crashes, go to the app's **More → Settings → Advanced** page, press **Dump crash logs** and share the crash logs here.
       placeholder: |
         You can upload the crash log file as an attachment, or paste the crash logs in plain text if needed.
 
   - type: input
-    id: komikku-version
+    id: app-version
     attributes:
-      label: Komikku version
-      description: You can find your Komikku version in **More → About**.
+      label: Komikku 2026 version
+      description: You can find your app version in **More → About**.
       placeholder: |
-        Example: "1.3.1"
+        Example: "0.1.0-alpha"
     validations:
       required: true
 
@@ -60,9 +60,9 @@ body:
     id: android-version
     attributes:
       label: Android version
-      description: You can find this somewhere in your Android settings.
+      description: You can find this in your Android settings.
       placeholder: |
-        Example: "Android 11"
+        Example: "Android 14"
     validations:
       required: true
 
@@ -72,7 +72,7 @@ body:
       label: Device
       description: List your device and model.
       placeholder: |
-        Example: "Google Pixel 5"
+        Example: "Google Pixel 8"
     validations:
       required: true
 
@@ -93,13 +93,11 @@ body:
           required: true
         - label: I have written a short but informative title.
           required: true
-        - label: I have gone through the [FAQ](https://komikku-app.github.io/docs/faq/general) and [troubleshooting guide](https://komikku-app.github.io/docs/guides/troubleshooting/).
-          required: true
-        - label: I have updated the app to version **[latest](https://github.com/komikku-app/komikku/releases/latest)**.
+        - label: I have updated the app to the **[latest version](https://github.com/Heartless-Veteran/komikku-2026/releases/latest)**.
           required: true
         - label: I have filled out all of the requested information in this form, including specific version numbers.
           required: true
-        - label: I understand that **Komikku does not have or fix any extensions**, and I **will not receive help** for any issues related to sources or extensions.
+        - label: I understand that **Komikku 2026 does not maintain or fix extensions**, and I **will not receive help** for issues related to sources or extensions.
           required: true
 
   - type: "textarea"
@@ -109,10 +107,10 @@ body:
       description: |
         **Please do not modify this text area!**
 
-        This template let users to vote with a :+1: reaction if they find it important.
-        This is not a guarantee that highly-requested issues will be fixed first, but it helps us to figure out what's important to users. Please react on other users' issues if you find them important.
+        This template lets users vote with a 👍 reaction if they find it important.
+        This is not a guarantee that highly-requested issues will be fixed first, but it helps prioritisation.
       value: |
-        Add a :+1: [reaction] to [issues you find important].
+        Add a 👍 [reaction] to [issues you find important].
 
         [reaction]: https://github.blog/2016-03-10-add-reactions-to-pull-requests-issues-and-comments/
-        [issues you find important]: https://github.com/komikku-app/komikku/issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc
+        [issues you find important]: https://github.com/Heartless-Veteran/komikku-2026/issues?q=is%3Aissue+is%3Aopen+sort%3Areactions-%2B1-desc
