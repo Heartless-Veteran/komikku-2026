@@ -1,16 +1,16 @@
 {
-  "baseBranchPatterns": [
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "baseBranches": [
     "master"
   ],
-  "rebaseWhen": "conflicted",
-  "semanticCommits": "enabled",
   "labels": [
     "Dependencies"
   ],
-  "extends": [
-    "config:best-practices",
-    "github>mihonapp/mihon//.github/renovate.json5"
-  ],
+  "rebaseWhen": "conflicted",
+  "semanticCommits": "enabled",
   "packageRules": [
     {
       "groupName": "GitHub Actions",
