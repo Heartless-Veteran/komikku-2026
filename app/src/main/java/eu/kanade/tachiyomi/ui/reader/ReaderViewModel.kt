@@ -41,6 +41,7 @@ import eu.kanade.tachiyomi.ui.reader.model.ViewerChapters
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
@@ -349,6 +350,10 @@ class ReaderViewModel @JvmOverloads constructor(
     private val downloadAheadAmount = downloadPreferences.autoDownloadWhileReading().get()
 
     init {
+        // Initialize scale mode from preferences
+        val initialScaleMode = ScaleMode.fromPreference(readerPreferences.scaleMode().get())
+        mutableState.update { it.copy(scaleMode = initialScaleMode) }
+
         // To save state
         state.map { it.viewerChapters?.currChapter }
             .distinctUntilChanged()
@@ -1091,6 +1096,19 @@ class ReaderViewModel @JvmOverloads constructor(
             readerPreferences.cropBordersContinuousVertical().toggle()
         }
     }
+
+    /**
+     * Toggle to the next scale mode in the cycle.
+     * Cycles through: FIT_SCREEN -> FIT_WIDTH -> FIT_HEIGHT -> ORIGINAL_SIZE -> SMART_CROP -> FIT_SCREEN
+     */
+    fun toggleScaleMode(): ScaleMode {
+        val currentMode = readerPreferences.scaleMode().get()
+        val nextMode = (currentMode + 1) % ScaleMode.entries.size
+        readerPreferences.scaleMode().set(nextMode)
+        val newScaleMode = ScaleMode.fromPreference(nextMode)
+        mutableState.update { it.copy(scaleMode = newScaleMode) }
+        return newScaleMode
+    }
     // SY <--
 
     /**
@@ -1497,6 +1515,9 @@ class ReaderViewModel @JvmOverloads constructor(
         val isAutoScrollEnabled: Boolean = false,
         val ehAutoscrollFreq: String = "",
         // SY <--
+
+        // Scale mode for Perfect Viewer style scaling
+        val scaleMode: ScaleMode = ScaleMode.FIT_SCREEN,
     ) {
         val currentChapter: ReaderChapter?
             get() = viewerChapters?.currChapter

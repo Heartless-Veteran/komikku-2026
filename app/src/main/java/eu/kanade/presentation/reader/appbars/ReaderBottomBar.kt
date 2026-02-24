@@ -3,6 +3,7 @@ package eu.kanade.presentation.reader.appbars
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.AspectRatio
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
 import androidx.compose.material.icons.outlined.Public
@@ -20,6 +21,7 @@ import eu.kanade.tachiyomi.R
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import kotlinx.collections.immutable.ImmutableSet
 import tachiyomi.i18n.MR
 import tachiyomi.i18n.sy.SYMR
@@ -47,6 +49,8 @@ fun ReaderBottomBar(
     onClickShare: (() -> Unit)?,
     onClickPageLayout: () -> Unit,
     onClickShiftPage: () -> Unit,
+    scaleMode: ScaleMode,
+    onClickScaleMode: () -> Unit,
     // SY <--
     modifier: Modifier = Modifier,
 ) {
@@ -172,6 +176,18 @@ fun ReaderBottomBar(
                 Icon(
                     painter = painterResource(R.drawable.ic_page_next_outline_24dp),
                     contentDescription = stringResource(SYMR.strings.shift_double_pages),
+                    // KMK -->
+                    tint = iconColor,
+                    // KMK <--
+                )
+            }
+        }
+
+        if (ReaderBottomButton.ScaleMode.isIn(enabledButtons)) {
+            IconButton(onClick = onClickScaleMode) {
+                Icon(
+                    imageVector = Icons.Outlined.AspectRatio,
+                    contentDescription = stringResource(MR.strings.scale_type),
                     // KMK -->
                     tint = iconColor,
                     // KMK <--

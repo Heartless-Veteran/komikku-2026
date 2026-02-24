@@ -100,6 +100,7 @@ import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderSettingsScreenModel
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
 import eu.kanade.tachiyomi.ui.reader.viewer.ReaderProgressIndicator
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.VerticalPagerViewer
@@ -756,6 +757,19 @@ class ReaderActivity : BaseActivity() {
                 }
             },
             onClickShiftPage = ::shiftDoublePages,
+            scaleMode = state.scaleMode,
+            onClickScaleMode = {
+                val newMode = viewModel.toggleScaleMode()
+                menuToggleToast?.cancel()
+                val modeName = when (newMode) {
+                    ScaleMode.FIT_SCREEN -> "Fit Screen"
+                    ScaleMode.FIT_WIDTH -> "Fit Width"
+                    ScaleMode.FIT_HEIGHT -> "Fit Height"
+                    ScaleMode.ORIGINAL_SIZE -> "Original Size"
+                    ScaleMode.SMART_CROP -> "Smart Crop"
+                }
+                menuToggleToast = toast("Scale mode: $modeName")
+            },
             // SY <--
         )
     }
