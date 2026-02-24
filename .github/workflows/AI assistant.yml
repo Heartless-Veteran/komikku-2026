@@ -1,0 +1,34 @@
+
+name: AI Assistant
+
+on:
+  issues:
+    types: [opened, edited]
+  issue_comment:
+    types: [created]
+
+jobs:
+  ai-response:
+    runs-on: ubuntu-latest
+    if: contains(github.event.comment.body, '@kimi') || contains(github.event.issue.body, '@kimi')
+    
+    steps:
+      - name: Send to OpenClaw
+```
+```yaml
+        run: |
+          curl -X POST "${{ secrets.OPENCLAW_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d '{"event":"${{ github.event_name }}","repo":"${{ github.repository }}","sender":"${{ github.event.sender.login }}","number":"${{ github.event.issue.number }}","body":"${{ github.event.comment.body || github.event.issue.body }}"}'
+
+      - name: Post response
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 Kimi received your message. Response will appear here.'
+            })
+```
