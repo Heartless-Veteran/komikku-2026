@@ -41,6 +41,12 @@ abstract class ViewerConfig(readerPreferences: ReaderPreferences, private val sc
     var dualPageRotateToFitInvert = false
         protected set
 
+    var scaleMode = ScaleMode.FIT_SCREEN
+        set(value) {
+            field = value
+            imagePropertyChangedListener?.invoke()
+        }
+
     abstract var navigator: ViewerNavigation
         protected set
 
@@ -67,6 +73,9 @@ abstract class ViewerConfig(readerPreferences: ReaderPreferences, private val sc
 
         readerPreferences.showNavigationOverlayOnStart()
             .register({ navigationOverlayOnStart = it })
+
+        readerPreferences.scaleMode()
+            .register({ scaleMode = ScaleMode.fromPreference(it) })
     }
 
     protected abstract fun defaultNavigation(): ViewerNavigation

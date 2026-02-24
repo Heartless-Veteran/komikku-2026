@@ -68,6 +68,9 @@ class ReaderPreferences(
     fun longStripGapSmartScale() = preferenceStore.getBoolean("pref_webtoon_smart_scale_long_strip_gap", false)
     // KMK <--
 
+    // Perfect Viewer style scale modes
+    fun scaleMode() = preferenceStore.getInt("pref_scale_mode_key", 0) // 0 = FIT_SCREEN
+
     fun zoomStart() = preferenceStore.getInt("pref_zoom_start_key", 1)
 
     fun readerTheme() = preferenceStore.getInt("pref_reader_theme_key", 1)
