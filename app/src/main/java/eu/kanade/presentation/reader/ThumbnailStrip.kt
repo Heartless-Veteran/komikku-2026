@@ -17,6 +17,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
@@ -106,12 +107,29 @@ private fun ThumbnailItem(
             .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
-        // Placeholder or actual thumbnail
-        AsyncImage(
-            model = page.imageUrl,
-            contentDescription = "Page ${page.number}",
-            modifier = Modifier.fillMaxWidth(),
-            contentScale = ContentScale.Crop,
+        // Use imageUrl if available, fallback to url, or show page number
+        val imageModel = page.imageUrl ?: page.url
+        
+        if (imageModel != null) {
+            AsyncImage(
+                model = imageModel,
+                contentDescription = "Page ${page.number}",
+                modifier = Modifier.fillMaxWidth(),
+                contentScale = ContentScale.Crop,
+            )
+        }
+        
+        // Page number overlay (always visible for clarity)
+        Text(
+            text = "${page.number}",
+            modifier = Modifier
+                .align(Alignment.BottomCenter)
+                .background(
+                    color = MaterialTheme.colorScheme.surface.copy(alpha = 0.8f),
+                )
+                .padding(horizontal = 4.dp, vertical = 2.dp),
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onSurface,
         )
     }
 }
