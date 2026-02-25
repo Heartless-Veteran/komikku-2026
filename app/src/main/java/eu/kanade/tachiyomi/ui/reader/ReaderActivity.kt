@@ -980,6 +980,12 @@ class ReaderActivity : BaseActivity() {
         updateViewerInset(readerPreferences.fullscreen().get(), readerPreferences.drawUnderCutout().get())
         binding.viewerContainer.addView(newViewer.getView())
 
+        // Apply per-manga scale mode override to the viewer config, so pages render with the
+        // correct scale mode even when it differs from the global preference.
+        val perMangaScaleMode = viewModel.state.value.scaleMode
+        val viewerConfig = (newViewer as? PagerViewer)?.config ?: (newViewer as? WebtoonViewer)?.config
+        viewerConfig?.scaleMode = perMangaScaleMode
+
         // SY -->
         if (newViewer is PagerViewer) {
             if (readerPreferences.pageLayout().get() == PagerConfig.PageLayout.AUTOMATIC) {

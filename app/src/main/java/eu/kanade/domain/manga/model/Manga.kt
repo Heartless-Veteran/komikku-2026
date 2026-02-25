@@ -5,6 +5,7 @@ import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
 import eu.kanade.tachiyomi.ui.reader.setting.ReadingMode
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import mihon.core.archive.CbzCrypto
 import tachiyomi.core.common.preference.TriState
 import tachiyomi.core.metadata.comicinfo.ComicInfo
@@ -20,6 +21,13 @@ val Manga.readingMode: Long
 
 val Manga.readerOrientation: Long
     get() = viewerFlags and ReaderOrientation.MASK.toLong()
+
+/**
+ * The per-manga scale mode stored in [viewerFlags] bits 6–8.
+ * A value of 0 means no per-manga override (use global preference).
+ */
+val Manga.readerScaleMode: Long
+    get() = viewerFlags and ScaleMode.MASK.toLong()
 
 val Manga.downloadedFilter: TriState
     get() {
