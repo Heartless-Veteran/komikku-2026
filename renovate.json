@@ -10,7 +10,7 @@
     "Dependencies"
   ],
   "rebaseWhen": "conflicted",
-  "semanticCommits": "enabled",
+  "semanticCommits": true,
   "packageRules": [
     {
       "groupName": "GitHub Actions",
