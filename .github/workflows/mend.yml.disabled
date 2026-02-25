@@ -30,6 +30,9 @@ jobs:
         run: ./gradlew dependencies --configuration releaseRuntimeClasspath > dependencies.txt
         
       - name: Mend Scan
+        # NOTE: mend-actions/dependency-check-action is a private/restricted repository;
+        # its tags cannot be resolved by Renovate (confirmed package lookup failure).
+        # Pin to a specific SHA once the action is publicly accessible.
         uses: mend-actions/dependency-check-action@v2
         with:
           apiKey: ${{ secrets.MEND_API_KEY }}
