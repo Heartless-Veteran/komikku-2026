@@ -27,6 +27,7 @@ enum class ReaderBottomButton(val value: String, val stringRes: StringResource) 
             CropBordersPager,
             CropBordersContinuesVertical,
             PageLayout,
+            ScaleMode,
         ).map { it.value }.toSet()
     }
 }

@@ -1,46 +1,48 @@
 package eu.kanade.tachiyomi.ui.reader.viewer
 
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+import dev.icerock.moko.resources.StringResource
+import tachiyomi.i18n.MR
 
 /**
  * Scale modes for manga page display.
  * Inspired by Perfect Viewer.
  */
 enum class ScaleMode(
-    val titleRes: Int? = null,
+    val titleRes: StringResource,
 ) {
     /**
      * Fit the entire page within the screen bounds.
      * Default behavior.
      */
-    FIT_SCREEN,
+    FIT_SCREEN(MR.strings.scale_type_fit_screen),
 
     /**
      * Fit the page width to screen width.
      * Good for reading text-heavy manga.
      */
-    FIT_WIDTH,
+    FIT_WIDTH(MR.strings.scale_type_fit_width),
 
     /**
      * Fit the page height to screen height.
      * Good for tall pages.
      */
-    FIT_HEIGHT,
+    FIT_HEIGHT(MR.strings.scale_type_fit_height),
 
     /**
      * Display at original size without scaling.
      * User must pan to see entire page.
      */
-    ORIGINAL_SIZE,
+    ORIGINAL_SIZE(MR.strings.scale_type_original_size),
 
     /**
-     * Smart crop - automatically crop white/black margins.
-     * Maximizes content visibility.
+     * Smart fit - auto-adjusts scale based on image orientation.
+     * Maximises content visibility.
      */
-    SMART_CROP;
+    SMART_CROP(MR.strings.scale_type_smart_crop);
 
     /**
-     * Convert ScaleMode to SubsamplingScaleImageView scale type
+     * Convert ScaleMode to SubsamplingScaleImageView scale type.
      */
     fun toSubsamplingScaleType(): Int {
         return when (this) {
@@ -48,7 +50,7 @@ enum class ScaleMode(
             FIT_WIDTH -> SubsamplingScaleImageView.SCALE_TYPE_FIT_WIDTH
             FIT_HEIGHT -> SubsamplingScaleImageView.SCALE_TYPE_FIT_HEIGHT
             ORIGINAL_SIZE -> SubsamplingScaleImageView.SCALE_TYPE_ORIGINAL_SIZE
-            SMART_CROP -> SubsamplingScaleImageView.SCALE_TYPE_SMART_CROP
+            SMART_CROP -> SubsamplingScaleImageView.SCALE_TYPE_SMART_FIT
         }
     }
 

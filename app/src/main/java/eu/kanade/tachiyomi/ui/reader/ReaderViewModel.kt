@@ -474,6 +474,10 @@ class ReaderViewModel @JvmOverloads constructor(
                             // SY <--
                         )
                     }
+                    // Load manga-specific scale mode, falling back to global default
+                    val mangaScaleMode = getMangaScaleMode(manga.id)
+                    readerPreferences.scaleMode().set(mangaScaleMode.ordinal)
+                    mutableState.update { it.copy(scaleMode = mangaScaleMode) }
                     if (chapterId == -1L) chapterId = initialChapterId
 
                     val context = Injekt.get<Application>()
@@ -1152,14 +1156,31 @@ class ReaderViewModel @JvmOverloads constructor(
     /**
      * Toggle to the next scale mode in the cycle.
      * Cycles through: FIT_SCREEN -> FIT_WIDTH -> FIT_HEIGHT -> ORIGINAL_SIZE -> SMART_CROP -> FIT_SCREEN
+     * Saves the scale mode per-manga if a manga is loaded.
      */
     fun toggleScaleMode(): ScaleMode {
-        val currentMode = readerPreferences.scaleMode().get()
-        val nextMode = (currentMode + 1) % ScaleMode.entries.size
-        readerPreferences.scaleMode().set(nextMode)
-        val newScaleMode = ScaleMode.fromPreference(nextMode)
-        mutableState.update { it.copy(scaleMode = newScaleMode) }
-        return newScaleMode
+        val currentMode = getMangaScaleMode()
+        val nextIndex = (currentMode.ordinal + 1) % ScaleMode.entries.size
+        val nextMode = ScaleMode.entries[nextIndex]
+        manga?.id?.let { mangaId ->
+            readerPreferences.mangaScaleMode(mangaId).set(nextIndex)
+        }
+        readerPreferences.scaleMode().set(nextIndex)
+        mutableState.update { it.copy(scaleMode = nextMode) }
+        return nextMode
+    }
+
+    /**
+     * Returns the scale mode for the current manga, falling back to the global default.
+     */
+    fun getMangaScaleMode(mangaId: Long? = manga?.id): ScaleMode {
+        if (mangaId != null) {
+            val mangaSpecificIndex = readerPreferences.mangaScaleMode(mangaId).get()
+            if (mangaSpecificIndex >= 0) {
+                return ScaleMode.fromPreference(mangaSpecificIndex)
+            }
+        }
+        return ScaleMode.fromPreference(readerPreferences.scaleMode().get())
     }
     // SY <--
 

@@ -71,6 +71,11 @@ class ReaderPreferences(
     // Perfect Viewer style scale modes
     fun scaleMode() = preferenceStore.getInt("pref_scale_mode_key", 0) // 0 = FIT_SCREEN
 
+    /**
+     * Per-manga scale mode preference. Returns -1 if not set (use global default).
+     */
+    fun mangaScaleMode(mangaId: Long) = preferenceStore.getInt("pref_scale_mode_key_$mangaId", -1)
+
     fun zoomStart() = preferenceStore.getInt("pref_zoom_start_key", 1)
 
     fun readerTheme() = preferenceStore.getInt("pref_reader_theme_key", 1)
