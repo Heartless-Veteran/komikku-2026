@@ -39,40 +39,39 @@
 
 ## ✨ Features
 
-### 🚧 In Development
-
-> These features are actively being built. Status is tracked in [`docs/PROJECT_PLAN.md`](docs/PROJECT_PLAN.md).
+### ✅ Completed
 
 #### 📐 Perfect Viewer Reading Modes
+| Mode | Description | Status |
+|------|-------------|--------|
+| **Fit Screen** | Fit the entire page to the screen (default) | ✅ |
+| **Fit Width** | Stretch page width to fill screen width | ✅ |
+| **Fit Height** | Stretch page height to fill screen height | ✅ |
+| **Original Size** | Display at native resolution — no scaling | ✅ |
+| **Smart Fit** | Auto-adjust based on image orientation | ✅ |
 
-| Mode | Description |
-|------|-------------|
-| **Fit Screen** | Fit the entire page to the screen (default) |
-| **Fit Width** | Stretch page width to fill screen width |
-| **Fit Height** | Stretch page height to fill screen height |
-| **Original Size** | Display at native resolution — no scaling |
-| **Smart Crop** | Automatically crop white/black margins |
+- Per-manga scale mode persistence
+- UI toggle in reader toolbar
 
 #### 🤖 AI Recommendations
-- Personalised suggestions based on your reading history
-- Similar manga finder powered by tag-based matching
-- Curated picks that adapt as your library grows
-
-### 📅 Planned
+- ✅ "For You" tab with personalized suggestions
+- ✅ "Because you read X" section
+- ✅ Tag-based matching algorithm
+- ✅ Reading history tracking
+- ✅ Weekly background updates
 
 #### 🖼️ Gallery View
-> *See the whole chapter at a glance.*
+- ✅ Perfect Viewer-style thumbnail strip
+- ✅ Tap to jump to any page
+- ✅ Page number overlays
+- ✅ Auto-hide functionality
 
-- Grid thumbnail view of all pages in a chapter
-- Tap any thumbnail to jump directly to that page
-- Fast, smooth scrolling with lazy-loaded previews
+### 🚧 In Progress
 
 #### 🎨 Dynamic Theming
-> *Let the manga set the mood.*
-
-- Automatically extracts colour palette from the manga cover
-- Applies accent colours to the reader background and UI elements
-- Seamless, immersive visual experience per title
+- Extract colors from manga covers
+- Apply to app bars and accents
+- Theme modes: Vibrant, Dominant, Muted
 
 ---
 
