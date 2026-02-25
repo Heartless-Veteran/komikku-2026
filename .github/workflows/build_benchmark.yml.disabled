@@ -1,7 +1,8 @@
 name: Benchmark Builder
 # Manually build a benchmark on a tag
 
-on:
+# DISABLED - Uncomment when ready
+# on:
   # Dispatch or Manual triggers
   workflow_dispatch:
 
