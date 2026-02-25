@@ -1,3 +1,4 @@
+# DISABLED - Enable when ready for release
 name: Release Builder
 # Build a stable release on a tag v* newly pushed
 
