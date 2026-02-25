@@ -1178,10 +1178,11 @@ class ReaderViewModel @JvmOverloads constructor(
             // Do not touch the global preference so other manga inheriting it are unaffected.
             readerPreferences.mangaScaleMode(mangaId).set(nextIndex)
             // Apply directly to the active viewer config instead of changing the global pref.
-            val viewer = state.value.viewer
-            when (viewer) {
-                is PagerViewer -> viewer.config.scaleMode = nextMode
-                is WebtoonViewer -> viewer.config.scaleMode = nextMode
+            state.value.viewer?.let { viewer ->
+                when (viewer) {
+                    is PagerViewer -> viewer.config.scaleMode = nextMode
+                    is WebtoonViewer -> viewer.config.scaleMode = nextMode
+                }
             }
         } else {
             // When no manga is loaded, fall back to updating the global default.
