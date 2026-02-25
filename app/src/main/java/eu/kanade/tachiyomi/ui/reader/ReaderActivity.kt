@@ -952,6 +952,10 @@ class ReaderActivity : BaseActivity() {
      */
     private fun setMenuVisibility(visible: Boolean) {
         viewModel.showMenus(visible)
+        if (!visible) {
+            // Also hide thumbnail strip when menu is hidden
+            viewModel.hideThumbnailStrip()
+        }
         if (visible) {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         } else if (readerPreferences.fullscreen().get()) {
