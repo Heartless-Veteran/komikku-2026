@@ -1,3 +1,4 @@
+# DISABLED - Enable if using Codeberg mirror
 # Sync repo to the Codeberg mirror
 name: Mirror Sync
 

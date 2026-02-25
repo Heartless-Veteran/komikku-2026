@@ -1,3 +1,4 @@
+# DISABLED - Enable when Mend API key is configured
 name: Mend Dependency Check
 
 on:
