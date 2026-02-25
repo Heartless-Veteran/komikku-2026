@@ -352,7 +352,7 @@ class ReaderActivity : BaseActivity() {
                 // Thumbnail Strip - Perfect Viewer style
                 ThumbnailStrip(
                     pages = state.viewerChapters?.currChapter?.pages ?: emptyList(),
-                    currentPage = state.currentPage,
+                    currentPage = state.currentPage - 1, // Convert to 0-based index
                     onPageSelected = { index ->
                         isScrollingThroughPages = true
                         moveToPageIndex(index)
