@@ -776,14 +776,8 @@ class ReaderActivity : BaseActivity() {
             onClickScaleMode = {
                 val newMode = viewModel.toggleScaleMode()
                 menuToggleToast?.cancel()
-                val modeName = when (newMode) {
-                    ScaleMode.FIT_SCREEN -> "Fit Screen"
-                    ScaleMode.FIT_WIDTH -> "Fit Width"
-                    ScaleMode.FIT_HEIGHT -> "Fit Height"
-                    ScaleMode.ORIGINAL_SIZE -> "Original Size"
-                    ScaleMode.SMART_CROP -> "Smart Crop"
-                }
-                menuToggleToast = toast("Scale mode: $modeName")
+                menuToggleToast = toast(newMode.titleRes)
+            },
             },
             onClickGallery = viewModel::toggleThumbnailStrip,
             // SY <--
@@ -958,6 +952,10 @@ class ReaderActivity : BaseActivity() {
      */
     private fun setMenuVisibility(visible: Boolean) {
         viewModel.showMenus(visible)
+        if (!visible) {
+            // Also hide thumbnail strip when menu is hidden
+            viewModel.hideThumbnailStrip()
+        }
         if (visible) {
             windowInsetsController.show(WindowInsetsCompat.Type.systemBars())
         } else if (readerPreferences.fullscreen().get()) {
