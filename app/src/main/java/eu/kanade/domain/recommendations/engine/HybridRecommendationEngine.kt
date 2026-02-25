@@ -35,17 +35,18 @@ class HybridRecommendationEngine(
         )
         
         // Get content-based recommendations
+        // Pre-filter candidates to exclude already interacted manga
+        val targetMangaIds = userHistory.interactions.map { it.mangaId }.toSet()
+        val filteredCandidates = candidateManga.filter { it.id !in targetMangaIds }
+        val candidateMap = filteredCandidates.associateBy { it.id }
+        
         val likedManga = userHistory.interactions
-            .filter { it.score >= 0.7 } // Only highly rated
-            .mapNotNull { interaction ->
-                candidateManga.find { it.id == interaction.mangaId }
-            }
+            .filter { it.score >= MIN_LIKED_SCORE_THRESHOLD }
+            .mapNotNull { interaction -> candidateMap[interaction.mangaId] }
         
         val contentRecs = contentEngine.getRecommendations(
             userLikedManga = likedManga,
-            candidateManga = candidateManga.filter { manga ->
-                userHistory.interactions.none { it.mangaId == manga.id }
-            },
+            candidateManga = filteredCandidates,
             topN = topN * 2,
         )
         
@@ -113,5 +114,6 @@ class HybridRecommendationEngine(
     companion object {
         private const val COLLABORATIVE_WEIGHT = 0.7
         private const val CONTENT_WEIGHT = 0.3
+        private const val MIN_LIKED_SCORE_THRESHOLD = 0.7
     }
 }

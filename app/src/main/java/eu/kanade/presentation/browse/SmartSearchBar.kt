@@ -11,6 +11,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,13 @@ fun SmartSearchBar(
     var query by remember { mutableStateOf("") }
     val smartSearch = remember { SmartMangaSearch() }
     
+    // Cache parsed query to avoid recomputing on every recomposition
+    val parsedParams by remember(query) {
+        derivedStateOf {
+            if (query.isNotBlank()) smartSearch.parseQuery(query) else null
+        }
+    }
+    
     Column(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = query,
@@ -44,10 +52,7 @@ fun SmartSearchBar(
             trailingIcon = {
                 IconButton(
                     onClick = {
-                        if (query.isNotBlank()) {
-                            val params = smartSearch.parseQuery(query)
-                            onSearch(params)
-                        }
+                        parsedParams?.let { onSearch(it) }
                     }
                 ) {
                     Icon(
@@ -59,9 +64,8 @@ fun SmartSearchBar(
             singleLine = true,
         )
         
-        // Show parsed interpretation
-        if (query.isNotBlank()) {
-            val params = smartSearch.parseQuery(query)
+        // Show parsed interpretation using cached result
+        parsedParams?.let { params ->
             if (!params.isEmpty()) {
                 Text(
                     text = formatParsedQuery(params),

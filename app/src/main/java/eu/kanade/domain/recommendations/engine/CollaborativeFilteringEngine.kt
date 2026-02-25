@@ -16,19 +16,18 @@ class CollaborativeFilteringEngine {
         user1Interactions: List<UserMangaInteraction>,
         user2Interactions: List<UserMangaInteraction>,
     ): Double {
-        // Find common manga
-        val commonManga = user1Interactions.map { it.mangaId }
-            .intersect(user2Interactions.map { it.mangaId }.toSet())
+        // Convert to maps for O(1) lookup
+        val user1Map = user1Interactions.associateBy { it.mangaId }
+        val user2Map = user2Interactions.associateBy { it.mangaId }
         
-        if (commonManga.size < 3) return 0.0 // Need at least 3 common items
+        // Find common manga
+        val commonManga = user1Map.keys.intersect(user2Map.keys)
+        
+        if (commonManga.size < MIN_COMMON_MANGA) return 0.0
         
         // Calculate cosine similarity
-        val user1Vector = commonManga.map { mangaId ->
-            user1Interactions.find { it.mangaId == mangaId }?.score ?: 0.0
-        }
-        val user2Vector = commonManga.map { mangaId ->
-            user2Interactions.find { it.mangaId == mangaId }?.score ?: 0.0
-        }
+        val user1Vector = commonManga.map { mangaId -> user1Map[mangaId]?.score ?: 0.0 }
+        val user2Vector = commonManga.map { mangaId -> user2Map[mangaId]?.score ?: 0.0 }
         
         return cosineSimilarity(user1Vector, user2Vector)
     }
@@ -114,5 +113,6 @@ class CollaborativeFilteringEngine {
     companion object {
         private const val SIMILARITY_THRESHOLD = 0.3
         private const val TOP_SIMILAR_USERS = 20
+        private const val MIN_COMMON_MANGA = 3
     }
 }
