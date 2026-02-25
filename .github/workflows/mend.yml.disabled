@@ -28,16 +28,7 @@ jobs:
         
       - name: Generate dependency graph
         run: ./gradlew dependencies --configuration releaseRuntimeClasspath > dependencies.txt
-        
-      - name: Mend Scan
-        # NOTE: mend-actions/dependency-check-action is a private/restricted repository;
-        # its tags cannot be resolved by Renovate (confirmed package lookup failure).
-        # Pin to a specific SHA once the action is publicly accessible.
-        uses: mend-actions/dependency-check-action@v2
-        with:
-          apiKey: ${{ secrets.MEND_API_KEY }}
-          projectName: 'komikku-2026'
-          
+
       - name: Upload report
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         if: always()
