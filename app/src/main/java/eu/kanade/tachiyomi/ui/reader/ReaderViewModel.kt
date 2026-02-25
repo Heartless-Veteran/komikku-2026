@@ -1259,6 +1259,29 @@ class ReaderViewModel @JvmOverloads constructor(
         mutableState.update { it.copy(dialog = null) }
     }
 
+    /**
+     * Toggle thumbnail strip visibility.
+     * Perfect Viewer style - tap bottom edge to show/hide.
+     */
+    fun toggleThumbnailStrip() {
+        mutableState.update { it.copy(thumbnailStripVisible = !it.thumbnailStripVisible) }
+    }
+
+    fun hideThumbnailStrip() {
+        mutableState.update { it.copy(thumbnailStripVisible = false) }
+    }
+
+    /**
+     * Toggle full gallery view.
+     */
+    fun toggleGallery() {
+        mutableState.update { it.copy(galleryVisible = !it.galleryVisible) }
+    }
+
+    fun hideGallery() {
+        mutableState.update { it.copy(galleryVisible = false) }
+    }
+
     fun setBrightnessOverlayValue(value: Int) {
         mutableState.update { it.copy(brightnessOverlayValue = value) }
     }
@@ -1581,6 +1604,10 @@ class ReaderViewModel @JvmOverloads constructor(
 
         // Scale mode for Perfect Viewer style scaling
         val scaleMode: ScaleMode = ScaleMode.FIT_SCREEN,
+
+        // Gallery/Thumbnail strip visibility
+        val thumbnailStripVisible: Boolean = false,
+        val galleryVisible: Boolean = false,
     ) {
         val currentChapter: ReaderChapter?
             get() = viewerChapters?.currChapter

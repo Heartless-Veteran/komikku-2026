@@ -6,6 +6,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AspectRatio
 import androidx.compose.material.icons.outlined.Explore
 import androidx.compose.material.icons.outlined.FormatListNumbered
+import androidx.compose.material.icons.outlined.PhotoLibrary
 import androidx.compose.material.icons.outlined.Public
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material.icons.outlined.Share
@@ -51,6 +52,7 @@ fun ReaderBottomBar(
     onClickShiftPage: () -> Unit,
     scaleMode: ScaleMode,
     onClickScaleMode: () -> Unit,
+    onClickGallery: () -> Unit,
     // SY <--
     modifier: Modifier = Modifier,
 ) {
@@ -188,6 +190,18 @@ fun ReaderBottomBar(
                 Icon(
                     imageVector = Icons.Outlined.AspectRatio,
                     contentDescription = stringResource(MR.strings.scale_type),
+                    // KMK -->
+                    tint = iconColor,
+                    // KMK <--
+                )
+            }
+        }
+
+        if (ReaderBottomButton.Gallery.isIn(enabledButtons)) {
+            IconButton(onClick = onClickGallery) {
+                Icon(
+                    imageVector = Icons.Outlined.PhotoLibrary,
+                    contentDescription = stringResource(MR.strings.gallery),
                     // KMK -->
                     tint = iconColor,
                     // KMK <--

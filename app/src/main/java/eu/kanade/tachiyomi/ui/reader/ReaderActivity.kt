@@ -73,6 +73,7 @@ import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
 import eu.kanade.presentation.reader.ReaderPageIndicator
 import eu.kanade.presentation.reader.ReadingModeSelectDialog
+import eu.kanade.presentation.reader.ThumbnailStrip
 import eu.kanade.presentation.reader.appbars.NavBarType
 import eu.kanade.presentation.reader.appbars.ReaderAppBars
 import eu.kanade.presentation.reader.settings.ReaderSettingsDialog
@@ -347,6 +348,20 @@ class ReaderActivity : BaseActivity() {
                             .navigationBarsPadding(),
                     )
                 }
+
+                // Thumbnail Strip - Perfect Viewer style
+                ThumbnailStrip(
+                    pages = state.viewerChapters?.currChapter?.pages ?: emptyList(),
+                    currentPage = state.currentPage,
+                    onPageSelected = { index ->
+                        isScrollingThroughPages = true
+                        moveToPageIndex(index)
+                        viewModel.hideThumbnailStrip()
+                    },
+                    visible = state.thumbnailStripVisible,
+                    onDismiss = viewModel::hideThumbnailStrip,
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                )
 
                 ContentOverlay(state = state)
 
@@ -770,6 +785,7 @@ class ReaderActivity : BaseActivity() {
                 }
                 menuToggleToast = toast("Scale mode: $modeName")
             },
+            onClickGallery = viewModel::toggleThumbnailStrip,
             // SY <--
         )
     }

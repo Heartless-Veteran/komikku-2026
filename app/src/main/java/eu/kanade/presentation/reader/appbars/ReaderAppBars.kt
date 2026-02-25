@@ -101,6 +101,7 @@ fun ReaderAppBars(
     onClickShiftPage: () -> Unit,
     scaleMode: ScaleMode,
     onClickScaleMode: () -> Unit,
+    onClickGallery: () -> Unit,
     // SY <--
 ) {
     val isRtl = viewer is R2LPagerViewer
@@ -279,6 +280,7 @@ fun ReaderAppBars(
                     onClickShiftPage = onClickShiftPage,
                     scaleMode = scaleMode,
                     onClickScaleMode = onClickScaleMode,
+                    onClickGallery = onClickGallery,
                     // SY <--
                 )
             }
