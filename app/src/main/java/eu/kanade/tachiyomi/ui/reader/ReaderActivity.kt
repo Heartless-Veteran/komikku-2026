@@ -776,14 +776,8 @@ class ReaderActivity : BaseActivity() {
             onClickScaleMode = {
                 val newMode = viewModel.toggleScaleMode()
                 menuToggleToast?.cancel()
-                val modeName = when (newMode) {
-                    ScaleMode.FIT_SCREEN -> "Fit Screen"
-                    ScaleMode.FIT_WIDTH -> "Fit Width"
-                    ScaleMode.FIT_HEIGHT -> "Fit Height"
-                    ScaleMode.ORIGINAL_SIZE -> "Original Size"
-                    ScaleMode.SMART_CROP -> "Smart Crop"
-                }
-                menuToggleToast = toast("Scale mode: $modeName")
+                menuToggleToast = toast(newMode.titleRes)
+            },
             },
             onClickGallery = viewModel::toggleThumbnailStrip,
             // SY <--
