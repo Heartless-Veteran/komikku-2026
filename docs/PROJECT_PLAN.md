@@ -59,17 +59,24 @@ Enhanced manga reader forked from Komikku with Perfect Viewer-inspired features,
 
 ## In Progress
 
-### 🔄 Phase 4: Dynamic Theming
-**Status:** Spec complete, implementation pending
+### ✅ Phase 4: Dynamic Theming
+**Status:** Already implemented (KMK feature)
 
-**Planned Features:**
-- Extract dominant/vibrant colors from manga covers
-- Apply colors to app bars, navigation, accents
-- Theme modes: Vibrant, Dominant, Muted, Dark
-- Optional reader background tinting
-- Cache colors in database
+**Features:**
+- ✅ Extract dominant/vibrant colors from manga covers
+- ✅ Apply colors to app bars, navigation, accents
+- ✅ Theme modes: Vibrant, Fidelity, and more (via MaterialKolor PaletteStyle)
+- ✅ Reader background theming
+- ✅ Settings toggle (`themeCoverBased`)
+- ✅ Cache colors in memory (`vibrantCoverColorMap`)
 
-**Spec:** `docs/specs/PHASE4_DYNAMIC_THEMING.md`
+**Files:**
+- `TachiyomiTheme.kt` - Theme with seedColor support
+- `MangaCoverMetadata.kt` - Color extraction from covers
+- `ReaderActivity.kt` - Apply theme in reader
+- `UiPreferences.kt` - `themeCoverBased` setting
+
+**Note:** This feature was already implemented in the KMK fork. Verified working in reader.
 
 ---
 
