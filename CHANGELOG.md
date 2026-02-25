@@ -9,10 +9,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and
 ## [Unreleased]
 
 ### Added
-- **Phase 1: Perfect Viewer Scale Modes** — 5 scale types (FIT_SCREEN, FIT_WIDTH, FIT_HEIGHT, ORIGINAL_SIZE, SMART_FIT) with per-manga persistence via viewerFlags
-- **Phase 2: AI Recommendations** — Tag-based recommendation system with "For You" tab and reading history tracking
-- **Phase 3: Gallery View** — Thumbnail strip for quick page navigation (Perfect Viewer style)
-- `SECURITY.md` — security policy with private reporting instructions and response timeline
+- **Phase 1: Perfect Viewer Scale Modes** — 5 scale types with per-manga persistence
+- **Phase 2: AI Recommendations** — Tag-based recommendation system with "For You" tab
+- **Phase 3: Gallery View** — Thumbnail strip for quick page navigation
+- **Phase 4: Dynamic Theming** — Cover-based theming (already present from KMK fork, verified working)
+- `SECURITY.md` — security policy
 - `assets/` folder with design token and colour-scheme reference
 - Issue templates, PR template, and `FUNDING.yml` updated to reference this fork
 

@@ -66,12 +66,12 @@
 - ✅ Page number overlays
 - ✅ Auto-hide functionality
 
-### 🚧 In Progress
-
-#### 🎨 Dynamic Theming
-- Extract colors from manga covers
-- Apply to app bars and accents
-- Theme modes: Vibrant, Dominant, Muted
+### ✅ Phase 4: Dynamic Theming
+- ✅ Extract colors from manga covers
+- ✅ Apply to app bars, navigation, accents
+- ✅ Theme modes: Vibrant, Fidelity, and more
+- ✅ Reader background theming
+- ✅ Toggle in settings
 
 ---
 
