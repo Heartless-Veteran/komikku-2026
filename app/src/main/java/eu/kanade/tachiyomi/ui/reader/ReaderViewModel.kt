@@ -12,6 +12,7 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.chapter.model.toDbChapter
 import eu.kanade.domain.manga.interactor.SetMangaViewerFlags
 import eu.kanade.domain.manga.model.readerOrientation
+import eu.kanade.domain.manga.model.readerScaleMode
 import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.domain.source.interactor.GetIncognitoState
 import eu.kanade.domain.sync.SyncPreferences
@@ -472,6 +473,8 @@ class ReaderViewModel @JvmOverloads constructor(
                             },
                             isAutoScrollEnabled = autoScrollFreq != -1f,
                             // SY <--
+                            // Load per-manga scale mode if set, otherwise keep the global default
+                            scaleMode = ScaleMode.fromMangaFlags(manga.readerScaleMode) ?: it.scaleMode,
                         )
                     }
                     if (chapterId == -1L) chapterId = initialChapterId
@@ -1152,12 +1155,20 @@ class ReaderViewModel @JvmOverloads constructor(
     /**
      * Toggle to the next scale mode in the cycle.
      * Cycles through: FIT_SCREEN -> FIT_WIDTH -> FIT_HEIGHT -> ORIGINAL_SIZE -> SMART_CROP -> FIT_SCREEN
+     * The new mode is persisted both globally and per-manga.
      */
     fun toggleScaleMode(): ScaleMode {
         val currentMode = readerPreferences.scaleMode().get()
         val nextMode = (currentMode + 1) % ScaleMode.entries.size
         readerPreferences.scaleMode().set(nextMode)
         val newScaleMode = ScaleMode.fromPreference(nextMode)
+        // Save per-manga preference so the mode is remembered when re-opening this manga
+        manga?.let { m ->
+            val mangaFlag = ((newScaleMode.ordinal + 1).toLong()) shl 6
+            viewModelScope.launchIO {
+                setMangaViewerFlags.awaitSetScaleMode(m.id, mangaFlag)
+            }
+        }
         mutableState.update { it.copy(scaleMode = newScaleMode) }
         return newScaleMode
     }
