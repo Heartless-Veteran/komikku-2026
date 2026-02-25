@@ -467,7 +467,6 @@
     <string name="scale_type_fit_height">Fit height</string>
     <string name="scale_type_original_size">Original size</string>
     <string name="scale_type_smart_fit">Smart fit</string>
-    <string name="scale_type_smart_crop">Smart fit</string>
     <string name="pref_navigate_pan">Pan wide images</string>
     <string name="pref_landscape_zoom">Automatically zoom into wide images</string>
     <string name="pref_zoom_start">Zoom start position</string>

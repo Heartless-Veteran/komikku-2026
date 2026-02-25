@@ -39,7 +39,7 @@ enum class ScaleMode(
      * Smart fit - auto-adjusts scale based on image orientation.
      * Maximises content visibility.
      */
-    SMART_CROP(MR.strings.scale_type_smart_crop);
+    SMART_FIT(MR.strings.scale_type_smart_fit);
 
     /**
      * Convert ScaleMode to SubsamplingScaleImageView scale type.
@@ -50,7 +50,7 @@ enum class ScaleMode(
             FIT_WIDTH -> SubsamplingScaleImageView.SCALE_TYPE_FIT_WIDTH
             FIT_HEIGHT -> SubsamplingScaleImageView.SCALE_TYPE_FIT_HEIGHT
             ORIGINAL_SIZE -> SubsamplingScaleImageView.SCALE_TYPE_ORIGINAL_SIZE
-            SMART_CROP -> SubsamplingScaleImageView.SCALE_TYPE_SMART_FIT
+            SMART_FIT -> SubsamplingScaleImageView.SCALE_TYPE_SMART_FIT
         }
     }
 

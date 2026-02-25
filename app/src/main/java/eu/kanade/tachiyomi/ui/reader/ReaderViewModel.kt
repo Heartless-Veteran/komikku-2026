@@ -45,6 +45,7 @@ import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import eu.kanade.tachiyomi.ui.reader.viewer.Viewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerViewer
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.R2LPagerViewer
+import eu.kanade.tachiyomi.ui.reader.viewer.webtoon.WebtoonViewer
 import eu.kanade.tachiyomi.util.chapter.filterDownloaded
 import eu.kanade.tachiyomi.util.chapter.removeDuplicates
 import eu.kanade.tachiyomi.util.editCover
@@ -476,7 +477,6 @@ class ReaderViewModel @JvmOverloads constructor(
                     }
                     // Load manga-specific scale mode, falling back to global default
                     val mangaScaleMode = getMangaScaleMode(manga.id)
-                    readerPreferences.scaleMode().set(mangaScaleMode.ordinal)
                     mutableState.update { it.copy(scaleMode = mangaScaleMode) }
                     if (chapterId == -1L) chapterId = initialChapterId
 
@@ -680,6 +680,16 @@ class ReaderViewModel @JvmOverloads constructor(
     fun onViewerLoaded(viewer: Viewer?) {
         mutableState.update {
             it.copy(viewer = viewer)
+        }
+        // Apply manga-specific scale mode directly to the new viewer config so the global
+        // preference is never mutated by per-manga overrides.
+        if (viewer != null) {
+            val scaleMode = getMangaScaleMode()
+            mutableState.update { it.copy(scaleMode = scaleMode) }
+            when (viewer) {
+                is PagerViewer -> viewer.config.scaleMode = scaleMode
+                is WebtoonViewer -> viewer.config.scaleMode = scaleMode
+            }
         }
     }
 
@@ -1155,17 +1165,28 @@ class ReaderViewModel @JvmOverloads constructor(
 
     /**
      * Toggle to the next scale mode in the cycle.
-     * Cycles through: FIT_SCREEN -> FIT_WIDTH -> FIT_HEIGHT -> ORIGINAL_SIZE -> SMART_CROP -> FIT_SCREEN
-     * Saves the scale mode per-manga if a manga is loaded.
+     * Cycles through: FIT_SCREEN -> FIT_WIDTH -> FIT_HEIGHT -> ORIGINAL_SIZE -> SMART_FIT -> FIT_SCREEN
+     * Saves the scale mode per-manga if a manga is loaded; updates global default otherwise.
      */
     fun toggleScaleMode(): ScaleMode {
         val currentMode = getMangaScaleMode()
         val nextIndex = (currentMode.ordinal + 1) % ScaleMode.entries.size
         val nextMode = ScaleMode.entries[nextIndex]
-        manga?.id?.let { mangaId ->
+        val mangaId = manga?.id
+        if (mangaId != null) {
+            // When a manga is loaded, update only its specific preference.
+            // Do not touch the global preference so other manga inheriting it are unaffected.
             readerPreferences.mangaScaleMode(mangaId).set(nextIndex)
+            // Apply directly to the active viewer config instead of changing the global pref.
+            val viewer = state.value.viewer
+            when (viewer) {
+                is PagerViewer -> viewer.config.scaleMode = nextMode
+                is WebtoonViewer -> viewer.config.scaleMode = nextMode
+            }
+        } else {
+            // When no manga is loaded, fall back to updating the global default.
+            readerPreferences.scaleMode().set(nextIndex)
         }
-        readerPreferences.scaleMode().set(nextIndex)
         mutableState.update { it.copy(scaleMode = nextMode) }
         return nextMode
     }
