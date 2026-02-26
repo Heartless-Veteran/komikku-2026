@@ -7,6 +7,9 @@ on:
     branches: [master, main]
   workflow_dispatch:
 
+permissions:
+  contents: read
+
 jobs:
   build:
     runs-on: 'ubuntu-24.04'
@@ -35,7 +38,6 @@ jobs:
         
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
-        continue-on-error: true
         
       - name: Upload Debug APK
         if: always()
