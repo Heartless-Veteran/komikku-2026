@@ -966,9 +966,9 @@ class ReaderViewModel @JvmOverloads constructor(
             // Sync manga tags for recommendation matching
             syncMangaTags.await(
                 mangaId = currentManga.id,
-                genres = currentManga.genre,
+                genres = currentManga.genre ?: emptyList(),
                 author = currentManga.author ?: "",
-                status = currentManga.status,
+                status = currentManga.status.toInt(),
             )
         } catch (e: Exception) {
             // Don't let recommendation tracking errors affect the reading experience

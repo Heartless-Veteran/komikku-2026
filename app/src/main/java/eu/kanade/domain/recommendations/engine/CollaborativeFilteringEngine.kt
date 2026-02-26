@@ -1,6 +1,5 @@
 package eu.kanade.domain.recommendations.engine
 
-import eu.kanade.tachiyomi.data.database.models.manga
 import tachiyomi.domain.manga.model.Manga
 
 /**

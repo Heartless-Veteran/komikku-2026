@@ -2,7 +2,7 @@ package tachiyomi.data.recommendations
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import eu.kanade.tachiyomi.data.database.DatabaseHandler
+import tachiyomi.data.DatabaseHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mihon.domain.recommendation.model.BecauseYouReadRecommendation
@@ -82,14 +82,13 @@ class RecommendationsRepositoryImpl(
     override suspend fun getRecentlyReadMangaIds(since: Date, limit: Int): List<Long> {
         return handler.awaitList {
             recommendationsQueries.getRecentlyReadMangaIds(since)
-        }.map { it.manga_id }
-            .take(limit)
+        }.take(limit)
     }
 
     override suspend fun getMostReadMangaIds(minTimeSpent: Long, limit: Int): List<Long> {
         return handler.awaitList {
             recommendationsQueries.getMostReadMangaIds(minTimeSpent, limit.toLong())
-        }.map { it.manga_id }
+        }
     }
 
     // Manga Tags operations
@@ -149,7 +148,7 @@ class RecommendationsRepositoryImpl(
                     mangaId = mangaId,
                     recommendedMangaId = recommendedMangaId,
                     score = score.toFloat(),
-                    reason = reason,
+                    reason = reason ?: "",
                     generatedAt = generatedAt,
                 )
             }
@@ -305,7 +304,7 @@ class RecommendationsRepositoryImpl(
 
     override suspend fun getRecommendationCandidates(limit: Int): List<MangaTags> {
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong()) { 
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
                 mangaId, genres, themes, author, popularity, _, _, _, _ ->
                 MangaTags(
                     id = 0,
@@ -350,7 +349,7 @@ class RecommendationsRepositoryImpl(
     private suspend fun getPopularRecommendations(limit: Int): List<Recommendation> {
         // Fallback: return popular manga
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong()) { 
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
                 mangaId, genres, _, author, popularity, _, _, _, _ ->
                 Recommendation(
                     mangaId = mangaId,
@@ -389,20 +388,20 @@ class RecommendationsRepositoryImpl(
     private fun mapMangaTags(
         id: Long,
         mangaId: Long,
-        genres: String?,
+        genres: String,
         themes: String?,
         author: String?,
-        status: Long,
-        popularity: Long,
+        status: Long?,
+        popularity: Long?,
     ): MangaTags {
         return MangaTags(
             id = id,
             mangaId = mangaId,
-            genres = genres?.split(",")?.map { it.trim() } ?: emptyList(),
+            genres = genres.split(",").map { it.trim() },
             themes = themes?.split(",")?.map { it.trim() } ?: emptyList(),
             author = author ?: "",
-            status = status.toInt(),
-            popularity = popularity.toInt(),
+            status = status?.toInt() ?: 0,
+            popularity = popularity?.toInt() ?: 0,
         )
     }
 }

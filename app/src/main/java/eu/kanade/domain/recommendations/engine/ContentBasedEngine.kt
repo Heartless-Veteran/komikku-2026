@@ -59,7 +59,7 @@ class ContentBasedEngine {
         val features = mutableSetOf<String>()
         
         // Add genre
-        features.addAll(manga.genre?.split(",")?.map { it.trim().lowercase() } ?: emptyList())
+        features.addAll(manga.genre?.map { it.lowercase() } ?: emptyList())
         
         // Add source as feature
         features.add("source_${manga.source}")
