@@ -35,4 +35,6 @@ dependencies {
     implementation(projects.core.common)
 
     api(libs.bundles.sqldelight)
+
+    implementation(androidx.workmanager)
 }

@@ -71,10 +71,10 @@ getAllReadingHistory:
 SELECT * FROM reading_history ORDER BY last_read DESC;
 
 getTopGenresFromHistory:
-SELECT mt.genres, SUM(rh.time_spent) as total_time
+SELECT mt.genres, SUM(rh.time_spent) AS total_time
 FROM reading_history rh
 JOIN manga_tags mt ON rh.manga_id = mt.manga_id
-WHERE rh.time_spent > 60000
+WHERE rh.time_spent > :minTimeSpent
 GROUP BY mt.genres
 ORDER BY total_time DESC
 LIMIT 10;
@@ -170,7 +170,7 @@ SELECT
                 THEN INSTR(SUBSTR(mt.genres, INSTR(mt.genres, ',') + 1), ',') - 1 
                 ELSE LENGTH(mt.genres) - INSTR(mt.genres, ',') END)) || ',%'
         )
-    ) as genre_match_count
+    ) AS genre_match_count
 FROM manga_tags mt
 JOIN mangas m ON mt.manga_id = m._id
 WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 60000)
@@ -193,7 +193,7 @@ SELECT
             (SELECT manga_id FROM reading_history ORDER BY time_spent DESC LIMIT 10))
         THEN 1.0
         ELSE 0.0
-    END as genre_similarity
+    END AS genre_similarity
 FROM manga_tags mt
 JOIN mangas m ON mt.manga_id = m._id
 WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 30000)

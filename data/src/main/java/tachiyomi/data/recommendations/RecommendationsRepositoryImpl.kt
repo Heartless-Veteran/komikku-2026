@@ -2,7 +2,7 @@ package tachiyomi.data.recommendations
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import eu.kanade.tachiyomi.data.database.DatabaseHandler
+import tachiyomi.data.DatabaseHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mihon.domain.recommendation.model.BecauseYouReadRecommendation
