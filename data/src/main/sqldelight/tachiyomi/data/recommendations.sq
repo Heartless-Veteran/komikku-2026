@@ -161,7 +161,7 @@ SELECT
     (
         SELECT COUNT(*) FROM manga_tags mt2
         WHERE mt2.manga_id IN (
-            SELECT manga_id FROM reading_history WHERE time_spent > 60000
+            SELECT manga_id FROM reading_history WHERE time_spent > :minTimeSpent
         )
         AND (
             ',' || mt2.genres || ',' LIKE '%,' || TRIM(SUBSTR(mt.genres, 1, INSTR(mt.genres || ',', ',') - 1)) || ',%'
@@ -173,7 +173,7 @@ SELECT
     ) AS genre_match_count
 FROM manga_tags mt
 JOIN mangas m ON mt.manga_id = m._id
-WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 60000)
+WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > :minTimeSpent)
 AND m.favorite = 0
 ORDER BY genre_match_count DESC, mt.popularity DESC
 LIMIT :limit;
@@ -196,7 +196,7 @@ SELECT
     END AS genre_similarity
 FROM manga_tags mt
 JOIN mangas m ON mt.manga_id = m._id
-WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > 30000)
+WHERE mt.manga_id NOT IN (SELECT manga_id FROM reading_history WHERE time_spent > :minTimeSpent)
 AND m.favorite = 0
 ORDER BY genre_similarity DESC, mt.popularity DESC
 LIMIT :limit;

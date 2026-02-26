@@ -304,7 +304,7 @@ class RecommendationsRepositoryImpl(
 
     override suspend fun getRecommendationCandidates(limit: Int): List<MangaTags> {
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong()) { 
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
                 mangaId, genres, themes, author, popularity, _, _, _, _ ->
                 MangaTags(
                     id = 0,
@@ -349,7 +349,7 @@ class RecommendationsRepositoryImpl(
     private suspend fun getPopularRecommendations(limit: Int): List<Recommendation> {
         // Fallback: return popular manga
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong()) { 
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
                 mangaId, genres, _, author, popularity, _, _, _, _ ->
                 Recommendation(
                     mangaId = mangaId,
