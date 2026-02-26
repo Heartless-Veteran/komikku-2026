@@ -11,7 +11,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,11 +30,17 @@ fun SmartSearchBar(
     var query by remember { mutableStateOf("") }
     val smartSearch = remember { SmartMangaSearch() }
     
-    // Cache parsed query to avoid recomputing on every recomposition
-    val parsedParams by remember(query) {
-        derivedStateOf {
-            if (query.isNotBlank()) smartSearch.parseQuery(query) else null
+    // Parse query once and remember result
+    var parsedParams by remember { mutableStateOf<SmartMangaSearch.SearchParameters?>(null) }
+    
+    // Update parsed params when query changes
+    if (query.isNotBlank()) {
+        val newParams = smartSearch.parseQuery(query)
+        if (newParams != parsedParams) {
+            parsedParams = newParams
         }
+    } else {
+        parsedParams = null
     }
     
     Column(modifier = modifier.fillMaxWidth()) {
@@ -64,7 +69,7 @@ fun SmartSearchBar(
             singleLine = true,
         )
         
-        // Show parsed interpretation using cached result
+        // Show parsed interpretation
         parsedParams?.let { params ->
             if (!params.isEmpty()) {
                 Text(
