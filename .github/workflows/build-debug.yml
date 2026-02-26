@@ -35,7 +35,6 @@ jobs:
         
       - name: Build Debug APK
         run: ./gradlew assembleDebug --stacktrace
-        continue-on-error: true
         
       - name: Upload Debug APK
         if: always()
