@@ -44,6 +44,8 @@ import tachiyomi.data.DatabaseHandler
 import tachiyomi.data.DateColumnAdapter
 import tachiyomi.data.History
 import tachiyomi.data.Mangas
+import tachiyomi.data.Reading_history
+import tachiyomi.data.Recommendations_cache
 import tachiyomi.data.StringListColumnAdapter
 import tachiyomi.data.UpdateStrategyColumnAdapter
 import tachiyomi.domain.manga.interactor.GetCustomMangaInfo
@@ -119,6 +121,12 @@ class AppModule(val app: Application) : InjektModule {
                 mangasAdapter = Mangas.Adapter(
                     genreAdapter = StringListColumnAdapter,
                     update_strategyAdapter = UpdateStrategyColumnAdapter,
+                ),
+                reading_historyAdapter = Reading_history.Adapter(
+                    last_readAdapter = DateColumnAdapter,
+                ),
+                recommendations_cacheAdapter = Recommendations_cache.Adapter(
+                    generated_atAdapter = DateColumnAdapter,
                 ),
             )
         }

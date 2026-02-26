@@ -778,7 +778,6 @@ class ReaderActivity : BaseActivity() {
                 menuToggleToast?.cancel()
                 menuToggleToast = toast(newMode.titleRes)
             },
-            },
             onClickGallery = viewModel::toggleThumbnailStrip,
             // SY <--
         )

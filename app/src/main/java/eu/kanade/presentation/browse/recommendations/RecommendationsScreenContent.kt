@@ -33,8 +33,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.manga.components.MangaCover
-import eu.kanade.presentation.util.padding
-import eu.kanade.tachiyomi.R
+import tachiyomi.i18n.MR
 import kotlinx.collections.immutable.ImmutableList
 import mihon.domain.recommendation.model.BecauseYouReadRecommendation
 import mihon.domain.recommendation.model.Recommendation
@@ -101,13 +100,13 @@ private fun RecommendationsList(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = stringResource(R.string.recommendations_for_you),
+                    text = stringResource(MR.strings.recommendations_for_you),
                     style = MaterialTheme.typography.headlineSmall,
                 )
                 IconButton(onClick = onRefresh) {
                     Icon(
                         imageVector = Icons.Default.Refresh,
-                        contentDescription = stringResource(R.string.action_refresh),
+                        contentDescription = stringResource(MR.strings.action_refresh),
                     )
                 }
             }
@@ -118,7 +117,7 @@ private fun RecommendationsList(
             item {
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
                 Text(
-                    text = stringResource(R.string.recommendations_personalized),
+                    text = stringResource(MR.strings.recommendations_personalized),
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(horizontal = MaterialTheme.padding.medium),
                 )
@@ -177,7 +176,7 @@ private fun ForYouCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(180.dp),
-                contentScale = ContentScale.Crop,
+                scale = ContentScale.Crop,
             )
             
             Column(
@@ -234,7 +233,7 @@ private fun BecauseYouReadSection(
             Spacer(modifier = Modifier.width(MaterialTheme.padding.small))
             Column {
                 Text(
-                    text = stringResource(R.string.recommendations_because_you_read),
+                    text = stringResource(MR.strings.recommendations_because_you_read),
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -285,7 +284,7 @@ private fun RecommendationSmallCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp),
-                contentScale = ContentScale.Crop,
+                scale = ContentScale.Crop,
             )
             
             Column(
@@ -330,12 +329,12 @@ private fun EmptyContent(
         )
         Spacer(modifier = Modifier.height(MaterialTheme.padding.medium))
         Text(
-            text = stringResource(R.string.recommendations_empty_title),
+            text = stringResource(MR.strings.recommendations_empty_title),
             style = MaterialTheme.typography.titleMedium,
         )
         Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
         Text(
-            text = stringResource(R.string.recommendations_empty_message),
+            text = stringResource(MR.strings.recommendations_empty_message),
             style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
@@ -343,7 +342,7 @@ private fun EmptyContent(
         IconButton(onClick = onRefresh) {
             Icon(
                 imageVector = Icons.Default.Refresh,
-                contentDescription = stringResource(R.string.action_refresh),
+                contentDescription = stringResource(MR.strings.action_refresh),
             )
         }
     }
@@ -362,7 +361,7 @@ private fun ErrorContent(
         verticalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = stringResource(R.string.recommendations_error_title),
+            text = stringResource(MR.strings.recommendations_error_title),
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.error,
         )
@@ -376,7 +375,7 @@ private fun ErrorContent(
         IconButton(onClick = onRefresh) {
             Icon(
                 imageVector = Icons.Default.Refresh,
-                contentDescription = stringResource(R.string.action_refresh),
+                contentDescription = stringResource(MR.strings.action_refresh),
             )
         }
     }
