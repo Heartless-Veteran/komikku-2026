@@ -34,4 +34,4 @@ jobs:
         if: always()
         with:
           name: mend-report
-          path: dependency-check-report.html
+          path: dependencies.txt

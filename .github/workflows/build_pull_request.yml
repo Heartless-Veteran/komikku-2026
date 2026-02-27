@@ -1,4 +1,12 @@
 name: PR build check
+# Required repository secrets for full signing/upload support:
+#   SIGNING_KEY             – Base64-encoded Android keystore
+#   ALIAS                   – Key alias inside the keystore
+#   KEY_STORE_PASSWORD      – Keystore password
+#   KEY_PASSWORD            – Key password
+#   GOOGLE_SERVICES_JSON    – Contents of app/google-services.json (for telemetry builds)
+#   GOOGLE_CLIENT_SECRETS_JSON – Contents of app/src/main/assets/client_secrets.json
+# Without these secrets, signing/upload steps are skipped and an unsigned debug APK is built instead.
 on:
   #  push:
   #    branches:

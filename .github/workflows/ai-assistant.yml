@@ -6,18 +6,21 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  issues: write
+
 jobs:
   notify:
     runs-on: 'ubuntu-24.04'
-    if: contains(github.event.comment.body, '@kimi') || contains(github.event.issue.body, '@kimi')
-    
+    if: contains(github.event.comment.body, '@copilot') || contains(github.event.issue.body, '@copilot')
+
     steps:
       - name: Send notification
         run: |
-          echo "@kimi mentioned by ${{ github.actor }}"
+          echo "@copilot mentioned by ${{ github.actor }}"
           echo "Issue/PR: #${{ github.event.issue.number || github.event.pull_request.number }}"
           echo "URL: ${{ github.event.issue.html_url || github.event.pull_request.html_url }}"
-          
+
       - name: Comment acknowledgment
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         with:
@@ -26,5 +29,5 @@ jobs:
               issue_number: context.issue.number,
               owner: context.repo.owner,
               repo: context.repo.repo,
-              body: '🤖 **Kimi was mentioned!**\n\nI will review this and respond soon.'
+              body: '🤖 **Copilot was mentioned!**\n\nThe GitHub Copilot coding agent will review this and respond soon.'
             })

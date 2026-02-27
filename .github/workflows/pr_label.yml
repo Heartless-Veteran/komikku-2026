@@ -29,3 +29,34 @@ jobs:
                 labels: labels
               });
             }
+
+            if (prAuthor === 'Copilot' || prAuthor === 'copilot-swe-agent[bot]') {
+              const labels = ['copilot'];
+              try {
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  labels: labels
+                });
+              } catch (e) {
+                if (e.status !== 422) {
+                  // 422 means the label already exists on the PR; anything else is unexpected
+                  console.log(`Failed to add copilot label: ${e.status} ${e.message}`);
+                }
+                // Label may not exist in repo yet; create it then retry
+                await github.rest.issues.createLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  name: 'copilot',
+                  color: '0075ca',
+                  description: 'Pull request created by GitHub Copilot'
+                }).catch(err => console.log(`createLabel: ${err.status} ${err.message}`));
+                await github.rest.issues.addLabels({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  labels: labels
+                });
+              }
+            }
