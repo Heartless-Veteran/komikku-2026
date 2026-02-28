@@ -350,18 +350,23 @@ class ReaderActivity : BaseActivity() {
                 }
 
                 // Thumbnail Strip - Perfect Viewer style
+                // KMK --> Show permanently if useThumbnailStripForNavigation is enabled
+                val useThumbnailStripNav by readerPreferences.useThumbnailStripForNavigation().collectAsState()
                 ThumbnailStrip(
                     pages = state.viewerChapters?.currChapter?.pages ?: emptyList(),
                     currentPage = state.currentPage - 1, // Convert to 0-based index
                     onPageSelected = { index ->
                         isScrollingThroughPages = true
                         moveToPageIndex(index)
-                        viewModel.hideThumbnailStrip()
+                        if (!useThumbnailStripNav) {
+                            viewModel.hideThumbnailStrip()
+                        }
                     },
-                    visible = state.thumbnailStripVisible,
-                    onDismiss = viewModel::hideThumbnailStrip,
+                    visible = state.thumbnailStripVisible || useThumbnailStripNav,
+                    onDismiss = if (useThumbnailStripNav) {{}} else viewModel::hideThumbnailStrip,
                     modifier = Modifier.align(Alignment.BottomCenter),
                 )
+                // KMK <--
 
                 ContentOverlay(state = state)
 
