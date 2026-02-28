@@ -17,7 +17,10 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material.icons.filled.SmartToy
 import androidx.compose.material.icons.outlined.Recommend
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -25,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -171,14 +175,28 @@ private fun ForYouCard(
         ),
     ) {
         Column {
-            MangaCover.Book(
-                data = recommendation.thumbnailUrl,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(180.dp),
-                scale = ContentScale.Crop,
-            )
-            
+            // Cover with AI badge
+            Box {
+                MangaCover.Book(
+                    data = recommendation.thumbnailUrl,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp),
+                    scale = ContentScale.Crop,
+                )
+
+                // KMK --> AI Badge
+                if (recommendation.score > 0) {
+                    AIBadge(
+                        score = recommendation.score,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(4.dp),
+                    )
+                }
+                // KMK <--
+            }
+
             Column(
                 modifier = Modifier.padding(MaterialTheme.padding.small),
             ) {
@@ -188,7 +206,29 @@ private fun ForYouCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                
+
+                // KMK --> Confidence score display
+                if (recommendation.score > 0) {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.padding(top = 2.dp),
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.SmartToy,
+                            contentDescription = "AI",
+                            modifier = Modifier.size(12.dp),
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                        Spacer(modifier = Modifier.width(2.dp))
+                        Text(
+                            text = "${(recommendation.score * 100).toInt()}% match",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
+                // KMK <--
+
                 Text(
                     text = recommendation.reason,
                     style = MaterialTheme.typography.bodySmall,
@@ -197,7 +237,7 @@ private fun ForYouCard(
                     overflow = TextOverflow.Ellipsis,
                     modifier = Modifier.padding(top = 2.dp),
                 )
-                
+
                 if (recommendation.genres.isNotEmpty()) {
                     Text(
                         text = recommendation.genres.take(2).joinToString(", "),
@@ -212,6 +252,43 @@ private fun ForYouCard(
         }
     }
 }
+
+// KMK --> AI Badge Component
+@Composable
+private fun AIBadge(
+    score: Float,
+    modifier: Modifier = Modifier,
+) {
+    val backgroundColor = when {
+        score >= 0.8f -> Color(0xFF4CAF50) // Green for high confidence
+        score >= 0.6f -> Color(0xFFFF9800) // Orange for medium
+        else -> Color(0xFF9E9E9E) // Gray for low
+    }
+
+    Badge(
+        containerColor = backgroundColor,
+        modifier = modifier,
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp),
+        ) {
+            Icon(
+                imageVector = Icons.Default.SmartToy,
+                contentDescription = null,
+                modifier = Modifier.size(10.dp),
+                tint = Color.White,
+            )
+            Spacer(modifier = Modifier.width(2.dp))
+            Text(
+                text = "${(score * 100).toInt()}",
+                style = MaterialTheme.typography.labelSmall,
+                color = Color.White,
+            )
+        }
+    }
+}
+// KMK <--
 
 @Composable
 private fun BecauseYouReadSection(
