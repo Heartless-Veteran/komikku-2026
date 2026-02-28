@@ -4,11 +4,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.core.common.preference.PreferenceStore
 import java.util.UUID
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Repository for saved searches with new result alerts.
  */
-class SavedSearchRepository(
+@Singleton
+class SavedSearchRepository @Inject constructor(
     private val preferenceStore: PreferenceStore,
 ) {
 

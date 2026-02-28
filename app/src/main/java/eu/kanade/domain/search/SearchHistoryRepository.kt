@@ -3,12 +3,15 @@ package eu.kanade.domain.search
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.core.common.preference.PreferenceStore
+import javax.inject.Inject
+import javax.inject.Singleton
 
 /**
  * Repository for search history.
  * Uses PreferenceStore for simple storage (last 20 searches).
  */
-class SearchHistoryRepository(
+@Singleton
+class SearchHistoryRepository @Inject constructor(
     private val preferenceStore: PreferenceStore,
 ) {
 
