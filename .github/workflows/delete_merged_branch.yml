@@ -17,7 +17,7 @@ jobs:
 
       - name: Delete branch
         run: |
-          branch_name="${{ github.event.pull_request.head.ref }}"
+          branch_name="$BRANCH_NAME"
           if [ "$branch_name" != "main" ] && [ "$branch_name" != "master" ]; then
             echo "Deleting branch ${branch_name}"
             git push origin --delete "$branch_name"
@@ -26,3 +26,4 @@ jobs:
           fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ github.event.pull_request.head.ref }}
