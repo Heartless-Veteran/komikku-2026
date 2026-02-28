@@ -71,6 +71,12 @@ class ReaderPreferences(
     // Perfect Viewer style scale modes
     fun scaleMode() = preferenceStore.getInt("pref_scale_mode_key", 0) // 0 = FIT_SCREEN
 
+    // Gallery View settings
+    fun galleryPosition() = preferenceStore.getEnum("pref_gallery_position", GalleryPosition.BOTTOM)
+    fun galleryThumbnailSize() = preferenceStore.getEnum("pref_gallery_thumbnail_size", GalleryThumbnailSize.MEDIUM)
+    fun galleryAutoHideDelay() = preferenceStore.getInt("pref_gallery_auto_hide_delay", 3) // seconds
+    fun galleryShowPageNumbers() = preferenceStore.getBoolean("pref_gallery_show_page_numbers", true)
+
     fun zoomStart() = preferenceStore.getInt("pref_zoom_start_key", 1)
 
     fun readerTheme() = preferenceStore.getInt("pref_reader_theme_key", 1)
@@ -341,5 +347,19 @@ class ReaderPreferences(
             SYMR.strings.archive_mode_cache_to_disk,
         )
         // SY <--
+
+        // Gallery View
+        enum class GalleryPosition {
+            TOP,
+            BOTTOM,
+            LEFT,
+            RIGHT,
+        }
+
+        enum class GalleryThumbnailSize {
+            SMALL,
+            MEDIUM,
+            LARGE,
+        }
     }
 }
