@@ -24,7 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import eu.kanade.domain.search.SearchHistoryRepository
+import eu.kanade.domain.search.SearchHistoryItem
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -34,7 +34,7 @@ import tachiyomi.presentation.core.i18n.stringResource
  */
 @Composable
 fun SearchHistoryDropdown(
-    history: List<SearchHistoryRepository.SearchHistoryItem>,
+    history: List<SearchHistoryItem>,
     onHistoryItemClick: (String) -> Unit,
     onHistoryItemDelete: (String) -> Unit,
     onClearHistory: () -> Unit,
@@ -104,7 +104,7 @@ fun SearchHistoryDropdown(
 
 @Composable
 private fun HistoryItem(
-    item: SearchHistoryRepository.SearchHistoryItem,
+    item: SearchHistoryItem,
     onClick: () -> Unit,
     onDelete: () -> Unit,
 ) {

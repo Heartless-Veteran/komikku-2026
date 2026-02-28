@@ -26,6 +26,7 @@ import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import eu.kanade.domain.search.SearchHistoryItem
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.presentation.search.SearchSuggestionsDropdown
@@ -55,7 +56,7 @@ fun GlobalSearchToolbar(
     hasPinnedSources: Boolean,
     // Search suggestions
     suggestionsQuery: String = "",
-    searchHistory: List<eu.kanade.domain.search.SearchHistoryRepository.SearchHistoryItem> = emptyList(),
+    searchHistory: List<SearchHistoryItem> = emptyList(),
     trendingSearches: List<String> = emptyList(),
     libraryTitles: List<String> = emptyList(),
     onSuggestionClick: (String) -> Unit = {},

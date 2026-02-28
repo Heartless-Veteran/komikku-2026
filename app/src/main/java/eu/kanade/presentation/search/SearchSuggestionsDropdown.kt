@@ -34,7 +34,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import eu.kanade.domain.search.SearchHistoryRepository
+import eu.kanade.domain.search.SearchHistoryItem
 import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
@@ -45,7 +45,7 @@ import tachiyomi.presentation.core.i18n.stringResource
 @Composable
 fun SearchSuggestionsDropdown(
     query: String,
-    history: List<SearchHistoryRepository.SearchHistoryItem>,
+    history: List<SearchHistoryItem>,
     trending: List<String>,
     libraryTitles: List<String>,
     onSuggestionClick: (String) -> Unit,
@@ -273,7 +273,7 @@ private fun TrendingSuggestionItem(
 
 @Composable
 private fun HistorySuggestionItem(
-    item: SearchHistoryRepository.SearchHistoryItem,
+    item: SearchHistoryItem,
     query: String,
     onClick: () -> Unit,
     onDelete: () -> Unit,

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.produceState
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import eu.kanade.domain.search.SearchHistoryItem
 import eu.kanade.domain.search.SearchHistoryRepository
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
@@ -284,7 +285,7 @@ abstract class SearchScreenModel(
         val items: PersistentMap<CatalogueSource, SearchItemResult> = persistentMapOf(),
         val dialog: Dialog? = null,
         // KMK -->
-        val searchHistory: List<SearchHistoryRepository.SearchHistoryItem> = emptyList(),
+        val searchHistory: List<SearchHistoryItem> = emptyList(),
         val showSearchHistory: Boolean = false,
         // KMK <--
     ) {

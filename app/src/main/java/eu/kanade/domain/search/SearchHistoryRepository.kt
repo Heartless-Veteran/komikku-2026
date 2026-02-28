@@ -68,23 +68,6 @@ class SearchHistoryRepository @Inject constructor(
         return "$query|$timestamp|$resultCount"
     }
 
-    data class SearchHistoryItem(
-        val query: String,
-        val timestamp: Long,
-        val resultCount: Int,
-    ) {
-        fun getRelativeTime(): String {
-            val diff = System.currentTimeMillis() - timestamp
-            return when {
-                diff < 60_000 -> "Just now"
-                diff < 3_600_000 -> "${diff / 60_000}m ago"
-                diff < 86_400_000 -> "${diff / 3_600_000}h ago"
-                diff < 604_800_000 -> "${diff / 86_400_000}d ago"
-                else -> "${diff / 604_800_000}w ago"
-            }
-        }
-    }
-
     companion object {
         private const val SEARCH_HISTORY_KEY = "search_history"
         private const val MAX_HISTORY_ITEMS = 20
