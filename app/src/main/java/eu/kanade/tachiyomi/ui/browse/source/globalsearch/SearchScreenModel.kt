@@ -5,6 +5,7 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.produceState
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import eu.kanade.domain.search.SearchHistoryRepository
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
 import eu.kanade.tachiyomi.extension.ExtensionManager
@@ -44,6 +45,9 @@ abstract class SearchScreenModel(
     private val networkToLocalManga: NetworkToLocalManga = Injekt.get(),
     private val getManga: GetManga = Injekt.get(),
     private val preferences: SourcePreferences = Injekt.get(),
+    // KMK -->
+    private val searchHistoryRepository: SearchHistoryRepository = Injekt.get(),
+    // KMK <--
 ) : StateScreenModel<SearchScreenModel.State>(initialState) {
 
     private val coroutineDispatcher = Executors.newFixedThreadPool(5).asCoroutineDispatcher()
@@ -144,6 +148,32 @@ abstract class SearchScreenModel(
         preferences.globalSearchFilterState().toggle()
     }
 
+    // KMK --> Search History functions
+    fun loadSearchHistory() {
+        screenModelScope.launchIO {
+            searchHistoryRepository.getSearchHistory().collect { history ->
+                mutableState.update { it.copy(searchHistory = history) }
+            }
+        }
+    }
+
+    fun deleteSearchHistoryItem(query: String) {
+        screenModelScope.launchIO {
+            searchHistoryRepository.removeSearch(query)
+        }
+    }
+
+    fun clearSearchHistory() {
+        screenModelScope.launchIO {
+            searchHistoryRepository.clearHistory()
+        }
+    }
+
+    fun setShowSearchHistory(show: Boolean) {
+        mutableState.update { it.copy(showSearchHistory = show) }
+    }
+    // KMK <--
+
     fun search() {
         val query = state.value.searchQuery
         val sourceFilter = state.value.sourceFilter
@@ -204,6 +234,16 @@ abstract class SearchScreenModel(
                 }
             }
                 .awaitAll()
+
+            // KMK --> Save search to history after completion
+            val totalResults = state.value.items.values.sumOf { item ->
+                when (item) {
+                    is SearchItemResult.Success -> item.manga.size
+                    else -> 0
+                }
+            }
+            searchHistoryRepository.addSearch(query, totalResults)
+            // KMK <--
         }
     }
 
@@ -243,6 +283,10 @@ abstract class SearchScreenModel(
         val onlyShowHasResults: Boolean = false,
         val items: PersistentMap<CatalogueSource, SearchItemResult> = persistentMapOf(),
         val dialog: Dialog? = null,
+        // KMK -->
+        val searchHistory: List<SearchHistoryRepository.SearchHistoryItem> = emptyList(),
+        val showSearchHistory: Boolean = false,
+        // KMK <--
     ) {
         val progress: Int = items.count { it.value !is SearchItemResult.Loading }
         val total: Int = items.size

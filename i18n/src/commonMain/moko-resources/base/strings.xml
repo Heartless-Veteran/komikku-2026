@@ -1059,4 +1059,5 @@
     <string name="recommendations_empty_message">Read more manga to get personalized recommendations</string>
     <string name="recommendations_error_title">Failed to load recommendations</string>
     <string name="action_refresh">Refresh</string>
+    <string name="recent_searches">Recent searches</string>
 </resources>
