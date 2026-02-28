@@ -8,8 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderSettingsScreenModel
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import eu.kanade.tachiyomi.util.system.hasDisplayCutout
 import tachiyomi.i18n.MR
+import tachiyomi.i18n.kmk.KMR
 import tachiyomi.i18n.sy.SYMR
 import tachiyomi.presentation.core.components.CheckboxItem
 import tachiyomi.presentation.core.components.SettingsChipRow
@@ -30,6 +32,29 @@ private val flashColors = listOf(
     MR.strings.pref_flash_style_white to ReaderPreferences.FlashColor.WHITE,
     MR.strings.pref_flash_style_white_black to ReaderPreferences.FlashColor.WHITE_BLACK,
 )
+
+// KMK --> Gallery position options
+private val galleryPositions = listOf(
+    KMR.strings.gallery_position_top to ReaderPreferences.Companion.GalleryPosition.TOP,
+    KMR.strings.gallery_position_bottom to ReaderPreferences.Companion.GalleryPosition.BOTTOM,
+    KMR.strings.gallery_position_left to ReaderPreferences.Companion.GalleryPosition.LEFT,
+    KMR.strings.gallery_position_right to ReaderPreferences.Companion.GalleryPosition.RIGHT,
+)
+
+private val galleryThumbnailSizes = listOf(
+    KMR.strings.gallery_size_small to ReaderPreferences.Companion.GalleryThumbnailSize.SMALL,
+    KMR.strings.gallery_size_medium to ReaderPreferences.Companion.GalleryThumbnailSize.MEDIUM,
+    KMR.strings.gallery_size_large to ReaderPreferences.Companion.GalleryThumbnailSize.LARGE,
+)
+
+private val scaleModes = listOf(
+    KMR.strings.scale_mode_fit_screen to ScaleMode.FIT_SCREEN,
+    KMR.strings.scale_mode_fit_width to ScaleMode.FIT_WIDTH,
+    KMR.strings.scale_mode_fit_height to ScaleMode.FIT_HEIGHT,
+    KMR.strings.scale_mode_original to ScaleMode.ORIGINAL_SIZE,
+    KMR.strings.scale_mode_smart_fit to ScaleMode.SMART_FIT,
+)
+// KMK <--
 
 @Composable
 internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
@@ -156,4 +181,65 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
         pref = screenModel.preferences.useAutoWebtoon(),
     )
     // SY <--
+
+    // KMK --> Gallery and Scale Mode Settings
+    val galleryPosition by screenModel.preferences.galleryPosition().collectAsState()
+    val galleryThumbnailSize by screenModel.preferences.galleryThumbnailSize().collectAsState()
+    val galleryAutoHideDelay by screenModel.preferences.galleryAutoHideDelay().collectAsState()
+    val useThumbnailStrip by screenModel.preferences.useThumbnailStripForNavigation().collectAsState()
+    val defaultScaleMode by screenModel.preferences.defaultScaleMode().collectAsState()
+
+    // Gallery Position
+    SettingsChipRow(KMR.strings.gallery_position_title) {
+        galleryPositions.map { (labelRes, value) ->
+            FilterChip(
+                selected = galleryPosition == value,
+                onClick = { screenModel.preferences.galleryPosition().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
+
+    // Gallery Thumbnail Size
+    SettingsChipRow(KMR.strings.gallery_thumbnail_size_title) {
+        galleryThumbnailSizes.map { (labelRes, value) ->
+            FilterChip(
+                selected = galleryThumbnailSize == value,
+                onClick = { screenModel.preferences.galleryThumbnailSize().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
+
+    // Gallery Auto-hide Delay
+    SliderItem(
+        value = galleryAutoHideDelay,
+        valueRange = 1..30,
+        label = stringResource(KMR.strings.gallery_auto_hide_delay_title),
+        valueString = if (galleryAutoHideDelay >= 30) stringResource(KMR.strings.never) else pluralStringResource(
+            MR.plurals.pref_pages,
+            galleryAutoHideDelay,
+            galleryAutoHideDelay,
+        ),
+        onChange = { screenModel.preferences.galleryAutoHideDelay().set(it) },
+        pillColor = MaterialTheme.colorScheme.surfaceContainerHighest,
+    )
+
+    // Use Thumbnail Strip for Navigation
+    CheckboxItem(
+        label = stringResource(KMR.strings.use_thumbnail_strip_nav_title),
+        pref = screenModel.preferences.useThumbnailStripForNavigation(),
+    )
+
+    // Default Scale Mode
+    SettingsChipRow(KMR.strings.default_scale_mode_title) {
+        scaleModes.map { (labelRes, value) ->
+            FilterChip(
+                selected = defaultScaleMode == value,
+                onClick = { screenModel.preferences.defaultScaleMode().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
+    // KMK <--
 }

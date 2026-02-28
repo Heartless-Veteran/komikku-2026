@@ -236,4 +236,26 @@
     <string name="pref_discord_show_download_button_summary">Displays a button to download the app</string>
     <string name="pref_discord_show_discord_button">Show Discord Button</string>
     <string name="pref_discord_show_discord_button_summary">Displays a button to join the Discord server</string>
+
+    <!-- Gallery Settings -->
+    <string name="gallery_position_title">Gallery position</string>
+    <string name="gallery_position_top">Top</string>
+    <string name="gallery_position_bottom">Bottom</string>
+    <string name="gallery_position_left">Left</string>
+    <string name="gallery_position_right">Right</string>
+    <string name="gallery_thumbnail_size_title">Thumbnail size</string>
+    <string name="gallery_size_small">Small</string>
+    <string name="gallery_size_medium">Medium</string>
+    <string name="gallery_size_large">Large</string>
+    <string name="gallery_auto_hide_delay_title">Auto-hide delay</string>
+    <string name="use_thumbnail_strip_nav_title">Use thumbnail strip for navigation</string>
+    <string name="never">Never</string>
+
+    <!-- Scale Mode Settings -->
+    <string name="default_scale_mode_title">Default scale mode</string>
+    <string name="scale_mode_fit_screen">Fit screen</string>
+    <string name="scale_mode_fit_width">Fit width</string>
+    <string name="scale_mode_fit_height">Fit height</string>
+    <string name="scale_mode_original">Original size</string>
+    <string name="scale_mode_smart_fit">Smart fit</string>
 </resources>

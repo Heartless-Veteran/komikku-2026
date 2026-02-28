@@ -4,6 +4,7 @@ import android.os.Build
 import androidx.compose.ui.graphics.BlendMode
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
 import dev.icerock.moko.resources.StringResource
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import eu.kanade.tachiyomi.ui.reader.viewer.pager.PagerConfig
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.preference.getEnum
@@ -70,6 +71,7 @@ class ReaderPreferences(
 
     // Perfect Viewer style scale modes
     fun scaleMode() = preferenceStore.getInt("pref_scale_mode_key", 0) // 0 = FIT_SCREEN
+    fun defaultScaleMode() = preferenceStore.getEnum("pref_default_scale_mode", ScaleMode.FIT_SCREEN)
 
     // Gallery View settings
     fun galleryPosition() = preferenceStore.getEnum("pref_gallery_position", GalleryPosition.BOTTOM)
