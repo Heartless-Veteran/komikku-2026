@@ -33,6 +33,7 @@ import eu.kanade.tachiyomi.source.Source
 import eu.kanade.tachiyomi.source.model.SManga
 import eu.kanade.tachiyomi.source.online.HttpSource
 import eu.kanade.tachiyomi.source.online.all.MergedSource
+import eu.kanade.tachiyomi.ui.library.model.LibraryItem
 import eu.kanade.tachiyomi.util.chapter.getNextUnread
 import eu.kanade.tachiyomi.util.removeCovers
 import exh.favorites.FavoritesSyncHelper
@@ -1161,6 +1162,14 @@ class LibraryScreenModel(
                 }
             }
             // AZ <--
+
+            // KMK --> Author/Artist prefix search
+            val authorQuery = AuthorSearchParser.parse(query)
+            if (authorQuery != null) {
+                return unfiltered.fastFilter { AuthorSearchParser.matches(it, authorQuery) }
+            }
+            // KMK <--
+
             // Prepare filter object
             val parsedQuery = searchEngine.parseQuery(query)
             val mangaWithMetaIds = getIdsOfFavoriteMangaWithMetadata.await()
