@@ -30,6 +30,12 @@ jobs:
       - name: Make gradlew executable
         run: chmod +x gradlew
         
+      - name: Clean build
+        run: ./gradlew clean
+        
+      - name: Generate moko resources
+        run: ./gradlew :i18n:generateMRcommonMain --stacktrace
+        
       - name: Create dummy google-services.json
         run: |
           if [ ! -f app/google-services.json ]; then
@@ -40,7 +46,7 @@ jobs:
           fi
         
       - name: Build Debug APK
-        run: ./gradlew assembleDebug --stacktrace
+        run: ./gradlew :i18n:generateMRcommonMain :app:assembleDebug --stacktrace
         
       - name: Upload Debug APK
         if: always()
