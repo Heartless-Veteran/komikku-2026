@@ -5,6 +5,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
+import eu.kanade.domain.readingstats.ReadingStatsRepository
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderOrientation
@@ -103,6 +104,9 @@ object SettingsReaderScreen : SearchableSettings {
             getDisplayGroup(readerPreferences = readerPref),
             getEInkGroup(readerPreferences = readerPref),
             getReadingGroup(readerPreferences = readerPref),
+            // KMK -->
+            getReadingStatsGroup(),
+            // KMK <--
             getPagedGroup(readerPreferences = readerPref),
             getWebtoonGroup(readerPreferences = readerPref),
             // SY -->
@@ -237,6 +241,40 @@ object SettingsReaderScreen : SearchableSettings {
             ),
         )
     }
+
+    // KMK -->
+    @Composable
+    private fun getReadingStatsGroup(): Preference.PreferenceGroup {
+        val readingStatsRepo = remember { Injekt.get<ReadingStatsRepository>() }
+        val goalEnabled by readingStatsRepo.readingGoalEnabled().collectAsState()
+        val goalMinutes by readingStatsRepo.readingGoalMinutes().collectAsState()
+        val streakEnabled by readingStatsRepo.readingStreakEnabled().collectAsState()
+
+        return Preference.PreferenceGroup(
+            title = "Reading Stats",
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = readingStatsRepo.readingGoalEnabled(),
+                    title = "Enable reading goal",
+                    subtitle = "Track daily reading time",
+                ),
+                Preference.PreferenceItem.SliderPreference(
+                    value = goalMinutes,
+                    valueRange = 5..120,
+                    title = "Daily reading goal",
+                    valueString = "$goalMinutes minutes",
+                    enabled = goalEnabled,
+                    onValueChanged = { readingStatsRepo.readingGoalMinutes().set(it) },
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = readingStatsRepo.readingStreakEnabled(),
+                    title = "Track reading streak",
+                    subtitle = "Count consecutive days of reading",
+                ),
+            ),
+        )
+    }
+    // KMK <--
 
     @Composable
     private fun getPagedGroup(readerPreferences: ReaderPreferences): Preference.PreferenceGroup {
