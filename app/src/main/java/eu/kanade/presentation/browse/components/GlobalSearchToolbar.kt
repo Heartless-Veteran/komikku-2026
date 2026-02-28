@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
+import eu.kanade.presentation.search.SearchSuggestionsDropdown
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SourceFilter
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.i18n.MR
@@ -52,6 +53,14 @@ fun GlobalSearchToolbar(
     toggleSelectionMode: () -> Unit,
     isRunning: Boolean,
     hasPinnedSources: Boolean,
+    // Search suggestions
+    suggestionsQuery: String = "",
+    searchHistory: List<eu.kanade.domain.search.SearchHistoryRepository.SearchHistoryItem> = emptyList(),
+    trendingSearches: List<String> = emptyList(),
+    libraryTitles: List<String> = emptyList(),
+    onSuggestionClick: (String) -> Unit = {},
+    onHistoryItemDelete: (String) -> Unit = {},
+    onClearHistory: () -> Unit = {},
     // KMK <--
 ) {
     Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -147,5 +156,17 @@ fun GlobalSearchToolbar(
         }
 
         HorizontalDivider()
+
+        // KMK --> Search Suggestions
+        SearchSuggestionsDropdown(
+            query = suggestionsQuery,
+            history = searchHistory,
+            trending = trendingSearches,
+            libraryTitles = libraryTitles,
+            onSuggestionClick = onSuggestionClick,
+            onHistoryItemDelete = onHistoryItemDelete,
+            onClearHistory = onClearHistory,
+        )
+        // KMK <--
     }
 }
