@@ -5,6 +5,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalView
+import eu.kanade.domain.brightness.SmartBrightnessRepository
 import eu.kanade.domain.readingstats.ReadingStatsRepository
 import eu.kanade.presentation.more.settings.Preference
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderBottomButton
@@ -106,6 +107,7 @@ object SettingsReaderScreen : SearchableSettings {
             getReadingGroup(readerPreferences = readerPref),
             // KMK -->
             getReadingStatsGroup(),
+            getSmartBrightnessGroup(),
             // KMK <--
             getPagedGroup(readerPreferences = readerPref),
             getWebtoonGroup(readerPreferences = readerPref),
@@ -270,6 +272,32 @@ object SettingsReaderScreen : SearchableSettings {
                     preference = readingStatsRepo.readingStreakEnabled(),
                     title = "Track reading streak",
                     subtitle = "Count consecutive days of reading",
+                ),
+            ),
+        )
+    }
+    // KMK <--
+
+    // KMK -->
+    @Composable
+    private fun getSmartBrightnessGroup(): Preference.PreferenceGroup {
+        val brightnessRepo = remember { Injekt.get<SmartBrightnessRepository>() }
+        val autoEnabled by brightnessRepo.autoBrightnessEnabled().collectAsState()
+        val timeDescription = remember { brightnessRepo.getTimeDescription() }
+
+        return Preference.PreferenceGroup(
+            title = "Smart Brightness",
+            preferenceItems = persistentListOf(
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = brightnessRepo.autoBrightnessEnabled(),
+                    title = "Auto-adjust brightness",
+                    subtitle = "Current: $timeDescription",
+                ),
+                Preference.PreferenceItem.SwitchPreference(
+                    preference = brightnessRepo.brightnessPerManga(),
+                    title = "Remember brightness per manga",
+                    subtitle = "Save optimal brightness for each series",
+                    enabled = !autoEnabled,
                 ),
             ),
         )
