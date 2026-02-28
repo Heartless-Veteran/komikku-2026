@@ -76,6 +76,7 @@ class ReaderPreferences(
     fun galleryThumbnailSize() = preferenceStore.getEnum("pref_gallery_thumbnail_size", GalleryThumbnailSize.MEDIUM)
     fun galleryAutoHideDelay() = preferenceStore.getInt("pref_gallery_auto_hide_delay", 3) // seconds
     fun galleryShowPageNumbers() = preferenceStore.getBoolean("pref_gallery_show_page_numbers", true)
+    fun useThumbnailStripForNavigation() = preferenceStore.getBoolean("pref_use_thumbnail_strip_nav", true)
 
     fun zoomStart() = preferenceStore.getInt("pref_zoom_start_key", 1)
 
