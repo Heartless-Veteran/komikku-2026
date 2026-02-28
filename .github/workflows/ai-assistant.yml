@@ -6,6 +6,9 @@ on:
   issue_comment:
     types: [created]
 
+permissions:
+  issues: write
+
 jobs:
   notify:
     runs-on: 'ubuntu-24.04'
