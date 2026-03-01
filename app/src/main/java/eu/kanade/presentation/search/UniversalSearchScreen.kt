@@ -29,10 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
-import eu.kanade.domain.manga.model.Manga
-import eu.kanade.presentation.browse.components.GlobalSearchResultItem
-import eu.kanade.presentation.components.MangaListItem
+import tachiyomi.domain.manga.model.Manga
+import tachiyomi.domain.manga.model.MangaCover
 import tachiyomi.domain.source.model.Source
+import tachiyomi.presentation.core.components.material.padding
+import eu.kanade.presentation.library.components.MangaListItem
 
 /**
  * Universal search screen that searches across library, history, and sources.
@@ -119,8 +120,17 @@ fun UniversalSearchScreen(
 
                     items(libraryResults) { manga ->
                         MangaListItem(
-                            manga = manga,
+                            title = manga.title,
+                            coverData = MangaCover(
+                                mangaId = manga.id,
+                                sourceId = manga.source,
+                                isMangaFavorite = manga.favorite,
+                                ogUrl = manga.thumbnailUrl,
+                                lastModified = manga.coverLastModified,
+                            ),
+                            badge = {},
                             onClick = { onMangaClick(manga) },
+                            onLongClick = {},
                         )
                     }
                 }
@@ -138,8 +148,17 @@ fun UniversalSearchScreen(
 
                     items(historyResults) { manga ->
                         MangaListItem(
-                            manga = manga,
+                            title = manga.title,
+                            coverData = MangaCover(
+                                mangaId = manga.id,
+                                sourceId = manga.source,
+                                isMangaFavorite = manga.favorite,
+                                ogUrl = manga.thumbnailUrl,
+                                lastModified = manga.coverLastModified,
+                            ),
+                            badge = {},
                             onClick = { onMangaClick(manga) },
+                            onLongClick = {},
                         )
                     }
                 }
@@ -157,8 +176,16 @@ fun UniversalSearchScreen(
                         }
 
                         items(mangas) { manga ->
-                            GlobalSearchResultItem(
-                                manga = manga,
+                            MangaListItem(
+                                title = manga.title,
+                                coverData = MangaCover(
+                                    mangaId = manga.id,
+                                    sourceId = manga.source,
+                                    isMangaFavorite = manga.favorite,
+                                    ogUrl = manga.thumbnailUrl,
+                                    lastModified = manga.coverLastModified,
+                                ),
+                                badge = {},
                                 onClick = { onMangaClick(manga) },
                                 onLongClick = {},
                             )
