@@ -4,14 +4,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import tachiyomi.core.common.preference.PreferenceStore
 import java.util.Calendar
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository for smart brightness management.
  */
-@Singleton
-class SmartBrightnessRepository @Inject constructor(
+class SmartBrightnessRepository(
     private val preferenceStore: PreferenceStore,
 ) {
 

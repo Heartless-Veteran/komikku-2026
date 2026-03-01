@@ -1,14 +1,11 @@
 package eu.kanade.domain.search
 
 import tachiyomi.domain.manga.model.Manga
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository for ranking search results intelligently.
  */
-@Singleton
-class SearchRankingRepository @Inject constructor() {
+class SearchRankingRepository {
 
     /**
      * Rank and deduplicate search results from multiple sources.
@@ -92,9 +89,7 @@ class SearchRankingRepository @Inject constructor() {
             score -= 10f
         }
 
-        // Popularity indicator (0-20)
-        // Higher score if manga has more chapters (proxy for popularity)
-        score += (manga.chapters?.size ?: 0).coerceAtMost(20).toFloat()
+        // TODO: Use chapter count for popularity scoring once Manga model includes it
 
         return score.coerceIn(0f, 100f)
     }

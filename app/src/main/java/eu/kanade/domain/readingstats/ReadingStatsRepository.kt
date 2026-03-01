@@ -4,14 +4,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.core.common.preference.PreferenceStore
 import java.util.concurrent.TimeUnit
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository for tracking reading sessions and statistics.
  */
-@Singleton
-class ReadingStatsRepository @Inject constructor(
+class ReadingStatsRepository(
     private val preferenceStore: PreferenceStore,
 ) {
 
