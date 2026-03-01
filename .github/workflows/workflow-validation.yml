@@ -1,0 +1,56 @@
+name: Workflow Validation
+
+on:
+  push:
+    branches: [master, main]
+    paths:
+      - '.github/workflows/**'
+  pull_request:
+    branches: [master, main]
+    paths:
+      - '.github/workflows/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-workflows:
+    runs-on: 'ubuntu-24.04'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        
+      - name: Validate workflow files
+        run: |
+          echo "=== Validating workflow files ==="
+          for file in .github/workflows/*.yml; do
+            echo "Checking: $file"
+            if ! python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>/dev/null; then
+              echo "❌ Invalid YAML: $file"
+              exit 1
+            fi
+            echo "✅ Valid: $file"
+          done
+          echo ""
+          echo "=== All workflow files valid ==="
+          
+      - name: Check for required secrets
+        run: |
+          echo "=== Checking workflow secret references ==="
+          # List workflows that need secrets
+          echo "Workflows requiring secrets:"
+          grep -l "secrets\." .github/workflows/*.yml | while read file; do
+            echo "  - $file"
+          done
+          echo ""
+          echo "✅ Secret check complete"
+          
+      - name: Workflow lint
+        uses: github/super-linter@v5
+        env:
+          DEFAULT_BRANCH: master
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VALIDATE_GITHUB_ACTIONS: true
+          VALIDATE_YAML: true
