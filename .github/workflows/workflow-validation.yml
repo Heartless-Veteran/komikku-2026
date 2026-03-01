@@ -25,7 +25,9 @@ jobs:
       - name: Validate workflow files
         run: |
           echo "=== Validating workflow files ==="
-          for file in .github/workflows/*.yml; do
+          pip install --quiet pyyaml
+          for file in .github/workflows/*.yml .github/workflows/*.yml.disabled; do
+            [ -f "$file" ] || continue
             echo "Checking: $file"
             if ! python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>/dev/null; then
               echo "❌ Invalid YAML: $file"
@@ -41,7 +43,7 @@ jobs:
           echo "=== Checking workflow secret references ==="
           # List workflows that need secrets
           echo "Workflows requiring secrets:"
-          grep -l "secrets\." .github/workflows/*.yml | while read file; do
+          grep -l "secrets\." .github/workflows/*.yml .github/workflows/*.yml.disabled 2>/dev/null | while read file; do
             echo "  - $file"
           done
           echo ""
@@ -50,7 +52,9 @@ jobs:
       - name: Validate GitHub Actions syntax
         run: |
           echo "=== Validating GitHub Actions YAML structure ==="
-          for file in .github/workflows/*.yml; do
+          pip install --quiet pyyaml
+          for file in .github/workflows/*.yml .github/workflows/*.yml.disabled; do
+            [ -f "$file" ] || continue
             echo "Checking actions syntax: $file"
             # Verify required fields exist in workflow files
             if ! python3 -c "
