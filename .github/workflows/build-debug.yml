@@ -46,7 +46,7 @@ jobs:
           fi
         
       - name: Build Debug APK
-        run: ./gradlew :i18n:generateMRcommonMain :app:assembleDebug --stacktrace
+        run: ./gradlew :app:assembleDebug --stacktrace
         
       - name: Upload Debug APK
         if: always()

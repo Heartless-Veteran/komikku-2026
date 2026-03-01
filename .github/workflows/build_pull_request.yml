@@ -73,6 +73,12 @@ jobs:
       - name: Set up gradle
         uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
 
+      - name: Clean build
+        run: ./gradlew clean
+
+      - name: Generate moko resources
+        run: ./gradlew :i18n:generateMRcommonMain --stacktrace
+
       - name: Check code format
         run: ./gradlew spotlessCheck
 
