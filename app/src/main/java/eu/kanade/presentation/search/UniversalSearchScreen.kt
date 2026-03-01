@@ -29,11 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import eu.kanade.presentation.library.components.MangaListItem
 import tachiyomi.domain.manga.model.Manga
 import tachiyomi.domain.manga.model.asMangaCover
 import tachiyomi.domain.source.model.Source
 import tachiyomi.presentation.core.components.material.padding
-import eu.kanade.presentation.library.components.MangaListItem
 
 /**
  * Universal search screen that searches across library, history, and sources.
