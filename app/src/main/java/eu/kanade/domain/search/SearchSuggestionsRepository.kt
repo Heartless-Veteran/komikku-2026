@@ -57,7 +57,7 @@ class SearchSuggestionsRepository @Inject constructor(
      */
     suspend fun getSuggestions(
         query: String,
-        history: List<SearchHistoryRepository.SearchHistoryItem>,
+        history: List<SearchHistoryItem>,
     ): SearchSuggestions {
         val trending = getTrendingSearches()
         val libraryTitles = getLibraryTitles()
@@ -72,7 +72,7 @@ class SearchSuggestionsRepository @Inject constructor(
     }
 
     data class SearchSuggestions(
-        val history: List<SearchHistoryRepository.SearchHistoryItem>,
+        val history: List<SearchHistoryItem>,
         val trending: List<String>,
         val libraryTitles: List<String>,
         val authors: List<String>,
