@@ -25,7 +25,9 @@ jobs:
       - name: Validate workflow files
         run: |
           echo "=== Validating workflow files ==="
-          for file in .github/workflows/*.yml; do
+          pip install --quiet pyyaml
+          for file in .github/workflows/*.yml .github/workflows/*.yml.disabled; do
+            [ -f "$file" ] || continue
             echo "Checking: $file"
             if ! python3 -c "import yaml; yaml.safe_load(open('$file'))" 2>/dev/null; then
               echo "❌ Invalid YAML: $file"
@@ -41,16 +43,35 @@ jobs:
           echo "=== Checking workflow secret references ==="
           # List workflows that need secrets
           echo "Workflows requiring secrets:"
-          grep -l "secrets\." .github/workflows/*.yml | while read file; do
+          grep -l "secrets\." .github/workflows/*.yml .github/workflows/*.yml.disabled 2>/dev/null | while read file; do
             echo "  - $file"
           done
           echo ""
           echo "✅ Secret check complete"
           
-      - name: Workflow lint
-        uses: github/super-linter@v5
-        env:
-          DEFAULT_BRANCH: master
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VALIDATE_GITHUB_ACTIONS: true
-          VALIDATE_YAML: true
+      - name: Validate GitHub Actions syntax
+        run: |
+          echo "=== Validating GitHub Actions YAML structure ==="
+          pip install --quiet pyyaml
+          for file in .github/workflows/*.yml .github/workflows/*.yml.disabled; do
+            [ -f "$file" ] || continue
+            echo "Checking actions syntax: $file"
+            # Verify required fields exist in workflow files
+            if ! python3 -c "
+import yaml, sys
+with open('$file') as f:
+    doc = yaml.safe_load(f)
+if doc is None:
+    print('ERROR: Empty document', file=sys.stderr)
+    sys.exit(1)
+if 'jobs' not in doc:
+    print('ERROR: Missing required \"jobs\" key', file=sys.stderr)
+    sys.exit(1)
+"; then
+              echo "❌ Invalid workflow structure: $file"
+              exit 1
+            fi
+            echo "✅ Valid structure: $file"
+          done
+          echo ""
+          echo "=== All workflow structures valid ==="

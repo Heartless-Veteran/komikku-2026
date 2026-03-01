@@ -1,6 +1,6 @@
 package eu.kanade.tachiyomi.ui.library
 
-import eu.kanade.tachiyomi.ui.library.model.LibraryItem
+import eu.kanade.tachiyomi.ui.library.LibraryItem
 
 /**
  * Parse author/artist prefix queries.

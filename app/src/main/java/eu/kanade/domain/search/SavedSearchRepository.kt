@@ -1,17 +1,15 @@
 package eu.kanade.domain.search
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import tachiyomi.core.common.preference.PreferenceStore
 import java.util.UUID
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository for saved searches with new result alerts.
  */
-@Singleton
-class SavedSearchRepository @Inject constructor(
+class SavedSearchRepository(
     private val preferenceStore: PreferenceStore,
 ) {
 
@@ -55,7 +53,7 @@ class SavedSearchRepository @Inject constructor(
     }
 
     suspend fun updateLastChecked(id: String, resultCount: Int) {
-        val search = getSavedSearches().map { it.find { it.id == id } }.get(null) ?: return
+        val search = getSavedSearches().first().find { it.id == id } ?: return
         updateSearch(
             search.copy(
                 lastCheckedAt = System.currentTimeMillis(),
@@ -65,7 +63,7 @@ class SavedSearchRepository @Inject constructor(
     }
 
     suspend fun toggleNotifications(id: String, enabled: Boolean) {
-        val search = getSavedSearches().map { it.find { it.id == id } }.get(null) ?: return
+        val search = getSavedSearches().first().find { it.id == id } ?: return
         updateSearch(search.copy(notifyOnNewResults = enabled))
     }
 

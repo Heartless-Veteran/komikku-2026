@@ -3,14 +3,11 @@ package eu.kanade.domain.search
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import tachiyomi.core.common.preference.PreferenceStore
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Repository for providing search suggestions from various sources.
  */
-@Singleton
-class SearchSuggestionsRepository @Inject constructor(
+class SearchSuggestionsRepository(
     private val preferenceStore: PreferenceStore,
 ) {
 

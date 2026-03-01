@@ -239,7 +239,7 @@ abstract class SearchScreenModel(
             // KMK --> Save search to history after completion
             val totalResults = state.value.items.values.sumOf { item ->
                 when (item) {
-                    is SearchItemResult.Success -> item.manga.size
+                    is SearchItemResult.Success -> item.result.size
                     else -> 0
                 }
             }

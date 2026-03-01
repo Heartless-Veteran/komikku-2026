@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.source.CatalogueSource
-import eu.kanade.tachiyomi.source.SourceManager
+import tachiyomi.domain.source.service.SourceManager
 import kotlinx.coroutines.flow.first
 import tachiyomi.core.common.util.system.logcat
 import uy.kohesive.injekt.Injekt
