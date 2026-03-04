@@ -1,6 +1,7 @@
 package eu.kanade.tachiyomi.ui.search
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import cafe.adriel.voyager.core.model.rememberScreenModel
@@ -24,7 +25,7 @@ class UniversalSearchScreen(
         val state by screenModel.state.collectAsState()
 
         if (initialQuery.isNotBlank()) {
-            androidx.compose.runtime.LaunchedEffect(Unit) {
+            LaunchedEffect(Unit) {
                 screenModel.search(initialQuery)
             }
         }

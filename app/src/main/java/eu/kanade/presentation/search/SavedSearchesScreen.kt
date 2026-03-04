@@ -12,8 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Notifications
-import androidx.compose.material.icons.filled.NotificationsOff
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -26,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.kanade.domain.search.SavedSearchRepository
+import eu.kanade.presentation.components.SearchToolbar
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.components.material.padding
 
@@ -43,7 +42,7 @@ fun SavedSearchesScreen(
 ) {
     Scaffold(
         topBar = { scrollBehavior ->
-            eu.kanade.presentation.components.SearchToolbar(
+            SearchToolbar(
                 searchQuery = null,
                 onChangeSearchQuery = {},
                 navigateUp = navigateUp,
@@ -71,8 +70,8 @@ fun SavedSearchesScreen(
                     imageVector = Icons.Default.Search,
                     contentDescription = null,
                     modifier = Modifier
-                        .size(64.dp)
-                        .padding(bottom = MaterialTheme.padding.medium),
+                        .padding(bottom = MaterialTheme.padding.medium)
+                        .size(64.dp),
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
@@ -124,8 +123,8 @@ private fun SavedSearchItem(
             imageVector = Icons.Default.Search,
             contentDescription = null,
             modifier = Modifier
-                .size(20.dp)
-                .padding(end = MaterialTheme.padding.small),
+                .padding(end = MaterialTheme.padding.small)
+                .size(20.dp),
             tint = MaterialTheme.colorScheme.primary,
         )
 

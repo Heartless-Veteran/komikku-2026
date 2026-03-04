@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import mihon.domain.manga.model.toDomainManga
 import tachiyomi.core.common.util.lang.launchIO
+import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.manga.interactor.GetLibraryManga
 import tachiyomi.domain.manga.interactor.NetworkToLocalManga
 import tachiyomi.domain.manga.model.Manga
@@ -51,7 +52,9 @@ class UniversalSearchScreenModel(
                 .filter { it.manga.title.contains(query, ignoreCase = true) }
                 .map { it.manga }
 
-            // History: find manga in library that were recently read and match query
+            // History: find manga in library that were recently read and match query.
+            // Uses lastRead timestamp from library as a proxy for reading history to
+            // avoid needing a separate history repository collect in this coroutine context.
             val historyResults = library
                 .filter { it.lastRead > 0 && it.manga.title.contains(query, ignoreCase = true) }
                 .sortedByDescending { it.lastRead }
@@ -91,8 +94,8 @@ class UniversalSearchScreenModel(
                         synchronized(sourceResultMap) {
                             sourceResultMap[domainSource] = domainManga
                         }
-                    } catch (_: Exception) {
-                        // Ignore individual source failures
+                    } catch (e: Exception) {
+                        logcat { "Universal search failed for source ${source.name}: ${e.message}" }
                     }
                 }
             }.awaitAll()
