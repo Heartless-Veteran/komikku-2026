@@ -1,10 +1,7 @@
 package eu.kanade.tachiyomi.ui.reader.setting
 
 import android.content.Context
-import eu.kanade.domain.manga.model.readerOrientation
-import eu.kanade.domain.manga.model.readerScaleMode
-import eu.kanade.domain.manga.model.readingMode
-import eu.kanade.tachiyomi.data.database.models.Manga
+import eu.kanade.tachiyomi.ui.reader.viewer.ScaleMode
 import tachiyomi.core.common.preference.PreferenceStore
 import tachiyomi.core.common.preference.getEnum
 
@@ -31,7 +28,7 @@ class PerMangaReaderPreferences(
      */
     fun scaleMode(mangaId: Long) = preferenceStore.getEnum(
         key(mangaId, "scale_mode"),
-        ReaderPreferences.ScaleMode.FIT_SCREEN,
+        ScaleMode.FIT_SCREEN,
     )
 
     /**
@@ -114,7 +111,7 @@ class PerMangaReaderPreferences(
 
     data class MangaReaderSettings(
         val readingDirection: ReadingMode,
-        val scaleMode: ReaderPreferences.ScaleMode,
+        val scaleMode: ScaleMode,
         val backgroundColor: Int,
         val brightness: Int,
         val keepScreenOn: Boolean,
