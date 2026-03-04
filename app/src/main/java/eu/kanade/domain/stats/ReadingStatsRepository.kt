@@ -90,8 +90,7 @@ class ReadingStatsRepository(
         
         val readDates = history
             .mapNotNull { it.readAt }
-            .map { Instant.ofEpochMilli(it.time).truncatedTo(ChronoUnit.DAYS) }
-            .distinct()
+            .mapTo(HashSet()) { Instant.ofEpochMilli(it.time).truncatedTo(ChronoUnit.DAYS) }
             .sortedDescending()
         
         if (readDates.isEmpty()) return 0
