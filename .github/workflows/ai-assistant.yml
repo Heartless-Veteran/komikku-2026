@@ -60,7 +60,6 @@ jobs:
             // Read context files
             const commits = fs.readFileSync('/tmp/recent_commits.txt', 'utf8');
             const status = fs.readFileSync('/tmp/project_status.txt', 'utf8');
-```
             
             const issueBody = context.payload.issue?.body || 
                              context.payload.pull_request?.body || 
@@ -75,7 +74,6 @@ jobs:
             \`\`\`
             
             What would you like me to help with?`;
-```
             await github.rest.issues.createComment({
               issue_number: context.issue.number,
               owner: context.repo.owner,
@@ -89,6 +87,3 @@ jobs:
         run: |
           # Example: Trigger build if requested
           echo "Would trigger build here"
-```
-───
-         
