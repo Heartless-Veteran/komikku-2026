@@ -249,6 +249,11 @@
     <string name="gallery_size_large">Large</string>
     <string name="gallery_auto_hide_delay_title">Auto-hide delay</string>
     <string name="use_thumbnail_strip_nav_title">Use thumbnail strip for navigation</string>
+    <string name="gallery_columns_title">Gallery columns</string>
+    <string name="gallery_columns_2">2 columns</string>
+    <string name="gallery_columns_3">3 columns</string>
+    <string name="gallery_columns_4">4 columns</string>
+    <string name="gallery_preview_title">Chapter Gallery</string>
     <string name="never">Never</string>
 
     <!-- Scale Mode Settings -->

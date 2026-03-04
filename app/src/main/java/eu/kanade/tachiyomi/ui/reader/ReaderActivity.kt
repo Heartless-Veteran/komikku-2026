@@ -66,6 +66,7 @@ import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.connections.service.ConnectionsPreferences
 import eu.kanade.domain.manga.model.readingMode
 import eu.kanade.domain.ui.UiPreferences
+import eu.kanade.presentation.reader.ChapterGalleryScreen
 import eu.kanade.presentation.reader.ChapterListDialog
 import eu.kanade.presentation.reader.DisplayRefreshHost
 import eu.kanade.presentation.reader.OrientationSelectDialog
@@ -371,6 +372,22 @@ class ReaderActivity : BaseActivity() {
                 ContentOverlay(state = state)
 
                 AppBars(state = state)
+
+                // KMK --> Full-screen chapter gallery
+                if (state.galleryVisible) {
+                    ChapterGalleryScreen(
+                        pages = state.viewerChapters?.currChapter?.pages ?: emptyList(),
+                        currentPage = state.currentPage - 1, // Convert to 0-based index
+                        readerPreferences = readerPreferences,
+                        onPageSelected = { index ->
+                            isScrollingThroughPages = true
+                            moveToPageIndex(index)
+                        },
+                        onDismiss = viewModel::hideGallery,
+                        modifier = Modifier.fillMaxSize(),
+                    )
+                }
+                // KMK <--
             }
 
             // KMK -->
@@ -783,7 +800,7 @@ class ReaderActivity : BaseActivity() {
                 menuToggleToast?.cancel()
                 menuToggleToast = toast(newMode.titleRes?.let { getString(it) })
             },
-            onClickGallery = viewModel::toggleThumbnailStrip,
+            onClickGallery = viewModel::toggleGallery,
             // SY <--
         )
     }
