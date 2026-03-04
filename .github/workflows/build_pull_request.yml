@@ -67,7 +67,7 @@ jobs:
         if: steps.write_google_services.outcome != 'success'
         run: |
           if [ ! -f app/google-services.json ]; then
-            echo '{"project_info":{"project_id":"placeholder","project_number":"000000000000","firebase_url":"https://placeholder.firebaseio.com","storage_bucket":"placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"app.komikku"}},"api_key":[{"current_key":""}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
+            echo '{"project_info":{"project_id":"placeholder","project_number":"000000000000","firebase_url":"https://placeholder.firebaseio.com","storage_bucket":"placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"app.komikku"}},"api_key":[{"current_key":""}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}},{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000001","android_client_info":{"package_name":"app.komikku.beta"}},"api_key":[{"current_key":""}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
           fi
 
       - name: Write client_secrets.json
