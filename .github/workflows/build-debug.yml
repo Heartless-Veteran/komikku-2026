@@ -1,13 +1,11 @@
 name: Build Debug
 
 on:
-  # DISABLED during development to save CI minutes
-  # Re-enable when ready for alpha release
-  # push:
-  #   branches: [master, main]
-  # pull_request:
-  #   branches: [master, main]
-  workflow_dispatch:  # Manual trigger only
+  push:
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
+  workflow_dispatch:
 
 permissions:
   contents: read
