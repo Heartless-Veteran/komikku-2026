@@ -53,6 +53,19 @@
 - Per-manga scale mode persistence
 - UI toggle in reader toolbar
 
+#### 🖼️ Full Chapter Gallery Preview
+- ✅ Full-screen grid gallery (2/3/4 columns)
+- ✅ Adjustable thumbnail sizes (S/M/L)
+- ✅ Tap any page to jump instantly
+- ✅ Page number overlays
+- ✅ Remembers column/size preferences
+
+#### 🖼️ Gallery View (Thumbnail Strip)
+- ✅ Perfect Viewer-style thumbnail strip
+- ✅ Tap to jump to any page
+- ✅ Page number overlays
+- ✅ Auto-hide functionality
+
 #### 🤖 AI Recommendations
 - ✅ "For You" tab with personalized suggestions
 - ✅ "Because you read X" section
@@ -60,11 +73,36 @@
 - ✅ Reading history tracking
 - ✅ Weekly background updates
 
-#### 🖼️ Gallery View
-- ✅ Perfect Viewer-style thumbnail strip
-- ✅ Tap to jump to any page
-- ✅ Page number overlays
-- ✅ Auto-hide functionality
+#### ⏱️ Reading Time Estimation
+- ✅ Estimates time remaining in chapter
+- ✅ Learns from your reading speed
+- ✅ Shows "5 min remaining" in reader
+
+#### 📊 Reading Statistics Dashboard
+- ✅ Total chapters read counter
+- ✅ Reading streak tracking
+- ✅ Weekly activity heatmap
+- ✅ Top manga by reading time
+- ✅ Total reading time stats
+
+#### ⚙️ Per-Series Reader Presets
+- ✅ Per-manga reading direction
+- ✅ Per-manga scale mode
+- ✅ Per-manga background color
+- ✅ Per-manga brightness settings
+- ✅ Reset to defaults option
+
+#### 🔍 Source Health Dashboard
+- ✅ Visual health indicators (Green/Yellow/Red)
+- ✅ Success/failure rate tracking
+- ✅ Last successful fetch timestamp
+- ✅ Auto-detects broken sources
+
+#### 📦 Export Downloads to CBZ
+- ✅ Export chapters as CBZ (comic book format)
+- ✅ Export entire manga series
+- ✅ Progress indicator for large exports
+- ✅ Compatible with standard comic readers
 
 ### ✅ Phase 4: Dynamic Theming
 - ✅ Extract colors from manga covers
@@ -121,12 +159,6 @@ Inherited from the upstream [Komikku](https://github.com/komikku-app/komikku) pr
 ./gradlew assembleRelease
 ```
 
-### Running Tests
-
-```bash
-./gradlew test
-```
-
 ---
 
 ## 📁 Project Structure
@@ -144,26 +176,14 @@ komikku-2026/
 ├── source-local/           # Local file source implementation
 ├── i18n/                   # Translations (upstream)
 ├── i18n-kmk/               # Komikku-specific translations
-├── docs/                   # Documentation & planning
-│   ├── DEPENDENCY_MANAGEMENT.md
-│   ├── FEATURE_DYNAMIC_THEME.md
-│   ├── FEATURE_GALLERY_VIEW.md
-│   ├── FEATURE_READING_MODES.md
-│   ├── FEATURE_RECOMMENDATIONS.md
-│   ├── PROJECT_PLAN.md
-│   ├── SCALE_MODES_IMPLEMENTATION.md
-│   ├── SECURITY_VULNERABILITIES.md
-│   └── TEST_SUMMARY.md
-└── .github/                # CI/CD workflows and templates
+└── docs/                   # Documentation & planning
 ```
 
 ---
 
 ## 🤝 Contributing
 
-Contributions are warmly welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request, and make sure to follow our [Code of Conduct](CODE_OF_CONDUCT.md).
-
-For security issues, please refer to [SECURITY.md](SECURITY.md).
+Contributions are warmly welcome! Please read [CONTRIBUTING.md](CONTRIBUTING.md) before submitting a pull request.
 
 ---
 
@@ -175,15 +195,11 @@ This project is licensed under the **Apache License 2.0** — see the [LICENSE](
 
 ## 💖 Credits
 
-- [Komikku](https://github.com/komikku-app/komikku) by the Komikku team — the upstream project this fork is based on
+- [Komikku](https://github.com/komikku-app/komikku) by the Komikku team — the upstream project
 - [Tachiyomi](https://github.com/tachiyomiorg/tachiyomi) — the original open-source manga reader
-- Perfect Viewer — inspiration for the advanced reading modes
+- [Perfect Viewer](https://play.google.com/store/apps/details?id=com.rookiestudio.perfectviewer) — inspiration for advanced reading modes
 - All upstream contributors and translators
 
 ---
 
-<div align="center">
-
-*Made with ❤️ for manga readers everywhere*
-
-</div>
+_Made with ❤️ for manga readers everywhere_
