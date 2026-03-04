@@ -6,6 +6,7 @@ import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 import tachiyomi.domain.history.interactor.GetHistory
+import tachiyomi.domain.library.model.LibraryManga
 import tachiyomi.domain.manga.interactor.GetLibraryManga
 
 /**
@@ -29,7 +30,7 @@ class ReadingStatsRepository(
 
     private fun calculateStats(
         history: List<tachiyomi.domain.history.model.HistoryWithRelations>,
-        libraryManga: List<tachiyomi.domain.manga.model.LibraryManga>,
+        libraryManga: List<LibraryManga>,
     ): ReadingStats {
         val now = Instant.now()
         
