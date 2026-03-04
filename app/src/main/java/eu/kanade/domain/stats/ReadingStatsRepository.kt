@@ -1,21 +1,17 @@
 package eu.kanade.domain.stats
 
-import eu.kanade.domain.history.interactor.GetHistory
-import eu.kanade.domain.manga.interactor.GetLibraryManga
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.map
 import java.time.Instant
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
-import javax.inject.Inject
-import javax.inject.Singleton
+import tachiyomi.domain.history.interactor.GetHistory
+import tachiyomi.domain.manga.interactor.GetLibraryManga
 
 /**
  * Calculates and provides reading statistics.
  */
-@Singleton
-class ReadingStatsRepository @Inject constructor(
+class ReadingStatsRepository(
     private val getHistory: GetHistory,
     private val getLibraryManga: GetLibraryManga,
 ) {
@@ -24,7 +20,7 @@ class ReadingStatsRepository @Inject constructor(
      */
     fun getStats(): Flow<ReadingStats> {
         return combine(
-            getHistory.subscribeAll(),
+            getHistory.subscribe("", null, null, null),
             getLibraryManga.subscribe(),
         ) { history, libraryManga ->
             calculateStats(history, libraryManga)
@@ -41,7 +37,7 @@ class ReadingStatsRepository @Inject constructor(
         val totalChaptersRead = history.size
         
         // Total reading time (minutes)
-        val totalReadingTimeMinutes = history.sumOf { it.timeRead } / 60000
+        val totalReadingTimeMinutes = history.sumOf { it.readDuration } / 60000
         
         // Reading streak (consecutive days with reading)
         val streak = calculateStreak(history)
@@ -52,9 +48,10 @@ class ReadingStatsRepository @Inject constructor(
             val dayStart = date.truncatedTo(ChronoUnit.DAYS)
             val dayEnd = dayStart.plus(1, ChronoUnit.DAYS)
             
-            val chaptersThatDay = history.count { 
-                val readTime = Instant.ofEpochMilli(it.readAt)
-                readTime.isAfter(dayStart) && readTime.isBefore(dayEnd)
+            val chaptersThatDay = history.count { entry ->
+                val readAt = entry.readAt ?: return@count false
+                val readTime = Instant.ofEpochMilli(readAt.time)
+                !readTime.isBefore(dayStart) && readTime.isBefore(dayEnd)
             }
             DayActivity(
                 date = dayStart.atZone(ZoneId.systemDefault()).toLocalDate(),
@@ -68,9 +65,9 @@ class ReadingStatsRepository @Inject constructor(
             .map { (mangaId, entries) ->
                 MangaReadingStats(
                     mangaId = mangaId,
-                    mangaTitle = entries.first().mangaTitle,
+                    mangaTitle = entries.first().ogTitle,
                     chaptersRead = entries.size,
-                    totalTimeMinutes = entries.sumOf { it.timeRead } / 60000,
+                    totalTimeMinutes = entries.sumOf { it.readDuration } / 60000,
                 )
             }
             .sortedByDescending { it.totalTimeMinutes }
@@ -92,8 +89,8 @@ class ReadingStatsRepository @Inject constructor(
         if (history.isEmpty()) return 0
         
         val readDates = history
-            .map { Instant.ofEpochMilli(it.readAt).truncatedTo(ChronoUnit.DAYS) }
-            .distinct()
+            .mapNotNull { it.readAt }
+            .mapTo(HashSet()) { Instant.ofEpochMilli(it.time).truncatedTo(ChronoUnit.DAYS) }
             .sortedDescending()
         
         if (readDates.isEmpty()) return 0

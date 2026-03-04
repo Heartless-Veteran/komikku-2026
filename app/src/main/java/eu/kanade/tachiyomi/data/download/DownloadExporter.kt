@@ -2,31 +2,26 @@ package eu.kanade.tachiyomi.data.download
 
 import android.content.Context
 import android.net.Uri
-import eu.kanade.tachiyomi.data.database.models.Chapter
-import eu.kanade.tachiyomi.data.database.models.Manga
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
 import logcat.LogPriority
-import tachiyomi.core.common.storage.UniFileTempFileManager
 import tachiyomi.core.common.util.system.logcat
+import tachiyomi.domain.chapter.model.Chapter
+import tachiyomi.domain.manga.model.Manga
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Exports downloaded chapters to CBZ (Comic Book ZIP) format.
  */
-@Singleton
-class DownloadExporter @Inject constructor(
+class DownloadExporter(
     private val context: Context,
-    private val tempFileManager: UniFileTempFileManager,
 ) {
     /**
      * Exports a chapter to CBZ format.
@@ -52,7 +47,7 @@ class DownloadExporter @Inject constructor(
                     if (pageFile.exists()) {
                         val entryName = String.format("%04d.jpg", index + 1)
                         zipOut.putNextEntry(ZipEntry(entryName))
-                        FileInputStream(pageFile).use { input -
+                        FileInputStream(pageFile).use { input ->
                             input.copyTo(zipOut)
                         }
                         zipOut.closeEntry()
@@ -84,7 +79,7 @@ class DownloadExporter @Inject constructor(
             // Get page files for this chapter
             val pageFiles = getPageFilesForChapter(manga, chapter)
             
-            exportChapter(manga, chapter, pageFiles, outputDir).collect { progress -
+            exportChapter(manga, chapter, pageFiles, outputDir).collect { progress ->
                 when {
                     progress.percent >= 0 -> {
                         val overallPercent = (chapterIndex * 100 + progress.percent) / chapters.size

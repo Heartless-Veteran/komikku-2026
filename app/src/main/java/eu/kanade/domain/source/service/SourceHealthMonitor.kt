@@ -1,19 +1,15 @@
 package eu.kanade.domain.source.service
 
-import eu.kanade.tachiyomi.source.Source
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.time.Instant
-import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Tracks source health (success/failure rates) for monitoring.
  */
-@Singleton
-class SourceHealthMonitor @Inject constructor() {
+class SourceHealthMonitor {
     private val _healthData = MutableStateFlow(mapOf<Long, SourceHealth>())
     val healthData: Flow<Map<Long, SourceHealth>> = _healthData.asStateFlow()
 
