@@ -29,7 +29,7 @@ class ReadingStatsRepository(
 
     private fun calculateStats(
         history: List<tachiyomi.domain.history.model.HistoryWithRelations>,
-        libraryManga: List<tachiyomi.domain.manga.model.LibraryManga>,
+        libraryManga: List<tachiyomi.domain.library.model.LibraryManga>,
     ): ReadingStats {
         val now = Instant.now()
         
