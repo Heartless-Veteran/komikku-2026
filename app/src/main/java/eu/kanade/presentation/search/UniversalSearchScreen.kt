@@ -8,7 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Book
 import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Public
@@ -61,7 +62,7 @@ fun UniversalSearchScreen(
                 title = { Text("Search") },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
                     }
                 },
             )
@@ -89,7 +90,7 @@ fun UniversalSearchScreen(
                         trailingIcon = {
                             if (query.isNotEmpty()) {
                                 IconButton(onClick = { onQueryChange("") }) {
-                                    Icon(Icons.Default.ArrowBack, contentDescription = "Clear")
+                                    Icon(Icons.Default.Close, contentDescription = "Clear")
                                 }
                             }
                         },
