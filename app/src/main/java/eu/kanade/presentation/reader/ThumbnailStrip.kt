@@ -114,7 +114,7 @@ private fun HorizontalThumbnailStrip(
     val surfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
 
     LaunchedEffect(visible, currentPage) {
-        if (visible) {
+        if (visible && currentPage >= 0) {
             listState.animateScrollToItem(currentPage)
         }
     }
@@ -172,7 +172,7 @@ private fun VerticalThumbnailStrip(
     val surfaceColor = MaterialTheme.colorScheme.surface.copy(alpha = 0.95f)
 
     LaunchedEffect(visible, currentPage) {
-        if (visible) {
+        if (visible && currentPage >= 0) {
             listState.animateScrollToItem(currentPage)
         }
     }
