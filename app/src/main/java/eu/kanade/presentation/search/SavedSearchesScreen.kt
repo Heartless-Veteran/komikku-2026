@@ -25,8 +25,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.presentation.components.SearchToolbar
+import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.components.material.padding
+import tachiyomi.presentation.core.i18n.pluralStringResource
+import tachiyomi.presentation.core.i18n.stringResource
 
 /**
  * Screen that displays saved searches and allows managing them.
@@ -48,7 +51,7 @@ fun SavedSearchesScreen(
                 navigateUp = navigateUp,
                 titleContent = {
                     Text(
-                        text = "Saved Searches",
+                        text = stringResource(MR.strings.saved_searches),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 },
@@ -75,12 +78,12 @@ fun SavedSearchesScreen(
                     tint = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = "No saved searches yet",
+                    text = stringResource(MR.strings.saved_searches_empty),
                     style = MaterialTheme.typography.bodyLarge,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Text(
-                    text = "Save a search from the search screen to get notified of new results",
+                    text = stringResource(MR.strings.saved_searches_empty_hint),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                     modifier = Modifier.padding(top = MaterialTheme.padding.small),
@@ -135,7 +138,7 @@ private fun SavedSearchItem(
             )
             if (search.lastResultCount > 0) {
                 Text(
-                    text = "${search.lastResultCount} results found",
+                    text = pluralStringResource(MR.plurals.saved_search_result_count, search.lastResultCount, search.lastResultCount),
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
@@ -150,7 +153,7 @@ private fun SavedSearchItem(
         IconButton(onClick = onDeleteClick) {
             Icon(
                 imageVector = Icons.Default.Delete,
-                contentDescription = "Delete saved search",
+                contentDescription = stringResource(MR.strings.action_delete),
                 modifier = Modifier.size(20.dp),
                 tint = MaterialTheme.colorScheme.error,
             )

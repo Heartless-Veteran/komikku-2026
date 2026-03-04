@@ -66,6 +66,7 @@ import tachiyomi.presentation.core.components.material.NavigationBar
 import tachiyomi.presentation.core.components.material.NavigationRail
 import tachiyomi.presentation.core.components.material.Scaffold
 import tachiyomi.presentation.core.i18n.pluralStringResource
+import tachiyomi.presentation.core.i18n.stringResource
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
 
@@ -149,7 +150,7 @@ object HomeScreen : Screen() {
                         ) {
                             Icon(
                                 imageVector = Icons.Default.Search,
-                                contentDescription = "Universal Search",
+                                contentDescription = stringResource(MR.strings.universal_search),
                             )
                         }
                     },

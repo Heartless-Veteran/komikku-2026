@@ -109,4 +109,10 @@
         <item quantity="one">An entry was skipped</item>
         <item quantity="other">%1$d entries were skipped</item>
     </plurals>
+
+    <!-- Saved searches -->
+    <plurals name="saved_search_result_count">
+        <item quantity="one">%1$d result found</item>
+        <item quantity="other">%1$d results found</item>
+    </plurals>
 </resources>

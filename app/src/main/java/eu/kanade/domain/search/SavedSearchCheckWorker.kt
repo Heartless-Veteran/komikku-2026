@@ -99,11 +99,11 @@ class SavedSearchCheckWorker(
                 .build()
 
             WorkManager.getInstance(context)
-                .enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.UPDATE, request)
+                .enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
         }
 
         fun cancelTask(context: Context) {
-            WorkManager.getInstance(context).cancelAllWorkByTag(WORK_NAME)
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
         }
     }
 }

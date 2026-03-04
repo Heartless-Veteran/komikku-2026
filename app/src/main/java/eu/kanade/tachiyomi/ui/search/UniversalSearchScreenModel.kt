@@ -8,9 +8,9 @@ import eu.kanade.tachiyomi.source.CatalogueSource
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import mihon.domain.manga.model.toDomainManga
+import tachiyomi.core.common.util.QuerySanitizer.sanitize
 import tachiyomi.core.common.util.lang.launchIO
 import tachiyomi.core.common.util.system.logcat
 import tachiyomi.domain.manga.interactor.GetLibraryManga
@@ -46,6 +46,8 @@ class UniversalSearchScreenModel(
 
         searchJob?.cancel()
         searchJob = screenModelScope.launchIO {
+            val sanitizedQuery = query.sanitize()
+
             // Search library
             val library = getLibraryManga.await()
             val libraryResults = library
@@ -78,7 +80,7 @@ class UniversalSearchScreenModel(
             enabledSources.map { source ->
                 async {
                     try {
-                        val page = source.getSearchManga(1, query, source.getFilterList())
+                        val page = source.getSearchManga(1, sanitizedQuery, source.getFilterList())
                         val domainManga = page.mangas
                             .map { sm -> sm.toDomainManga(source.id) }
                             .distinctBy { it.url }
@@ -102,13 +104,13 @@ class UniversalSearchScreenModel(
 
             mutableState.update {
                 it.copy(
-                    sourceResults = sourceResultMap,
+                    sourceResults = sourceResultMap.toMap(),
                     isLoading = false,
                 )
             }
 
-            // Save to search history
-            searchHistoryRepository.addSearch(query)
+            // Save sanitized query to search history
+            searchHistoryRepository.addSearch(sanitizedQuery)
         }
     }
 
