@@ -37,7 +37,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
-import coil3.compose.AsyncImage
+import coil3.compose.SubcomposeAsyncImage
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
 import eu.kanade.tachiyomi.ui.reader.setting.ReaderPreferences
 import tachiyomi.i18n.kmk.KMR
@@ -267,7 +267,7 @@ private fun GalleryPageItem(
     ) {
         val imageModel = page.imageUrl ?: page.url
         if (imageModel != null) {
-            AsyncImage(
+            SubcomposeAsyncImage(
                 model = imageModel,
                 contentDescription = "Page $pageNumber",
                 modifier = Modifier.fillMaxSize(),
