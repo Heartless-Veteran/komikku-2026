@@ -1,49 +1,59 @@
-# 📋 Changelog
+# Changelog
 
-All notable changes to Komikku 2026 will be documented here.
+All notable changes to Komikku 2026 will be documented in this file.
 
-The format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
-
----
-
-## [Unreleased]
+## [Unreleased] - Alpha
 
 ### Added
-- **Phase 1: Perfect Viewer Scale Modes** — 5 scale types with per-manga persistence
-- **Phase 2: AI Recommendations** — Tag-based recommendation system with "For You" tab
-- **Phase 3: Gallery View** — Thumbnail strip for quick page navigation
-- **Phase 4: Dynamic Theming** — Cover-based theming (already present from KMK fork, verified working)
-- `SECURITY.md` — security policy
-- `assets/` folder with design token and colour-scheme reference
-- Issue templates, PR template, and `FUNDING.yml` updated to reference this fork
+
+#### Reader Features
+- **Full Chapter Gallery Preview** — Full-screen grid gallery with 2/3/4 column layout, adjustable thumbnail sizes, and instant page jumping
+- **Reading Time Estimation** — Learns your reading speed and displays estimated time remaining in chapter
+- **Per-Series Reader Presets** — Per-manga settings for reading direction, scale mode, background color, brightness, and more
+
+#### Library & Management
+- **Source Health Dashboard** — Visual indicators for source reliability with success/failure tracking
+- **Export Downloads to CBZ** — Export chapters or entire series as CBZ comic book archives
+- **Reading Statistics Dashboard** — Track total chapters read, reading streaks, weekly activity, and top manga by time
+
+#### Infrastructure
+- GitHub Actions CI/CD workflows optimized for development
+- Automated build and test pipeline
 
 ### Changed
-- `README.md` completely rewritten with ASCII banner, shields.io badges, feature tables, and project structure tree
-- `CONTRIBUTING.md` rewritten with project-specific guidance, dev setup steps, and PR checklist
-- `CHANGELOG.md` converted to [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) format
-- `CODE_OF_CONDUCT.md` given a table of contents and section divider
-- Documentation reorganised: `PROJECT_PLAN.md`, `SCALE_MODES_IMPLEMENTATION.md`, `TEST_SUMMARY.md`, `SECURITY_VULNERABILITIES.md` moved to `docs/`
-- Spurious empty file `1` removed
+- CI workflows temporarily disabled during heavy development, then re-enabled for alpha release
+- Import cleanup in multiple modules
+
+### Fixed
+- Removed unused imports in `PerMangaReaderPreferences.kt`
+- Removed unused imports in `ReadingTimeEstimator.kt`
+- Navigation bar padding in gallery preview
+- Unstable keys in gallery grid (now uses page URL)
 
 ---
 
-## [0.1.0-alpha] — 2026-02-24
+## [0.1.0-alpha] - 2026-03-05
 
-### Added
-- Initial fork of [Komikku](https://github.com/komikku-app/komikku)
-- Project roadmap (`docs/PROJECT_PLAN.md`)
-- Feature specification documents in `docs/`
-- CI workflow for debug builds (`.github/workflows/build-debug.yml`)
-- App rebranded to **Komikku 2026** (`app_name` updated in strings.xml)
-- `ScaleMode` enum with `toSubsamplingScaleType()` conversion helper (in progress)
-- `scaleMode` preference in `ReaderPreferences` (in progress)
-- AI-powered recommendation system scaffold (in progress)
-- Reading history tracker (in progress)
+### Initial Release
+
+Based on Komikku with the following 2026 enhancements:
+
+- Perfect Viewer-style reading modes (Fit Screen, Fit Width, Fit Height, Original, Smart Fit)
+- AI-powered recommendations with "For You" tab
+- Dynamic theming with cover color extraction
+- Gallery view thumbnail strip
+- Scale mode persistence per manga
 
 ---
 
-## Credits
+## Upstream (Komikku)
 
-- [Komikku](https://github.com/komikku-app/komikku) — upstream project
-- Perfect Viewer — inspiration for reading modes
-- All upstream contributors and translators
+See [upstream changelog](https://github.com/komikku-app/komikku/blob/master/CHANGELOG.md) for base features including:
+
+- Extension system with hundreds of sources
+- Library management with categories
+- Offline downloads
+- Local manga support
+- Reading history & bookmarks
+- Webtoon & pager modes
+- Tracking integration (MyAnimeList, AniList, etc.)
