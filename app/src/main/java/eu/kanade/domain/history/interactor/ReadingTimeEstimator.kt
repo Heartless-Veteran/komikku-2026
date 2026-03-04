@@ -1,7 +1,5 @@
 package eu.kanade.domain.history.interactor
 
-import eu.kanade.tachiyomi.data.database.models.toDomainChapter
-import eu.kanade.tachiyomi.ui.reader.model.ReaderChapter
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import tachiyomi.domain.history.interactor.GetHistoryByMangaId
