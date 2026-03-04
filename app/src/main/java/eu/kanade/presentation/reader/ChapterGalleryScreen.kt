@@ -105,7 +105,7 @@ private fun GalleryTopBar(
         IconButton(onClick = onDismiss) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
-                contentDescription = stringResource(KMR.strings.gallery_preview_title),
+                contentDescription = stringResource(KMR.strings.action_close_gallery),
                 tint = MaterialTheme.colorScheme.onSurface,
             )
         }
@@ -252,7 +252,7 @@ private fun GalleryPageItem(
         if (imageModel != null) {
             AsyncImage(
                 model = imageModel,
-                contentDescription = null,
+                contentDescription = "Page $pageNumber",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
             )

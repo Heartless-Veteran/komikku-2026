@@ -254,6 +254,7 @@
     <string name="gallery_columns_3">3 columns</string>
     <string name="gallery_columns_4">4 columns</string>
     <string name="gallery_preview_title">Chapter Gallery</string>
+    <string name="action_close_gallery">Close gallery</string>
     <string name="never">Never</string>
 
     <!-- Scale Mode Settings -->
