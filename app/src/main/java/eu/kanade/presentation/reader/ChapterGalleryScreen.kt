@@ -10,17 +10,21 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.ArrowBack
+import androidx.compose.material.icons.filled.BrokenImage
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -30,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import eu.kanade.tachiyomi.ui.reader.model.ReaderPage
@@ -59,7 +65,8 @@ fun ChapterGalleryScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background),
+            .background(MaterialTheme.colorScheme.background)
+            .windowInsetsPadding(WindowInsets.navigationBars), // Handle gesture navigation
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             // Top bar
@@ -102,7 +109,12 @@ private fun GalleryTopBar(
             .padding(horizontal = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        IconButton(onClick = onDismiss) {
+        IconButton(
+            onClick = onDismiss,
+            modifier = Modifier.semantics {
+                contentDescription = "Close gallery"
+            },
+        ) {
             Icon(
                 imageVector = Icons.AutoMirrored.Outlined.ArrowBack,
                 contentDescription = stringResource(KMR.strings.action_close_gallery),
@@ -204,13 +216,18 @@ private fun GalleryGrid(
     LazyVerticalGrid(
         columns = GridCells.Fixed(columns),
         modifier = Modifier.fillMaxSize(),
-        contentPadding = PaddingValues(4.dp),
+        contentPadding = PaddingValues(
+            start = 4.dp,
+            end = 4.dp,
+            top = 4.dp,
+            bottom = 88.dp, // Space for navigation bar/gesture area
+        ),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalArrangement = Arrangement.spacedBy(4.dp),
     ) {
         itemsIndexed(
             items = pages,
-            key = { idx, _ -> idx },
+            key = { _, page -> page.url ?: page.index }, // Stable key
         ) { idx, page ->
             GalleryPageItem(
                 page = page,
@@ -255,6 +272,18 @@ private fun GalleryPageItem(
                 contentDescription = "Page $pageNumber",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
+                error = { // Error placeholder
+                    Box(
+                        modifier = Modifier.fillMaxSize(),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.BrokenImage,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                },
             )
         } else {
             Box(
