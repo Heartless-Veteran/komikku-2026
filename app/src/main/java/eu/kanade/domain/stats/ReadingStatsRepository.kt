@@ -48,9 +48,10 @@ class ReadingStatsRepository(
             val dayStart = date.truncatedTo(ChronoUnit.DAYS)
             val dayEnd = dayStart.plus(1, ChronoUnit.DAYS)
             
-            val chaptersThatDay = history.count { 
-                val readTime = Instant.ofEpochMilli(it.readAt?.time ?: 0L)
-                readTime.isAfter(dayStart) && readTime.isBefore(dayEnd)
+            val chaptersThatDay = history.count { entry ->
+                val readAt = entry.readAt ?: return@count false
+                val readTime = Instant.ofEpochMilli(readAt.time)
+                !readTime.isBefore(dayStart) && readTime.isBefore(dayEnd)
             }
             DayActivity(
                 date = dayStart.atZone(ZoneId.systemDefault()).toLocalDate(),
@@ -88,7 +89,8 @@ class ReadingStatsRepository(
         if (history.isEmpty()) return 0
         
         val readDates = history
-            .map { Instant.ofEpochMilli(it.readAt?.time ?: 0L).truncatedTo(ChronoUnit.DAYS) }
+            .mapNotNull { it.readAt }
+            .map { Instant.ofEpochMilli(it.time).truncatedTo(ChronoUnit.DAYS) }
             .distinct()
             .sortedDescending()
         
