@@ -58,16 +58,16 @@ jobs:
             echo "Checking actions syntax: $file"
             # Verify required fields exist in workflow files
             if ! python3 -c "
-import yaml, sys
-with open('$file') as f:
-    doc = yaml.safe_load(f)
-if doc is None:
-    print('ERROR: Empty document', file=sys.stderr)
-    sys.exit(1)
-if 'jobs' not in doc:
-    print('ERROR: Missing required \"jobs\" key', file=sys.stderr)
-    sys.exit(1)
-"; then
+          import yaml, sys
+          with open('$file') as f:
+              doc = yaml.safe_load(f)
+          if doc is None:
+              print('ERROR: Empty document', file=sys.stderr)
+              sys.exit(1)
+          if 'jobs' not in doc:
+              print('ERROR: Missing required \"jobs\" key', file=sys.stderr)
+              sys.exit(1)
+            "; then
               echo "❌ Invalid workflow structure: $file"
               exit 1
             fi

@@ -2,7 +2,7 @@ name: Preview Builder
 # Manually build a preview on master
 
 # DISABLED - Uncomment when ready
-# on:
+on:
   # Dispatch or Manual triggers
   workflow_dispatch:
 
