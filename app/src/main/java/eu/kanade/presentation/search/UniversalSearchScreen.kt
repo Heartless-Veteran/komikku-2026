@@ -31,7 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import eu.kanade.presentation.library.components.MangaListItem
 import tachiyomi.domain.manga.model.Manga
-import tachiyomi.domain.manga.model.MangaCover
+import tachiyomi.domain.manga.model.asMangaCover
 import tachiyomi.domain.source.model.Source
 import tachiyomi.presentation.core.components.material.padding
 
@@ -121,13 +121,7 @@ fun UniversalSearchScreen(
                     items(libraryResults) { manga ->
                         MangaListItem(
                             title = manga.title,
-                            coverData = MangaCover(
-                                mangaId = manga.id,
-                                sourceId = manga.source,
-                                isMangaFavorite = manga.favorite,
-                                ogUrl = manga.thumbnailUrl,
-                                lastModified = manga.coverLastModified,
-                            ),
+                            coverData = manga.asMangaCover(),
                             onClick = { onMangaClick(manga) },
                             onLongClick = { onMangaClick(manga) },
                             badge = {},
@@ -149,13 +143,7 @@ fun UniversalSearchScreen(
                     items(historyResults) { manga ->
                         MangaListItem(
                             title = manga.title,
-                            coverData = MangaCover(
-                                mangaId = manga.id,
-                                sourceId = manga.source,
-                                isMangaFavorite = manga.favorite,
-                                ogUrl = manga.thumbnailUrl,
-                                lastModified = manga.coverLastModified,
-                            ),
+                            coverData = manga.asMangaCover(),
                             onClick = { onMangaClick(manga) },
                             onLongClick = { onMangaClick(manga) },
                             badge = {},
@@ -178,13 +166,7 @@ fun UniversalSearchScreen(
                         items(mangas) { manga ->
                             MangaListItem(
                                 title = manga.title,
-                                coverData = MangaCover(
-                                    mangaId = manga.id,
-                                    sourceId = manga.source,
-                                    isMangaFavorite = manga.favorite,
-                                    ogUrl = manga.thumbnailUrl,
-                                    lastModified = manga.coverLastModified,
-                                ),
+                                coverData = manga.asMangaCover(),
                                 onClick = { onMangaClick(manga) },
                                 onLongClick = { onMangaClick(manga) },
                                 badge = {},

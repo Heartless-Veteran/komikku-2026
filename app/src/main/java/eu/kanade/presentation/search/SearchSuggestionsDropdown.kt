@@ -282,7 +282,8 @@ private fun HistorySuggestionItem(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(start = MaterialTheme.padding.medium, end = MaterialTheme.padding.small, vertical = MaterialTheme.padding.small),
+            .padding(start = MaterialTheme.padding.medium, end = MaterialTheme.padding.small)
+            .padding(vertical = MaterialTheme.padding.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

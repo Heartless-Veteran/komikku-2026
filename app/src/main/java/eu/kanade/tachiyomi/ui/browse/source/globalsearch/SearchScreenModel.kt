@@ -7,6 +7,8 @@ import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import eu.kanade.domain.search.SearchHistoryItem
 import eu.kanade.domain.search.SearchHistoryRepository
+import eu.kanade.domain.search.SavedSearchRepository
+import eu.kanade.domain.search.SearchSuggestionsRepository
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope
 import eu.kanade.tachiyomi.extension.ExtensionManager
@@ -48,6 +50,8 @@ abstract class SearchScreenModel(
     private val preferences: SourcePreferences = Injekt.get(),
     // KMK -->
     private val searchHistoryRepository: SearchHistoryRepository = Injekt.get(),
+    private val searchSuggestionsRepository: SearchSuggestionsRepository = Injekt.get(),
+    private val savedSearchRepository: SavedSearchRepository = Injekt.get(),
     // KMK <--
 ) : StateScreenModel<SearchScreenModel.State>(initialState) {
 
@@ -158,6 +162,14 @@ abstract class SearchScreenModel(
         }
     }
 
+    fun loadTrendingSearches() {
+        screenModelScope.launchIO {
+            searchSuggestionsRepository.getTrendingSearches().collect { trending ->
+                mutableState.update { it.copy(trendingSearches = trending) }
+            }
+        }
+    }
+
     fun deleteSearchHistoryItem(query: String) {
         screenModelScope.launchIO {
             searchHistoryRepository.removeSearch(query)
@@ -172,6 +184,13 @@ abstract class SearchScreenModel(
 
     fun setShowSearchHistory(show: Boolean) {
         mutableState.update { it.copy(showSearchHistory = show) }
+    }
+
+    fun saveCurrentSearch() {
+        val query = state.value.searchQuery ?: return
+        screenModelScope.launchIO {
+            savedSearchRepository.saveSearch(query)
+        }
     }
     // KMK <--
 
@@ -286,6 +305,7 @@ abstract class SearchScreenModel(
         val dialog: Dialog? = null,
         // KMK -->
         val searchHistory: List<SearchHistoryItem> = emptyList(),
+        val trendingSearches: List<String> = emptyList(),
         val showSearchHistory: Boolean = false,
         // KMK <--
     ) {

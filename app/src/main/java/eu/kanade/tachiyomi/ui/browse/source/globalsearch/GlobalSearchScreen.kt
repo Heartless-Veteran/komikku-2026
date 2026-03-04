@@ -46,6 +46,13 @@ class GlobalSearchScreen(
             mutableStateOf(searchQuery.isNotEmpty() && !extensionFilter.isNullOrEmpty() && state.total == 1)
         }
 
+        // KMK --> Load search history and trending on launch
+        LaunchedEffect(Unit) {
+            screenModel.loadSearchHistory()
+            screenModel.loadTrendingSearches()
+        }
+        // KMK <--
+
         // KMK -->
         val bulkFavoriteScreenModel = rememberScreenModel { BulkFavoriteScreenModel() }
         val bulkFavoriteState by bulkFavoriteScreenModel.state.collectAsState()
@@ -108,6 +115,19 @@ class GlobalSearchScreen(
                 // KMK -->
                 bulkFavoriteScreenModel = bulkFavoriteScreenModel,
                 hasPinnedSources = screenModel.hasPinnedSources(),
+                onSuggestionClick = { query ->
+                    screenModel.updateSearchQuery(query)
+                    screenModel.search()
+                },
+                onHistoryItemDelete = screenModel::deleteSearchHistoryItem,
+                onClearHistory = screenModel::clearSearchHistory,
+                onVoiceSearchResult = { query ->
+                    screenModel.updateSearchQuery(query)
+                    screenModel.search()
+                },
+                onSaveSearch = {
+                    screenModel.saveCurrentSearch()
+                },
                 // KMK <--
             )
         }

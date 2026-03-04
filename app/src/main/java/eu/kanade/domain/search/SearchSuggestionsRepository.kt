@@ -1,6 +1,7 @@
 package eu.kanade.domain.search
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import tachiyomi.core.common.preference.PreferenceStore
 
@@ -56,15 +57,15 @@ class SearchSuggestionsRepository(
         query: String,
         history: List<SearchHistoryItem>,
     ): SearchSuggestions {
-        val trending = getTrendingSearches()
-        val libraryTitles = getLibraryTitles()
-        val authors = getAuthorNames()
+        val trendingList = getTrendingSearches().first()
+        val libraryList = getLibraryTitles().first()
+        val authorList = getAuthorNames().first()
 
         return SearchSuggestions(
             history = history.filter { it.query.contains(query, ignoreCase = true) },
-            trending = trending,
-            libraryTitles = libraryTitles.filter { it.contains(query, ignoreCase = true) },
-            authors = authors.filter { it.contains(query, ignoreCase = true) },
+            trending = trendingList.filter { it.contains(query, ignoreCase = true) },
+            libraryTitles = libraryList.filter { it.contains(query, ignoreCase = true) },
+            authors = authorList.filter { it.contains(query, ignoreCase = true) },
         )
     }
 

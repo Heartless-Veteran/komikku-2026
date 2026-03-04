@@ -7,6 +7,7 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import eu.kanade.domain.search.SearchHistoryItem
 import eu.kanade.domain.source.model.installedExtension
 import eu.kanade.presentation.browse.components.GlobalSearchCardRow
 import eu.kanade.presentation.browse.components.GlobalSearchErrorResultItem
@@ -40,6 +41,11 @@ fun GlobalSearchScreen(
     // KMK -->
     bulkFavoriteScreenModel: BulkFavoriteScreenModel,
     hasPinnedSources: Boolean,
+    onSuggestionClick: (String) -> Unit = {},
+    onHistoryItemDelete: (String) -> Unit = {},
+    onClearHistory: () -> Unit = {},
+    onVoiceSearchResult: (String) -> Unit = {},
+    onSaveSearch: () -> Unit = {},
     // KMK <--
 ) {
     // KMK -->
@@ -87,6 +93,14 @@ fun GlobalSearchScreen(
                     toggleSelectionMode = bulkFavoriteScreenModel::toggleSelectionMode,
                     isRunning = bulkFavoriteState.isRunning,
                     hasPinnedSources = hasPinnedSources,
+                    suggestionsQuery = state.searchQuery ?: "",
+                    searchHistory = state.searchHistory,
+                    trendingSearches = state.trendingSearches,
+                    onSuggestionClick = onSuggestionClick,
+                    onHistoryItemDelete = onHistoryItemDelete,
+                    onClearHistory = onClearHistory,
+                    onVoiceSearchResult = onVoiceSearchResult,
+                    onSaveSearch = onSaveSearch,
                     // KMK <--
                 )
             }

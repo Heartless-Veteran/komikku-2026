@@ -83,6 +83,7 @@ import eu.kanade.tachiyomi.data.library.LibraryUpdateJob
 import eu.kanade.tachiyomi.data.notification.NotificationReceiver
 import eu.kanade.tachiyomi.data.updater.AppUpdateChecker
 import eu.kanade.tachiyomi.data.updater.AppUpdateJob
+import eu.kanade.domain.search.SavedSearchCheckWorker
 import eu.kanade.tachiyomi.extension.api.ExtensionApi
 import eu.kanade.tachiyomi.ui.base.activity.BaseActivity
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreen
@@ -569,6 +570,12 @@ class MainActivity : BaseActivity() {
                 }
             }
         }
+
+        // KMK --> Saved searches check
+        LaunchedEffect(Unit) {
+            SavedSearchCheckWorker.setupTask(context)
+        }
+        // KMK <--
 
         // Extensions updates
         LaunchedEffect(Unit) {
