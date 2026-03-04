@@ -7,22 +7,24 @@ name: PR build check
 #   GOOGLE_SERVICES_JSON    – Contents of app/google-services.json (for telemetry builds)
 #   GOOGLE_CLIENT_SECRETS_JSON – Contents of app/src/main/assets/client_secrets.json
 # Without these secrets, signing/upload steps are skipped and an unsigned debug APK is built instead.
+
+# DISABLED during development to save CI minutes
+# Re-enable when ready for alpha release
 on:
-  #  push:
-  #    branches:
-  #      - develop
-  #    paths-ignore:
-  #      - '**.md'
-  pull_request:
-    paths:
-      - '**'
-      - '!**.md'
-      - '!i18n-kmk/src/commonMain/moko-resources/**/strings.xml'
-      - '!i18n-kmk/src/commonMain/moko-resources/**/plurals.xml'
-      - 'i18n-kmk/src/commonMain/moko-resources/base/strings.xml'
-      - 'i18n-kmk/src/commonMain/moko-resources/base/plurals.xml'
-  # Dispatch or Manual triggers
-  workflow_dispatch:
+  # push:
+  #   branches:
+  #     - develop
+  #   paths-ignore:
+  #     - '**.md'
+  # pull_request:
+  #   paths:
+  #     - '**'
+  #     - '!**.md'
+  #     - '!i18n-kmk/src/commonMain/moko-resources/**/strings.xml'
+  #     - '!i18n-kmk/src/commonMain/moko-resources/**/plurals.xml'
+  #     - 'i18n-kmk/src/commonMain/moko-resources/base/strings.xml'
+  #     - 'i18n-kmk/src/commonMain/moko-resources/base/plurals.xml'
+  workflow_dispatch:  # Manual trigger only
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
