@@ -47,6 +47,14 @@ private val galleryThumbnailSizes = listOf(
     KMR.strings.gallery_size_large to ReaderPreferences.Companion.GalleryThumbnailSize.LARGE,
 )
 
+// KMK --> Gallery columns options
+private val galleryColumnOptions = listOf(
+    KMR.strings.gallery_columns_2 to ReaderPreferences.Companion.GalleryColumns.TWO,
+    KMR.strings.gallery_columns_3 to ReaderPreferences.Companion.GalleryColumns.THREE,
+    KMR.strings.gallery_columns_4 to ReaderPreferences.Companion.GalleryColumns.FOUR,
+)
+// KMK <--
+
 private val scaleModes = listOf(
     KMR.strings.scale_mode_fit_screen to ScaleMode.FIT_SCREEN,
     KMR.strings.scale_mode_fit_width to ScaleMode.FIT_WIDTH,
@@ -187,6 +195,7 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
     val galleryThumbnailSize by screenModel.preferences.galleryThumbnailSize().collectAsState()
     val galleryAutoHideDelay by screenModel.preferences.galleryAutoHideDelay().collectAsState()
     val useThumbnailStrip by screenModel.preferences.useThumbnailStripForNavigation().collectAsState()
+    val galleryColumns by screenModel.preferences.galleryColumns().collectAsState()
     val defaultScaleMode by screenModel.preferences.defaultScaleMode().collectAsState()
 
     // Gallery Position
@@ -210,6 +219,18 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
             )
         }
     }
+
+    // KMK --> Gallery Columns
+    SettingsChipRow(KMR.strings.gallery_columns_title) {
+        galleryColumnOptions.map { (labelRes, value) ->
+            FilterChip(
+                selected = galleryColumns == value,
+                onClick = { screenModel.preferences.galleryColumns().set(value) },
+                label = { Text(stringResource(labelRes)) },
+            )
+        }
+    }
+    // KMK <--
 
     // Gallery Auto-hide Delay
     SliderItem(

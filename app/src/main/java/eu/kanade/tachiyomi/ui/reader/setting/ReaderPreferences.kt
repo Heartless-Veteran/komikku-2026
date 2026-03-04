@@ -79,6 +79,9 @@ class ReaderPreferences(
     fun galleryAutoHideDelay() = preferenceStore.getInt("pref_gallery_auto_hide_delay", 3) // seconds
     fun galleryShowPageNumbers() = preferenceStore.getBoolean("pref_gallery_show_page_numbers", true)
     fun useThumbnailStripForNavigation() = preferenceStore.getBoolean("pref_use_thumbnail_strip_nav", true)
+    // KMK -->
+    fun galleryColumns() = preferenceStore.getEnum("pref_gallery_columns", GalleryColumns.THREE)
+    // KMK <--
 
     fun zoomStart() = preferenceStore.getInt("pref_zoom_start_key", 1)
 
@@ -364,5 +367,13 @@ class ReaderPreferences(
             MEDIUM,
             LARGE,
         }
+
+        // KMK -->
+        enum class GalleryColumns(val count: Int) {
+            TWO(2),
+            THREE(3),
+            FOUR(4),
+        }
+        // KMK <--
     }
 }
