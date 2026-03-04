@@ -1,7 +1,12 @@
 package eu.kanade.domain.search
 
 import android.content.Context
+import androidx.work.Constraints
 import androidx.work.CoroutineWorker
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
 import androidx.work.WorkerParameters
 import eu.kanade.tachiyomi.source.CatalogueSource
 import tachiyomi.domain.source.service.SourceManager
@@ -9,6 +14,7 @@ import kotlinx.coroutines.flow.first
 import tachiyomi.core.common.util.system.logcat
 import uy.kohesive.injekt.Injekt
 import uy.kohesive.injekt.api.get
+import java.util.concurrent.TimeUnit
 
 /**
  * Worker that checks saved searches for new results.
@@ -78,5 +84,26 @@ class SavedSearchCheckWorker(
 
     companion object {
         const val WORK_NAME = "saved_search_check"
+
+        fun setupTask(context: Context) {
+            val constraints = Constraints.Builder()
+                .setRequiredNetworkType(NetworkType.CONNECTED)
+                .build()
+
+            val request = PeriodicWorkRequestBuilder<SavedSearchCheckWorker>(
+                7,
+                TimeUnit.DAYS,
+            )
+                .addTag(WORK_NAME)
+                .setConstraints(constraints)
+                .build()
+
+            WorkManager.getInstance(context)
+                .enqueueUniquePeriodicWork(WORK_NAME, ExistingPeriodicWorkPolicy.KEEP, request)
+        }
+
+        fun cancelTask(context: Context) {
+            WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
+        }
     }
 }

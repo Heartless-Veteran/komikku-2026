@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.DoneAll
 import androidx.compose.material.icons.outlined.FilterList
 import androidx.compose.material.icons.outlined.PushPin
@@ -27,9 +28,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import eu.kanade.domain.search.SearchHistoryItem
+import eu.kanade.presentation.components.AppBar
 import eu.kanade.presentation.components.AppBarActions
 import eu.kanade.presentation.components.SearchToolbar
 import eu.kanade.presentation.search.SearchSuggestionsDropdown
+import eu.kanade.presentation.search.VoiceSearchButton
 import eu.kanade.tachiyomi.ui.browse.source.globalsearch.SourceFilter
 import kotlinx.collections.immutable.persistentListOf
 import tachiyomi.i18n.MR
@@ -62,6 +65,8 @@ fun GlobalSearchToolbar(
     onSuggestionClick: (String) -> Unit = {},
     onHistoryItemDelete: (String) -> Unit = {},
     onClearHistory: () -> Unit = {},
+    onVoiceSearchResult: (String) -> Unit = {},
+    onSaveSearch: () -> Unit = {},
     // KMK <--
 ) {
     Column(modifier = Modifier.background(MaterialTheme.colorScheme.surface)) {
@@ -75,9 +80,17 @@ fun GlobalSearchToolbar(
                 scrollBehavior = scrollBehavior,
                 // KMK -->
                 actions = {
+                    // KMK --> Voice search button
+                    VoiceSearchButton(onResult = onVoiceSearchResult)
+                    // KMK <--
                     AppBarActions(
                         actions = persistentListOf(
                             bulkSelectionButton(isRunning, toggleSelectionMode),
+                            AppBar.Action(
+                                title = stringResource(MR.strings.action_save),
+                                icon = Icons.Outlined.Bookmarks,
+                                onClick = onSaveSearch,
+                            ),
                         ),
                     )
                 },

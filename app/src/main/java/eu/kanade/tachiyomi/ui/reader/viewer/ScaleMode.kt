@@ -37,7 +37,12 @@ enum class ScaleMode(
      * Smart crop - automatically crop white/black margins.
      * Maximizes content visibility.
      */
-    SMART_CROP;
+    SMART_CROP,
+
+    /**
+     * Smart fit - intelligently fits the page while preserving aspect ratio.
+     */
+    SMART_FIT;
 
     /**
      * Convert ScaleMode to SubsamplingScaleImageView scale type
@@ -50,6 +55,8 @@ enum class ScaleMode(
             ORIGINAL_SIZE -> SubsamplingScaleImageView.SCALE_TYPE_ORIGINAL_SIZE
             // CENTER_CROP crops to fill the view, effectively removing white/black margins
             SMART_CROP -> SubsamplingScaleImageView.SCALE_TYPE_CENTER_CROP
+            // Smart fit uses center inside similar to FIT_SCREEN but with smart aspect ratio handling
+            SMART_FIT -> SubsamplingScaleImageView.SCALE_TYPE_CENTER_INSIDE
         }
     }
 

@@ -1,0 +1,34 @@
+package eu.kanade.tachiyomi.ui.search
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import cafe.adriel.voyager.core.model.rememberScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import eu.kanade.presentation.search.SavedSearchesScreen
+import eu.kanade.presentation.util.Screen
+import eu.kanade.tachiyomi.ui.browse.source.globalsearch.GlobalSearchScreen as GlobalSearchVoyagerScreen
+
+/**
+ * Voyager screen that displays all saved searches with notification toggles.
+ */
+class SavedSearchesScreen : Screen() {
+
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        val screenModel = rememberScreenModel { SavedSearchesScreenModel() }
+        val state by screenModel.state.collectAsState()
+
+        SavedSearchesScreen(
+            savedSearches = state.savedSearches,
+            onSearchClick = { query ->
+                navigator.push(GlobalSearchVoyagerScreen(query))
+            },
+            onDeleteSearch = screenModel::deleteSearch,
+            onToggleNotification = screenModel::toggleNotification,
+            navigateUp = navigator::pop,
+        )
+    }
+}
