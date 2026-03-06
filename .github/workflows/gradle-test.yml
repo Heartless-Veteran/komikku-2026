@@ -48,7 +48,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@ac638b010cf58a27ee1de5a1ae952d7b1ab1d3c0 # v4
 
       - name: Make gradlew executable
         run: chmod +x gradlew
