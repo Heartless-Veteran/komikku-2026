@@ -72,7 +72,9 @@ class Kavita(id: Long) : BaseTracker(id, "Kavita"), EnhancedTracker {
     }
 
     override suspend fun search(query: String): List<TrackSearch> {
-        TODO("Not yet implemented: search")
+        // KMK --> Kavita uses EnhancedTracker pattern; manual search is not supported
+        return emptyList()
+        // KMK <--
     }
 
     override suspend fun refresh(track: Track): Track {
