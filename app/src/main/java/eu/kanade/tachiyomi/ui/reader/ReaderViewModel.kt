@@ -428,6 +428,10 @@ class ReaderViewModel @JvmOverloads constructor(
                 downloadManager.addDownloadsToStartOfQueue(listOf(it))
             }
         }
+        // KMK --> Clear reading speed cache to prevent stale data on next ViewModel use
+        cachedReadingSpeed = null
+        cachedReadingSpeedMangaId = -1L
+        // KMK <--
     }
 
     /**

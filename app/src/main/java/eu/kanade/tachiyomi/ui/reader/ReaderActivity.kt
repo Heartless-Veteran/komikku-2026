@@ -372,12 +372,18 @@ class ReaderActivity : BaseActivity() {
                 val dailyTime by readingStatsRepository.getDailyReadingTime().collectAsState(initial = 0L)
                 val readingStreak by readingStatsRepository.getReadingStreak().collectAsState(initial = 0)
                 if (!state.menuVisible && goalEnabled) {
+                    // Capture session start once so the overlay's LaunchedEffect key is stable
+                    // across recompositions and the per-second ticker is not interrupted.
+                    val sessionDuration = remember { readingStatsRepository.getCurrentSessionDuration() }
                     ReadingTimerOverlay(
-                        sessionDuration = readingStatsRepository.getCurrentSessionDuration(),
+                        sessionDuration = sessionDuration,
                         dailyReadingTime = dailyTime,
                         goalMinutes = goalMinutes,
                         streak = if (streakEnabled) readingStreak else 0,
-                        goalReached = goalMinutes > 0 && dailyTime >= goalMinutes * 60_000L,
+                        // Include the current session in goalReached so the overlay shows the
+                        // celebration state consistently with the progress it displays.
+                        goalReached = goalMinutes > 0 &&
+                            (dailyTime + sessionDuration) >= goalMinutes * 60_000L,
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(8.dp),
