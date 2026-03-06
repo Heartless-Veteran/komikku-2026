@@ -14,13 +14,13 @@ class ContentBasedEngine {
     fun calculateMangaSimilarity(manga1: Manga, manga2: Manga): Double {
         val tags1 = extractFeatures(manga1)
         val tags2 = extractFeatures(manga2)
-        
+
         if (tags1.isEmpty() || tags2.isEmpty()) return 0.0
-        
+
         // Jaccard similarity
         val intersection = tags1.intersect(tags2).size
         val union = tags1.union(tags2).size
-        
+
         return if (union > 0) intersection.toDouble() / union else 0.0
     }
 
@@ -33,7 +33,7 @@ class ContentBasedEngine {
         topN: Int = 10,
     ): List<ContentRecommendation> {
         if (userLikedManga.isEmpty()) return emptyList()
-        
+
         return candidateManga
             .filter { candidate ->
                 userLikedManga.none { it.id == candidate.id }
@@ -43,11 +43,11 @@ class ContentBasedEngine {
                 val avgSimilarity = userLikedManga
                     .map { calculateMangaSimilarity(it, candidate) }
                     .average()
-                
+
                 ContentRecommendation(
                     manga = candidate,
                     score = avgSimilarity,
-                    matchedFeatures = findMatchedFeatures(userLikedManga, candidate)
+                    matchedFeatures = findMatchedFeatures(userLikedManga, candidate),
                 )
             }
             .filter { it.score > SIMILARITY_THRESHOLD }
@@ -57,16 +57,16 @@ class ContentBasedEngine {
 
     private fun extractFeatures(manga: Manga): Set<String> {
         val features = mutableSetOf<String>()
-        
+
         // Add genre
         features.addAll(manga.genre?.map { it.lowercase() } ?: emptyList())
-        
+
         // Add source as feature
         features.add("source_${manga.source}")
-        
+
         // Add status
         features.add("status_${manga.status}")
-        
+
         return features.filter { it.isNotBlank() }.toSet()
     }
 
@@ -76,7 +76,7 @@ class ContentBasedEngine {
     ): List<String> {
         val candidateFeatures = extractFeatures(candidate)
         val likedFeatures = likedManga.flatMap { extractFeatures(it) }.toSet()
-        
+
         return candidateFeatures.intersect(likedFeatures).toList()
     }
 

@@ -19,10 +19,12 @@ class SourceHealthMonitor {
     fun recordSuccess(sourceId: Long, sourceName: String) {
         _healthData.update { data ->
             val current = data[sourceId] ?: SourceHealth(sourceId, sourceName)
-            data + (sourceId to current.copy(
-                lastSuccess = Instant.now(),
-                successCount = current.successCount + 1,
-            ))
+            data + (
+                sourceId to current.copy(
+                    lastSuccess = Instant.now(),
+                    successCount = current.successCount + 1,
+                )
+                )
         }
     }
 
@@ -32,11 +34,13 @@ class SourceHealthMonitor {
     fun recordFailure(sourceId: Long, sourceName: String, error: Throwable) {
         _healthData.update { data ->
             val current = data[sourceId] ?: SourceHealth(sourceId, sourceName)
-            data + (sourceId to current.copy(
-                lastFailure = Instant.now(),
-                failureCount = current.failureCount + 1,
-                lastError = error.message,
-            ))
+            data + (
+                sourceId to current.copy(
+                    lastFailure = Instant.now(),
+                    failureCount = current.failureCount + 1,
+                    lastError = error.message,
+                )
+                )
         }
     }
 
@@ -53,7 +57,7 @@ class SourceHealthMonitor {
         _healthData.update { data ->
             data.filterValues { health ->
                 (health.lastSuccess?.isAfter(cutoff) ?: false) ||
-                (health.lastFailure?.isAfter(cutoff) ?: false)
+                    (health.lastFailure?.isAfter(cutoff) ?: false)
             }
         }
     }
@@ -86,10 +90,10 @@ class SourceHealthMonitor {
     }
 
     enum class HealthStatus {
-        HEALTHY,    // Green - working well
-        DEGRADED,   // Yellow - occasional failures
-        UNSTABLE,   // Orange - frequent failures
-        DOWN,       // Red - mostly failing
-        UNKNOWN,    // Gray - no data
+        HEALTHY, // Green - working well
+        DEGRADED, // Yellow - occasional failures
+        UNSTABLE, // Orange - frequent failures
+        DOWN, // Red - mostly failing
+        UNKNOWN, // Gray - no data
     }
 }

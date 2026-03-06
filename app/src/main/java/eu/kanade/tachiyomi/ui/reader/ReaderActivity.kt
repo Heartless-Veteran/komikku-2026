@@ -367,7 +367,11 @@ class ReaderActivity : BaseActivity() {
                         }
                     },
                     visible = state.thumbnailStripVisible || useThumbnailStripNav,
-                    onDismiss = if (useThumbnailStripNav) {{}} else viewModel::hideThumbnailStrip,
+                    onDismiss = if (useThumbnailStripNav) {
+                        {}
+                    } else {
+                        viewModel::hideThumbnailStrip
+                    },
                     modifier = Modifier.align(Alignment.BottomCenter),
                 )
                 // KMK <--

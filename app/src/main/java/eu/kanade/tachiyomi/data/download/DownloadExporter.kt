@@ -3,7 +3,6 @@ package eu.kanade.tachiyomi.data.download
 import android.content.Context
 import android.net.Uri
 import android.provider.DocumentsContract
-import com.hippo.unifile.UniFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -101,7 +100,15 @@ class DownloadExporter(
     }.flowOn(Dispatchers.IO)
 
     /**
-     * Exports all downloaded chapters of a manga into [outputDirUri] (a SAF tree URI).
+     * Exports all downloaded chapters of a manga into [outputDirUri].
+     *
+     * [outputDirUri] must be a **document** URI pointing to the target directory (not a raw
+     * tree URI from [Intent.ACTION_OPEN_DOCUMENT_TREE]).  If you receive a tree URI, convert
+     * it first:
+     * ```kotlin
+     * val docUri = DocumentsContract.buildDocumentUriUsingTree(
+     *     treeUri, DocumentsContract.getTreeDocumentId(treeUri))
+     * ```
      *
      * Each chapter becomes a separate CBZ file named
      * `"<manga title> - <chapter name>.cbz"` inside [outputDirUri].
@@ -143,25 +150,30 @@ class DownloadExporter(
                 return@flow
             }
 
+            var chapterFailed = false
             exportChapter(manga, chapter, chapterFileUri).collect { progress ->
-                val overallPercent = (chapterIndex * 100 + progress.percent) / chapters.size
                 when {
                     progress.percent < 0 -> {
+                        // Fail the whole manga export on the first chapter error.
+                        chapterFailed = true
                         emit(
                             MangaExportProgress(
-                                overallPercent = overallPercent,
+                                overallPercent = chapterIndex * 100 / chapters.size,
                                 currentChapter = chapterIndex + 1,
                                 totalChapters = chapters.size,
                                 exportedUris = null,
                                 error = progress.error,
                             ),
                         )
-                        return@collect
                     }
                     progress.uri != null -> exportedUris.add(progress.uri)
-                    else -> emit(MangaExportProgress(overallPercent, chapterIndex + 1, chapters.size, null))
+                    else -> {
+                        val overallPercent = (chapterIndex * 100 + progress.percent) / chapters.size
+                        emit(MangaExportProgress(overallPercent, chapterIndex + 1, chapters.size, null))
+                    }
                 }
             }
+            if (chapterFailed) return@flow
         }
 
         emit(MangaExportProgress(100, chapters.size, chapters.size, exportedUris))

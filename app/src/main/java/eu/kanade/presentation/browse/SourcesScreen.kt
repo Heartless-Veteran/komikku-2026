@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.times
 import eu.kanade.domain.source.model.installedExtension
 import eu.kanade.domain.source.service.SourceHealthMonitor
 import eu.kanade.presentation.browse.components.BaseSourceItem
-import eu.kanade.presentation.source.SourceHealthIndicator
 import eu.kanade.presentation.components.AnimatedFloatingSearchBox
 import eu.kanade.presentation.components.SOURCE_SEARCH_BOX_HEIGHT
+import eu.kanade.presentation.source.SourceHealthIndicator
 import eu.kanade.presentation.util.animateItemFastScroll
 import eu.kanade.tachiyomi.ui.browse.source.SourcesScreenModel
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreenModel.Listing
@@ -74,7 +74,8 @@ fun SourcesScreen(
     @Suppress("UNUSED_PARAMETER") modifier: Modifier = Modifier,
     onChangeSearchQuery: (String?) -> Unit,
     // KMK <--
-) {    // KMK -->
+) {
+    // KMK -->
     val lazyListState = rememberLazyListState()
 
     BackHandler(enabled = !state.searchQuery.isNullOrBlank()) {

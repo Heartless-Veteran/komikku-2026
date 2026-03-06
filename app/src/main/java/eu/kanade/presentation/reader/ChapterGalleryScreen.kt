@@ -272,7 +272,8 @@ private fun GalleryPageItem(
                 contentDescription = "Page $pageNumber",
                 modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
-                error = { // Error placeholder
+                error = {
+                    // Error placeholder
                     Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,
