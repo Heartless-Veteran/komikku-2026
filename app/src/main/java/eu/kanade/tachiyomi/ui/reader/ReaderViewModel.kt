@@ -411,16 +411,20 @@ class ReaderViewModel @JvmOverloads constructor(
         // SY <--
 
         // KMK --> Refresh cached reading speed when manga changes
-        state.map { it.manga?.id }
-            .distinctUntilChanged()
-            .filterNotNull()
-            .onEach { mangaId ->
-                if (mangaId != cachedReadingSpeedMangaId) {
-                    cachedReadingSpeed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
-                    cachedReadingSpeedMangaId = mangaId
+        viewModelScope.launchIO {
+            state.map { it.manga?.id }
+                .distinctUntilChanged()
+                .filterNotNull()
+                .collect { mangaId ->
+                    if (mangaId != cachedReadingSpeedMangaId) {
+                        val speed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
+                        withUIContext {
+                            cachedReadingSpeed = speed
+                            cachedReadingSpeedMangaId = mangaId
+                        }
+                    }
                 }
-            }
-            .launchIn(viewModelScope)
+        }
         // KMK <--
     }
 

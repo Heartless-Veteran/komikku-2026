@@ -370,10 +370,11 @@ class ReaderActivity : BaseActivity() {
                         dailyReadingTime = dailyTime,
                         goalMinutes = goalMinutes,
                         streak = if (streakEnabled) readingStreak else 0,
-                        // Include the current session in goalReached so the overlay shows the
-                        // celebration state consistently with the progress it displays.
+                        // Derive goalReached only from persisted daily time so it updates
+                        // with reactive state changes and does not depend on the remembered
+                        // sessionDuration, which does not change across recompositions.
                         goalReached = goalMinutes > 0 &&
-                            (dailyTime + sessionDuration) >= goalMinutes * 60_000L,
+                            dailyTime >= goalMinutes * 60_000L,
                         modifier = Modifier
                             .align(Alignment.TopEnd)
                             .padding(8.dp),
