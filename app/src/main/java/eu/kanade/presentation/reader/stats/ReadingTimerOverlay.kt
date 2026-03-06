@@ -99,10 +99,14 @@ fun ReadingTimerOverlay(
                             .size(20.dp)
                             .clip(CircleShape)
                             .background(
-                                if (progress >= 1f) Color(0xFF4CAF50) else MaterialTheme.colorScheme.primary.copy(
-                                    alpha = 0.3f,
-                                ),
- ),
+                                if (progress >= 1f) {
+                                    Color(0xFF4CAF50)
+                                } else {
+                                    MaterialTheme.colorScheme.primary.copy(
+                                        alpha = 0.3f,
+                                    )
+                                },
+                            ),
                         contentAlignment = Alignment.Center,
                     ) {
                         if (progress >= 1f) {

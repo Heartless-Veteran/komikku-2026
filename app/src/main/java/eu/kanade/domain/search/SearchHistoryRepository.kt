@@ -24,21 +24,21 @@ class SearchHistoryRepository(
 
     suspend fun addSearch(query: String, resultCount: Int = 0) {
         if (query.isBlank()) return
-        
+
         val current = preferenceStore.getStringSet(SEARCH_HISTORY_KEY, emptySet()).get()
         val newItem = createHistoryItemString(query, System.currentTimeMillis(), resultCount)
-        
+
         // Remove existing entry with same query (to move to top)
         val filtered = current.filter { !it.startsWith("$query|") }.toMutableSet()
         filtered.add(newItem)
-        
+
         // Keep only last MAX_HISTORY_ITEMS
         val trimmed = filtered.map { parseHistoryItem(it) }
             .sortedByDescending { it.timestamp }
             .take(MAX_HISTORY_ITEMS)
             .map { createHistoryItemString(it.query, it.timestamp, it.resultCount) }
             .toSet()
-        
+
         preferenceStore.getStringSet(SEARCH_HISTORY_KEY, emptySet()).set(trimmed)
     }
 

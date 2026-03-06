@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -74,6 +76,7 @@ import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
 import eu.kanade.presentation.reader.ReaderPageIndicator
 import eu.kanade.presentation.reader.ReadingModeSelectDialog
+import eu.kanade.presentation.reader.ReadingTimeIndicator
 import eu.kanade.presentation.reader.ThumbnailStrip
 import eu.kanade.presentation.reader.appbars.NavBarType
 import eu.kanade.presentation.reader.appbars.ReaderAppBars
@@ -364,7 +367,11 @@ class ReaderActivity : BaseActivity() {
                         }
                     },
                     visible = state.thumbnailStripVisible || useThumbnailStripNav,
-                    onDismiss = if (useThumbnailStripNav) {{}} else viewModel::hideThumbnailStrip,
+                    onDismiss = if (useThumbnailStripNav) {
+                        {}
+                    } else {
+                        viewModel::hideThumbnailStrip
+                    },
                     modifier = Modifier.align(Alignment.BottomCenter),
                 )
                 // KMK <--
@@ -372,6 +379,18 @@ class ReaderActivity : BaseActivity() {
                 ContentOverlay(state = state)
 
                 AppBars(state = state)
+
+                // KMK --> Reading time estimate overlay (top-start, only when menu is hidden)
+                if (!state.menuVisible && state.minutesRemaining != null) {
+                    ReadingTimeIndicator(
+                        minutesRemaining = state.minutesRemaining,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .statusBarsPadding()
+                            .padding(start = 16.dp, top = 8.dp),
+                    )
+                }
+                // KMK <--
 
                 // KMK --> Full-screen chapter gallery
                 if (state.galleryVisible) {

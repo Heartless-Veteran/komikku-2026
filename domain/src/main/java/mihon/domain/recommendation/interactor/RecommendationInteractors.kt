@@ -76,7 +76,7 @@ class GetReadingHistory(
     fun subscribe(): Flow<List<ReadingHistory>> {
         return repository.getAllReadingHistory()
     }
-    
+
     /**
      * Get reading history for a specific manga.
      */
