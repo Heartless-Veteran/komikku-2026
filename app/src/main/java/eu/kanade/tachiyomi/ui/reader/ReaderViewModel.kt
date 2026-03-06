@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.chapter.model.toDbChapter
+import eu.kanade.domain.history.interactor.ReadingTimeEstimator
 import eu.kanade.domain.manga.interactor.SetMangaViewerFlags
 import eu.kanade.domain.manga.model.readerOrientation
 import eu.kanade.domain.manga.model.readerScaleMode
@@ -146,7 +147,15 @@ class ReaderViewModel @JvmOverloads constructor(
     private val trackReadingHistory: TrackReadingHistory = Injekt.get(),
     private val syncMangaTags: SyncMangaTags = Injekt.get(),
     // KMK <--
+    // KMK --> Reading time estimation
+    private val readingTimeEstimator: ReadingTimeEstimator = Injekt.get(),
+    // KMK <--
 ) : ViewModel() {
+
+    // KMK --> Cached reading speed to avoid per-page flow collection
+    private var cachedReadingSpeed: Float? = null
+    private var cachedReadingSpeedMangaId: Long = -1L
+    // KMK <--
 
     private val mutableState = MutableStateFlow(State())
     val state = mutableState.asStateFlow()
@@ -396,6 +405,19 @@ class ReaderViewModel @JvmOverloads constructor(
             }
             .launchIn(viewModelScope)
         // SY <--
+
+        // KMK --> Refresh cached reading speed when manga changes
+        state.map { it.manga?.id }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .onEach { mangaId ->
+                if (mangaId != cachedReadingSpeedMangaId) {
+                    cachedReadingSpeed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
+                    cachedReadingSpeedMangaId = mangaId
+                }
+            }
+            .launchIn(viewModelScope)
+        // KMK <--
     }
 
     override fun onCleared() {
@@ -406,6 +428,10 @@ class ReaderViewModel @JvmOverloads constructor(
                 downloadManager.addDownloadsToStartOfQueue(listOf(it))
             }
         }
+        // KMK --> Clear reading speed cache to prevent stale data on next ViewModel use
+        cachedReadingSpeed = null
+        cachedReadingSpeedMangaId = -1L
+        // KMK <--
     }
 
     /**
@@ -714,6 +740,16 @@ class ReaderViewModel @JvmOverloads constructor(
         if (inDownloadRange) {
             downloadNextChapters()
         }
+
+        // KMK --> Update reading time estimate using cached reading speed
+        val speed = cachedReadingSpeed
+        val minutes = readingTimeEstimator.estimateTimeRemaining(
+            readingSpeedPpm = speed,
+            currentPage = page.index + 1,
+            totalPages = pages.size,
+        )
+        mutableState.update { it.copy(minutesRemaining = minutes) }
+        // KMK <--
 
         eventChannel.trySend(Event.PageChanged)
     }
@@ -1608,6 +1644,10 @@ class ReaderViewModel @JvmOverloads constructor(
         // Gallery/Thumbnail strip visibility
         val thumbnailStripVisible: Boolean = false,
         val galleryVisible: Boolean = false,
+
+        // KMK --> Reading time estimation
+        val minutesRemaining: Int? = null,
+        // KMK <--
     ) {
         val currentChapter: ReaderChapter?
             get() = viewerChapters?.currChapter

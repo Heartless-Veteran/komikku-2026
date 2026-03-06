@@ -11,6 +11,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -42,7 +43,8 @@ fun SourceHealthIndicator(
         modifier = modifier
             .size(12.dp)
             .clip(CircleShape)
-            .background(color)
+            .background(color),
+        contentAlignment = Alignment.Center,
     ) {
         icon?.let {
             Icon(
