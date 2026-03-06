@@ -152,6 +152,11 @@ class ReaderViewModel @JvmOverloads constructor(
     // KMK <--
 ) : ViewModel() {
 
+    // KMK --> Cached reading speed to avoid per-page flow collection
+    private var cachedReadingSpeed: Float? = null
+    private var cachedReadingSpeedMangaId: Long = -1L
+    // KMK <--
+
     private val mutableState = MutableStateFlow(State())
     val state = mutableState.asStateFlow()
 
@@ -400,6 +405,19 @@ class ReaderViewModel @JvmOverloads constructor(
             }
             .launchIn(viewModelScope)
         // SY <--
+
+        // KMK --> Refresh cached reading speed when manga changes
+        state.map { it.manga?.id }
+            .distinctUntilChanged()
+            .filterNotNull()
+            .onEach { mangaId ->
+                if (mangaId != cachedReadingSpeedMangaId) {
+                    cachedReadingSpeed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
+                    cachedReadingSpeedMangaId = mangaId
+                }
+            }
+            .launchIn(viewModelScope)
+        // KMK <--
     }
 
     override fun onCleared() {
@@ -719,17 +737,14 @@ class ReaderViewModel @JvmOverloads constructor(
             downloadNextChapters()
         }
 
-        // KMK --> Update reading time estimate
-        viewModelScope.launchIO {
-            val mangaId = manga?.id ?: return@launchIO
-            val speed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
-            val minutes = readingTimeEstimator.estimateTimeRemaining(
-                readingSpeedPpm = speed,
-                currentPage = page.index + 1,
-                totalPages = pages.size,
-            )
-            mutableState.update { it.copy(minutesRemaining = minutes) }
-        }
+        // KMK --> Update reading time estimate using cached reading speed
+        val speed = cachedReadingSpeed
+        val minutes = readingTimeEstimator.estimateTimeRemaining(
+            readingSpeedPpm = speed,
+            currentPage = page.index + 1,
+            totalPages = pages.size,
+        )
+        mutableState.update { it.copy(minutesRemaining = minutes) }
         // KMK <--
 
         eventChannel.trySend(Event.PageChanged)

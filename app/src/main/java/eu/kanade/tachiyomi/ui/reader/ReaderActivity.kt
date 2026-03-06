@@ -31,6 +31,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -359,7 +360,7 @@ class ReaderActivity : BaseActivity() {
                         minutesRemaining = state.minutesRemaining,
                         modifier = Modifier
                             .align(Alignment.TopStart)
-                            .navigationBarsPadding(),
+                            .padding(8.dp),
                     )
                 }
                 // KMK <--
@@ -368,18 +369,18 @@ class ReaderActivity : BaseActivity() {
                 val goalEnabled by readingStatsRepository.readingGoalEnabled().collectAsState()
                 val goalMinutes by readingStatsRepository.readingGoalMinutes().collectAsState()
                 val streakEnabled by readingStatsRepository.readingStreakEnabled().collectAsState()
+                val dailyTime by readingStatsRepository.getDailyReadingTime().collectAsState(initial = 0L)
+                val readingStreak by readingStatsRepository.getReadingStreak().collectAsState(initial = 0)
                 if (!state.menuVisible && goalEnabled) {
-                    val dailyTime by readingStatsRepository.getDailyReadingTime().collectAsState(initial = 0L)
-                    val streak by readingStatsRepository.getReadingStreak().collectAsState(initial = 0)
                     ReadingTimerOverlay(
                         sessionDuration = readingStatsRepository.getCurrentSessionDuration(),
                         dailyReadingTime = dailyTime,
                         goalMinutes = goalMinutes,
-                        streak = if (streakEnabled) streak else 0,
+                        streak = if (streakEnabled) readingStreak else 0,
                         goalReached = goalMinutes > 0 && dailyTime >= goalMinutes * 60_000L,
                         modifier = Modifier
                             .align(Alignment.TopEnd)
-                            .navigationBarsPadding(),
+                            .padding(8.dp),
                     )
                 }
                 // KMK <--
