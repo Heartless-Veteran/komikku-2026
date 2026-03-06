@@ -1,23 +1,43 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
-    "config:recommended"
+    "config:base",
+    ":disableDependencyDashboard"
   ],
-  "baseBranches": [
-    "master"
-  ],
-  "labels": [
-    "Dependencies"
-  ],
-  "rebaseWhen": "conflicted",
-  "semanticCommits": true,
+  "labels": ["dependencies"],
+  "schedule": ["before 6am on monday"],
+  "timezone": "Asia/Shanghai",
+  "prConcurrentLimit": 5,
+  "prHourlyLimit": 2,
+  "gradle": {
+    "enabled": true
+  },
   "packageRules": [
     {
-      "groupName": "GitHub Actions",
-      "matchManagers": [
-        "github-actions"
-      ],
-      "pinDigests": true
+      "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["minor", "patch"],
+      "automerge": false
+    },
+    {
+      "matchManagers": ["gradle"],
+      "matchUpdateTypes": ["major"],
+      "labels": ["dependencies", "breaking"]
+    },
+    {
+      "matchPackageNames": ["androidx.compose.compiler:compiler"],
+      "groupName": "Compose Compiler"
+    },
+    {
+      "matchPackageNames": ["org.jetbrains.kotlin.android", "org.jetbrains.kotlin.plugin.*"],
+      "groupName": "Kotlin"
+    },
+    {
+      "matchPackagePatterns": ["^androidx"],
+      "groupName": "AndroidX"
     }
-  ]
+  ],
+  "vulnerabilityAlerts": {
+    "enabled": true,
+    "labels": ["security", "dependencies"]
+  }
 }
