@@ -1,15 +1,7 @@
-name: Test Coverage
+name: Unit Tests
 
 on:
   push:
-    branches: [master, main]
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/*.md'
-      - 'LICENSE'
-      - 'CHANGELOG.md'
-  pull_request:
     branches: [master, main]
     paths-ignore:
       - '**.md'
@@ -28,7 +20,7 @@ concurrency:
 
 jobs:
   test:
-    name: Run unit tests and collect coverage
+    name: Run unit tests
     runs-on: ubuntu-24.04
 
     steps:
