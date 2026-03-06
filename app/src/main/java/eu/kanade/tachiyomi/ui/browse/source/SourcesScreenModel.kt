@@ -13,14 +13,18 @@ import eu.kanade.domain.source.interactor.ToggleExcludeFromDataSaver
 import eu.kanade.domain.source.interactor.ToggleSource
 import eu.kanade.domain.source.interactor.ToggleSourcePin
 import eu.kanade.domain.source.model.installedExtension
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.source.service.SourcePreferences.DataSaver
 import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.browse.SourceUiModel
 import eu.kanade.presentation.components.SEARCH_DEBOUNCE_MILLIS
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
@@ -55,6 +59,9 @@ class SourcesScreenModel(
     private val sourcePreferences: SourcePreferences = Injekt.get(),
     val smartSearchConfig: SourcesScreen.SmartSearchConfig?,
     // SY <--
+    // KMK -->
+    private val sourceHealthMonitor: SourceHealthMonitor = Injekt.get(),
+    // KMK <--
 ) : StateScreenModel<SourcesScreenModel.State>(State()) {
 
     private val _events = Channel<Event>(Int.MAX_VALUE)
@@ -92,6 +99,16 @@ class SourcesScreenModel(
             }
             .launchIn(screenModelScope)
         // SY <--
+
+        // KMK -->
+        sourceHealthMonitor.healthData
+            .onEach { healthMap ->
+                val statuses = healthMap.mapValues { (_, health) -> health.status }
+                    .toImmutableMap()
+                mutableState.update { it.copy(sourceHealthStatuses = statuses) }
+            }
+            .launchIn(screenModelScope)
+        // KMK <--
     }
 
     private fun collectLatestSources(
@@ -244,6 +261,7 @@ class SourcesScreenModel(
         // KMK -->
         val searchQuery: String? = null,
         val nsfwOnly: Boolean = false,
+        val sourceHealthStatuses: ImmutableMap<Long, SourceHealthMonitor.HealthStatus> = persistentMapOf(),
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

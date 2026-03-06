@@ -74,7 +74,9 @@ import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
 import eu.kanade.presentation.reader.ReaderPageIndicator
 import eu.kanade.presentation.reader.ReadingModeSelectDialog
+import eu.kanade.presentation.reader.ReadingTimeIndicator
 import eu.kanade.presentation.reader.ThumbnailStrip
+import eu.kanade.presentation.reader.stats.ReadingTimerOverlay
 import eu.kanade.presentation.reader.appbars.NavBarType
 import eu.kanade.presentation.reader.appbars.ReaderAppBars
 import eu.kanade.presentation.reader.settings.ReaderSettingsDialog
@@ -173,6 +175,7 @@ class ReaderActivity : BaseActivity() {
 
     // KMK -->
     val themeCoverBased = Injekt.get<UiPreferences>().themeCoverBased().get()
+    private val readingStatsRepository = Injekt.get<eu.kanade.domain.readingstats.ReadingStatsRepository>()
     // KMK <--
 
     // AM (CONNECTIONS) -->
@@ -349,6 +352,37 @@ class ReaderActivity : BaseActivity() {
                             .navigationBarsPadding(),
                     )
                 }
+
+                // KMK --> Reading time indicator
+                if (!state.menuVisible) {
+                    ReadingTimeIndicator(
+                        minutesRemaining = state.minutesRemaining,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .navigationBarsPadding(),
+                    )
+                }
+                // KMK <--
+
+                // KMK --> Reading timer overlay (goal tracking)
+                val goalEnabled by readingStatsRepository.readingGoalEnabled().collectAsState()
+                val goalMinutes by readingStatsRepository.readingGoalMinutes().collectAsState()
+                val streakEnabled by readingStatsRepository.readingStreakEnabled().collectAsState()
+                if (!state.menuVisible && goalEnabled) {
+                    val dailyTime by readingStatsRepository.getDailyReadingTime().collectAsState(initial = 0L)
+                    val streak by readingStatsRepository.getReadingStreak().collectAsState(initial = 0)
+                    ReadingTimerOverlay(
+                        sessionDuration = readingStatsRepository.getCurrentSessionDuration(),
+                        dailyReadingTime = dailyTime,
+                        goalMinutes = goalMinutes,
+                        streak = if (streakEnabled) streak else 0,
+                        goalReached = goalMinutes > 0 && dailyTime >= goalMinutes * 60_000L,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .navigationBarsPadding(),
+                    )
+                }
+                // KMK <--
 
                 // Thumbnail Strip - Perfect Viewer style
                 // KMK --> Show permanently if useThumbnailStripForNavigation is enabled
@@ -571,6 +605,12 @@ class ReaderActivity : BaseActivity() {
             viewModel.updateHistory()
         }
 
+        // KMK --> End reading session for stats tracking
+        lifecycleScope.launchNonCancellable {
+            readingStatsRepository.endSession()
+        }
+        // KMK <--
+
         // AM (DISCORD) -->
         updateDiscordRPC(exitingReader = true)
         // <-- AM (DISCORD)
@@ -585,6 +625,10 @@ class ReaderActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.restartReadTimer()
+
+        // KMK --> Start reading session for stats tracking
+        readingStatsRepository.startSession()
+        // KMK <--
 
         // AM (DISCORD) -->
         updateDiscordRPC(exitingReader = false)

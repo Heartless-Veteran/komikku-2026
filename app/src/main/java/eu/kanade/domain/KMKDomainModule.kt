@@ -1,11 +1,13 @@
 package eu.kanade.domain
 
 import eu.kanade.domain.brightness.SmartBrightnessRepository
+import eu.kanade.domain.history.interactor.ReadingTimeEstimator
 import eu.kanade.domain.readingstats.ReadingStatsRepository
 import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.domain.search.SearchHistoryRepository
 import eu.kanade.domain.search.SearchRankingRepository
 import eu.kanade.domain.search.SearchSuggestionsRepository
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import mihon.domain.recommendation.interactor.ClearOldRecommendations
 import mihon.domain.recommendation.interactor.GetBecauseYouReadRecommendations
 import mihon.domain.recommendation.interactor.GetReadingHistory
@@ -18,6 +20,7 @@ import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorRepositoryImpl
 import tachiyomi.data.libraryUpdateError.LibraryUpdateErrorWithRelationsRepositoryImpl
 import tachiyomi.data.libraryUpdateErrorMessage.LibraryUpdateErrorMessageRepositoryImpl
 import tachiyomi.data.recommendations.RecommendationsRepositoryImpl
+import tachiyomi.domain.history.interactor.GetHistory
 import tachiyomi.domain.libraryUpdateError.interactor.DeleteLibraryUpdateErrors
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrorWithRelations
 import tachiyomi.domain.libraryUpdateError.interactor.GetLibraryUpdateErrors
@@ -70,6 +73,8 @@ class KMKDomainModule : InjektModule {
         addSingletonFactory { SearchSuggestionsRepository(get()) }
         addSingletonFactory { SavedSearchRepository(get()) }
         addSingletonFactory { SearchRankingRepository() }
+        addSingletonFactory { SourceHealthMonitor() }
+        addFactory { ReadingTimeEstimator(get<GetHistory>()) }
         // KMK <--
     }
 }

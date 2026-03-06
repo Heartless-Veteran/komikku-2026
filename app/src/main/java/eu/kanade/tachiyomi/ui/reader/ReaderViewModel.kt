@@ -10,6 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.chapter.model.toDbChapter
+import eu.kanade.domain.history.interactor.ReadingTimeEstimator
 import eu.kanade.domain.manga.interactor.SetMangaViewerFlags
 import eu.kanade.domain.manga.model.readerOrientation
 import eu.kanade.domain.manga.model.readerScaleMode
@@ -145,6 +146,9 @@ class ReaderViewModel @JvmOverloads constructor(
     // KMK --> AI Recommendations
     private val trackReadingHistory: TrackReadingHistory = Injekt.get(),
     private val syncMangaTags: SyncMangaTags = Injekt.get(),
+    // KMK <--
+    // KMK --> Reading time estimation
+    private val readingTimeEstimator: ReadingTimeEstimator = Injekt.get(),
     // KMK <--
 ) : ViewModel() {
 
@@ -714,6 +718,19 @@ class ReaderViewModel @JvmOverloads constructor(
         if (inDownloadRange) {
             downloadNextChapters()
         }
+
+        // KMK --> Update reading time estimate
+        viewModelScope.launchIO {
+            val mangaId = manga?.id ?: return@launchIO
+            val speed = readingTimeEstimator.getAverageReadingSpeed(mangaId).first()
+            val minutes = readingTimeEstimator.estimateTimeRemaining(
+                readingSpeedPpm = speed,
+                currentPage = page.index + 1,
+                totalPages = pages.size,
+            )
+            mutableState.update { it.copy(minutesRemaining = minutes) }
+        }
+        // KMK <--
 
         eventChannel.trySend(Event.PageChanged)
     }
@@ -1608,6 +1625,10 @@ class ReaderViewModel @JvmOverloads constructor(
         // Gallery/Thumbnail strip visibility
         val thumbnailStripVisible: Boolean = false,
         val galleryVisible: Boolean = false,
+
+        // KMK --> Reading time estimation
+        val minutesRemaining: Int? = null,
+        // KMK <--
     ) {
         val currentChapter: ReaderChapter?
             get() = viewerChapters?.currChapter
