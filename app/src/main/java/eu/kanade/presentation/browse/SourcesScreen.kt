@@ -206,6 +206,9 @@ private fun SourceItem(
     onClickItem: (Source, Listing) -> Unit,
     onLongClickItem: (Source) -> Unit,
     onClickPin: (Source) -> Unit,
+    // KMK -->
+    healthStatus: SourceHealthMonitor.HealthStatus? = null,
+    // KMK <--
     modifier: Modifier = Modifier,
 ) {
     BaseSourceItem(
@@ -214,11 +217,11 @@ private fun SourceItem(
         onClickItem = { onClickItem(source, Listing.Popular) },
         onLongClickItem = { onLongClickItem(source) },
         action = {
-            // KMK -->
-            val effectiveStatus = healthStatus ?: SourceHealthMonitor.HealthStatus.UNKNOWN
-            if (effectiveStatus != SourceHealthMonitor.HealthStatus.UNKNOWN) {
+            // KMK --> Show health indicator when there is actual health data
+            if (healthStatus != null && healthStatus != SourceHealthMonitor.HealthStatus.UNKNOWN) {
                 SourceHealthIndicator(
-                    status = effectiveStatus,
+                    status = healthStatus,
+                    modifier = Modifier.padding(end = 4.dp),
                 )
             }
             // KMK <--

@@ -69,6 +69,7 @@ class KMKDomainModule : InjektModule {
         // KMK --> Feature repositories
         addSingletonFactory { SmartBrightnessRepository(get()) }
         addSingletonFactory { ReadingStatsRepository(get()) }
+        addSingletonFactory { ReadingTimeEstimator(get()) }
         addSingletonFactory { SearchHistoryRepository(get()) }
         addSingletonFactory { SearchSuggestionsRepository(get()) }
         addSingletonFactory { SavedSearchRepository(get()) }

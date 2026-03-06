@@ -6,7 +6,7 @@ import tachiyomi.domain.manga.model.Manga
 
 /**
  * Hybrid recommendation engine combining collaborative and content-based filtering.
- * 
+ *
  * Weight: 70% collaborative, 30% content-based
  * Falls back to content-based when no similar users found.
  */
@@ -33,26 +33,26 @@ class HybridRecommendationEngine(
             allManga = candidateManga.associateBy { it.id },
             topN = topN * 2, // Get more for hybrid scoring
         )
-        
+
         // Get content-based recommendations
         // Pre-filter candidates to exclude already interacted manga
         val targetMangaIds = userHistory.interactions.map { it.mangaId }.toSet()
         val filteredCandidates = candidateManga.filter { it.id !in targetMangaIds }
         val candidateMap = filteredCandidates.associateBy { it.id }
-        
+
         val likedManga = userHistory.interactions
             .filter { it.score >= MIN_LIKED_SCORE_THRESHOLD }
             .mapNotNull { interaction -> candidateMap[interaction.mangaId] }
-        
+
         val contentRecs = contentEngine.getRecommendations(
             userLikedManga = likedManga,
             candidateManga = filteredCandidates,
             topN = topN * 2,
         )
-        
+
         // Combine scores with weighting
         val hybridScores = mutableMapOf<Long, HybridRecommendation>()
-        
+
         // Add collaborative scores (70% weight)
         for (rec in collaborativeRecs) {
             rec.manga?.let { manga ->
@@ -65,7 +65,7 @@ class HybridRecommendationEngine(
                 )
             }
         }
-        
+
         // Add content scores (30% weight)
         for (rec in contentRecs) {
             val existing = hybridScores[rec.manga.id]
@@ -73,7 +73,7 @@ class HybridRecommendationEngine(
                 // Update existing with content score
                 hybridScores[rec.manga.id] = existing.copy(
                     contentScore = rec.score * CONTENT_WEIGHT,
-                    reason = "${existing.reason} • Similar to what you like"
+                    reason = "${existing.reason} • Similar to what you like",
                 )
             } else {
                 hybridScores[rec.manga.id] = HybridRecommendation(
@@ -85,7 +85,7 @@ class HybridRecommendationEngine(
                 )
             }
         }
-        
+
         // Calculate final scores and sort
         return hybridScores.values
             .map { it.copy(finalScore = it.collaborativeScore + it.contentScore) }

@@ -59,7 +59,7 @@ class SourcesScreenModel(
     private val sourcePreferences: SourcePreferences = Injekt.get(),
     val smartSearchConfig: SourcesScreen.SmartSearchConfig?,
     // SY <--
-    // KMK -->
+    // KMK --> Source health monitoring
     private val sourceHealthMonitor: SourceHealthMonitor = Injekt.get(),
     // KMK <--
 ) : StateScreenModel<SourcesScreenModel.State>(State()) {
@@ -100,7 +100,7 @@ class SourcesScreenModel(
             .launchIn(screenModelScope)
         // SY <--
 
-        // KMK -->
+        // KMK --> Subscribe to source health data updates
         sourceHealthMonitor.healthData
             .onEach { healthMap ->
                 val statuses = healthMap.mapValues { (_, health) -> health.status }

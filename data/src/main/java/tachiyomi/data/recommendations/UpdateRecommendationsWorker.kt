@@ -30,15 +30,15 @@ class UpdateRecommendationsWorker(
     override suspend fun doWork(): Result {
         return try {
             logcat { "Starting recommendations update..." }
-            
+
             withContext(Dispatchers.IO) {
                 // Clear old recommendations
                 val oneWeekAgo = Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000)
                 repository.deleteOldRecommendations(oneWeekAgo)
-                
+
                 // Generate new personalized recommendations
                 val recommendations = repository.getPersonalizedRecommendations(limit = 20)
-                
+
                 // Cache the recommendations
                 recommendations.forEach { rec ->
                     // Store in cache with a generic source manga ID (0 for general recommendations)
@@ -49,7 +49,7 @@ class UpdateRecommendationsWorker(
                         reason = rec.reason,
                     )
                 }
-                
+
                 // Generate "Because you read" recommendations
                 val becauseYouRead = repository.getBecauseYouReadRecommendations(limitPerSource = 5)
                 becauseYouRead.forEach { group ->
@@ -63,7 +63,7 @@ class UpdateRecommendationsWorker(
                     }
                 }
             }
-            
+
             logcat { "Recommendations update completed successfully" }
             Result.success()
         } catch (e: Exception) {
@@ -74,7 +74,7 @@ class UpdateRecommendationsWorker(
 
     companion object {
         private const val WORK_NAME = "update_recommendations"
-        
+
         /**
          * Schedule the periodic recommendations update job.
          * Runs once per week when the device has network connectivity.
@@ -84,30 +84,30 @@ class UpdateRecommendationsWorker(
                 .setRequiredNetworkType(NetworkType.CONNECTED)
                 .setRequiresBatteryNotLow(true)
                 .build()
-            
+
             val request = PeriodicWorkRequestBuilder<UpdateRecommendationsWorker>(
                 7, TimeUnit.DAYS, // Repeat every 7 days
                 6, TimeUnit.HOURS, // Flex interval
             ).setConstraints(constraints)
                 .addTag(WORK_NAME)
                 .build()
-            
+
             WorkManager.getInstance(context).enqueueUniquePeriodicWork(
                 WORK_NAME,
                 ExistingPeriodicWorkPolicy.KEEP,
                 request,
             )
-            
+
             logcat { "Scheduled recommendations update job" }
         }
-        
+
         /**
          * Cancel the scheduled recommendations update job.
          */
         fun cancel(context: Context) {
             WorkManager.getInstance(context).cancelUniqueWork(WORK_NAME)
         }
-        
+
         /**
          * Run the update immediately (one-time execution).
          */
@@ -115,7 +115,7 @@ class UpdateRecommendationsWorker(
             val request = androidx.work.OneTimeWorkRequestBuilder<UpdateRecommendationsWorker>()
                 .addTag("$WORK_NAME-once")
                 .build()
-            
+
             WorkManager.getInstance(context).enqueue(request)
         }
     }

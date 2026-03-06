@@ -27,15 +27,15 @@ fun SourceHealthIndicator(
     modifier: Modifier = Modifier,
 ) {
     val (color, icon) = when (status) {
-        SourceHealthMonitor.HealthStatus.HEALTHY -> 
+        SourceHealthMonitor.HealthStatus.HEALTHY ->
             Color(0xFF4CAF50) to Icons.Default.CheckCircle
-        SourceHealthMonitor.HealthStatus.DEGRADED -> 
+        SourceHealthMonitor.HealthStatus.DEGRADED ->
             Color(0xFFFFC107) to Icons.Default.Warning
-        SourceHealthMonitor.HealthStatus.UNSTABLE -> 
+        SourceHealthMonitor.HealthStatus.UNSTABLE ->
             Color(0xFFFF9800) to Icons.Default.Warning
-        SourceHealthMonitor.HealthStatus.DOWN -> 
+        SourceHealthMonitor.HealthStatus.DOWN ->
             Color(0xFFF44336) to Icons.Default.Error
-        SourceHealthMonitor.HealthStatus.UNKNOWN -> 
+        SourceHealthMonitor.HealthStatus.UNKNOWN ->
             MaterialTheme.colorScheme.outline to null
     }
 
@@ -51,7 +51,7 @@ fun SourceHealthIndicator(
                 imageVector = it,
                 contentDescription = status.name,
                 tint = Color.White,
-                modifier = Modifier.size(8.dp)
+                modifier = Modifier.size(8.dp),
             )
         }
     }

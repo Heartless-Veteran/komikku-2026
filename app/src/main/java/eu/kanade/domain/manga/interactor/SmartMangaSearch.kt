@@ -13,7 +13,7 @@ class SmartMangaSearch {
      */
     fun parseQuery(query: String): SearchParameters {
         val lowerQuery = query.lowercase()
-        
+
         return SearchParameters(
             keywords = extractKeywords(lowerQuery),
             genres = extractGenres(lowerQuery),
@@ -30,9 +30,9 @@ class SmartMangaSearch {
         // Remove known genre/theme words, keep descriptive terms
         val stopWords = GENRE_KEYWORDS + THEME_KEYWORDS + listOf(
             "with", "without", "like", "similar", "to", "something",
-            "find", "me", "manga", "anime", "show", "get"
+            "find", "me", "manga", "anime", "show", "get",
         )
-        
+
         return query.split(" ")
             .filter { it.length > 2 }
             .filter { it !in stopWords }
@@ -94,7 +94,7 @@ class SmartMangaSearch {
         val maxChapters: Int? = null,
         val similarTo: String? = null,
     ) {
-        fun isEmpty(): Boolean = 
+        fun isEmpty(): Boolean =
             keywords.isEmpty() && genres.isEmpty() && themes.isEmpty()
     }
 
@@ -103,7 +103,7 @@ class SmartMangaSearch {
             "action", "adventure", "comedy", "drama", "fantasy", "horror",
             "mystery", "romance", "sci-fi", "slice of life", "sports", "thriller",
             "isekai", "mecha", "psychological", "supernatural", "shounen", "shoujo",
-            "seinen", "josei"
+            "seinen", "josei",
         )
 
         private val THEME_KEYWORDS = listOf(
@@ -111,7 +111,7 @@ class SmartMangaSearch {
             "robots", "aliens", "time travel", "reincarnation", "survival",
             "martial arts", "music", "cooking", "games", "virtual reality",
             "post-apocalyptic", "cyberpunk", "steampunk", "detective",
-            "female protagonist", "male protagonist", "anti-hero", "villain"
+            "female protagonist", "male protagonist", "anti-hero", "villain",
         )
     }
 }
