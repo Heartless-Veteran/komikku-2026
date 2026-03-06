@@ -3,12 +3,28 @@ name: Build Debug
 on:
   push:
     branches: [master, main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
   pull_request:
     branches: [master, main]
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/*.md'
+      - 'LICENSE'
+      - 'CHANGELOG.md'
   workflow_dispatch:
 
 permissions:
   contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -39,9 +55,6 @@ jobs:
       - name: Create dummy google-services.json
         run: |
           if [ ! -f app/google-services.json ]; then
-            # Minimal valid structure accepted by the Google Services Gradle plugin.
-            # project_id/mobilesdk_app_id are placeholders; Firebase code is not
-            # active in debug builds (Config.includeTelemetry is false by default).
             echo '{"project_info":{"project_id":"placeholder","project_number":"000000000000","firebase_url":"https://placeholder.firebaseio.com","storage_bucket":"placeholder.appspot.com"},"client":[{"client_info":{"mobilesdk_app_id":"1:000000000000:android:0000000000000000","android_client_info":{"package_name":"app.komikku"}},"api_key":[{"current_key":""}],"services":{"appinvite_service":{"other_platform_oauth_client":[]}}}],"configuration_version":"1"}' > app/google-services.json
           fi
         
