@@ -10,7 +10,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import eu.kanade.domain.base.BasePreferences
 import eu.kanade.domain.chapter.model.toDbChapter
+import eu.kanade.domain.history.interactor.ReadingTimeEstimator
 import eu.kanade.domain.manga.interactor.SetMangaViewerFlags
+import eu.kanade.tachiyomi.ui.reader.setting.PerMangaReaderPreferences
 import eu.kanade.domain.manga.model.readerOrientation
 import eu.kanade.domain.manga.model.readerScaleMode
 import eu.kanade.domain.manga.model.readingMode
@@ -61,6 +63,7 @@ import exh.util.defaultReaderType
 import exh.util.mangaType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -146,6 +149,12 @@ class ReaderViewModel @JvmOverloads constructor(
     private val trackReadingHistory: TrackReadingHistory = Injekt.get(),
     private val syncMangaTags: SyncMangaTags = Injekt.get(),
     // KMK <--
+    // KMK --> Reading time estimation
+    private val readingTimeEstimator: ReadingTimeEstimator = Injekt.get(),
+    // KMK <--
+    // KMK --> Per-manga reader presets
+    private val perMangaReaderPreferences: PerMangaReaderPreferences = Injekt.get(),
+    // KMK <--
 ) : ViewModel() {
 
     private val mutableState = MutableStateFlow(State())
@@ -153,6 +162,11 @@ class ReaderViewModel @JvmOverloads constructor(
 
     private val eventChannel = Channel<Event>()
     val eventFlow = eventChannel.receiveAsFlow()
+
+    // KMK --> Reading time estimation – cached reading speed in pages per minute
+    private var cachedReadingSpeedPpm: Float? = null
+    private var readingSpeedJob: Job? = null
+    // KMK <--
 
     /**
      * The manga loaded in the reader. It can be null when instantiated for a short time.
@@ -475,6 +489,10 @@ class ReaderViewModel @JvmOverloads constructor(
                             // SY <--
                             // Load per-manga scale mode if set, otherwise keep the global default
                             scaleMode = ScaleMode.fromMangaFlags(manga.readerScaleMode) ?: it.scaleMode,
+                            // KMK --> Load per-manga brightness override (value -1 means "use global")
+                            brightnessOverlayValue = perMangaReaderPreferences.brightness(mangaId).get()
+                                .takeIf { b -> b >= 0 } ?: it.brightnessOverlayValue,
+                            // KMK <--
                         )
                     }
                     if (chapterId == -1L) chapterId = initialChapterId
@@ -502,6 +520,13 @@ class ReaderViewModel @JvmOverloads constructor(
                         page,
                         // SY <--
                     )
+                    // KMK --> Prefetch reading speed for time estimation; cancel any previous job
+                    readingSpeedJob?.cancel()
+                    readingSpeedJob = viewModelScope.launchIO {
+                        readingTimeEstimator.getAverageReadingSpeed(mangaId)
+                            .collect { speed -> cachedReadingSpeedPpm = speed }
+                    }
+                    // KMK <--
                     Result.success(true)
                 } else {
                     // Unlikely but okay
@@ -829,9 +854,17 @@ class ReaderViewModel @JvmOverloads constructor(
         val syncTriggerOpt = syncPreferences.getSyncTriggerOptions()
         val isSyncEnabled = syncPreferences.isSyncEnabled()
 
+        val totalPages = readerChapter.pages?.size ?: 0
+        // KMK --> Update reading time estimate on each page change
+        val minutesRemaining = readingTimeEstimator.estimateTimeRemaining(
+            readingSpeedPpm = cachedReadingSpeedPpm,
+            currentPage = pageIndex,
+            totalPages = totalPages,
+        )
         mutableState.update {
-            it.copy(currentPage = pageIndex + 1)
+            it.copy(currentPage = pageIndex + 1, minutesRemaining = minutesRemaining)
         }
+        // KMK <--
         readerChapter.requestedPage = pageIndex
         chapterPageIndex = pageIndex
 
@@ -1284,6 +1317,13 @@ class ReaderViewModel @JvmOverloads constructor(
 
     fun setBrightnessOverlayValue(value: Int) {
         mutableState.update { it.copy(brightnessOverlayValue = value) }
+        // KMK --> Persist per-manga brightness when manga is loaded
+        manga?.id?.let { mangaId ->
+            viewModelScope.launchNonCancellable {
+                perMangaReaderPreferences.brightness(mangaId).set(value)
+            }
+        }
+        // KMK <--
     }
 
     /**
@@ -1608,6 +1648,10 @@ class ReaderViewModel @JvmOverloads constructor(
         // Gallery/Thumbnail strip visibility
         val thumbnailStripVisible: Boolean = false,
         val galleryVisible: Boolean = false,
+
+        // KMK --> Estimated minutes remaining in current chapter (null = not enough data)
+        val minutesRemaining: Int? = null,
+        // KMK <--
     ) {
         val currentChapter: ReaderChapter?
             get() = viewerChapters?.currChapter

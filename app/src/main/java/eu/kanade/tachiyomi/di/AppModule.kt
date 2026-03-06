@@ -7,6 +7,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase
 import androidx.sqlite.db.framework.FrameworkSQLiteOpenHelperFactory
 import app.cash.sqldelight.db.SqlDriver
 import app.cash.sqldelight.driver.android.AndroidSqliteDriver
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import eu.kanade.domain.track.store.DelayedTrackingStore
 import eu.kanade.tachiyomi.core.security.SecurityPreferences
 import eu.kanade.tachiyomi.data.BackupRestoreStatus
@@ -17,6 +18,7 @@ import eu.kanade.tachiyomi.data.cache.CoverCache
 import eu.kanade.tachiyomi.data.cache.PagePreviewCache
 import eu.kanade.tachiyomi.data.connections.ConnectionsManager
 import eu.kanade.tachiyomi.data.download.DownloadCache
+import eu.kanade.tachiyomi.data.download.DownloadExporter
 import eu.kanade.tachiyomi.data.download.DownloadManager
 import eu.kanade.tachiyomi.data.download.DownloadProvider
 import eu.kanade.tachiyomi.data.saver.ImageSaver
@@ -167,6 +169,9 @@ class AppModule(val app: Application) : InjektModule {
         addSingletonFactory { DownloadProvider(app) }
         addSingletonFactory { DownloadManager(app) }
         addSingletonFactory { DownloadCache(app) }
+        // KMK -->
+        addSingletonFactory { DownloadExporter(app, get(), get()) }
+        // KMK <--
 
         addSingletonFactory { TrackerManager() }
         addSingletonFactory { DelayedTrackingStore(app) }
@@ -188,6 +193,7 @@ class AppModule(val app: Application) : InjektModule {
         addSingletonFactory { BackupRestoreStatus() }
         addSingletonFactory { SyncStatus() }
         addSingletonFactory { LibraryUpdateStatus() }
+        addSingletonFactory { SourceHealthMonitor() }
         // KMK <--
 
         // AM (CONNECTIONS) -->

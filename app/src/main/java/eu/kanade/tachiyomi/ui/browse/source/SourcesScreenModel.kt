@@ -13,6 +13,7 @@ import eu.kanade.domain.source.interactor.ToggleExcludeFromDataSaver
 import eu.kanade.domain.source.interactor.ToggleSource
 import eu.kanade.domain.source.interactor.ToggleSourcePin
 import eu.kanade.domain.source.model.installedExtension
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.domain.source.service.SourcePreferences.DataSaver
 import eu.kanade.domain.ui.UiPreferences
@@ -55,6 +56,9 @@ class SourcesScreenModel(
     private val sourcePreferences: SourcePreferences = Injekt.get(),
     val smartSearchConfig: SourcesScreen.SmartSearchConfig?,
     // SY <--
+    // KMK --> Source health monitoring
+    private val sourceHealthMonitor: SourceHealthMonitor = Injekt.get(),
+    // KMK <--
 ) : StateScreenModel<SourcesScreenModel.State>(State()) {
 
     private val _events = Channel<Event>(Int.MAX_VALUE)
@@ -92,6 +96,18 @@ class SourcesScreenModel(
             }
             .launchIn(screenModelScope)
         // SY <--
+
+        // KMK --> Subscribe to source health data updates
+        sourceHealthMonitor.healthData
+            .onEach { healthMap ->
+                mutableState.update {
+                    it.copy(
+                        sourceHealthStatuses = healthMap.mapValues { (_, health) -> health.status },
+                    )
+                }
+            }
+            .launchIn(screenModelScope)
+        // KMK <--
     }
 
     private fun collectLatestSources(
@@ -244,6 +260,7 @@ class SourcesScreenModel(
         // KMK -->
         val searchQuery: String? = null,
         val nsfwOnly: Boolean = false,
+        val sourceHealthStatuses: Map<Long, SourceHealthMonitor.HealthStatus> = emptyMap(),
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

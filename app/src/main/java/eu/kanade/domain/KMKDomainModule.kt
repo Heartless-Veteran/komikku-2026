@@ -1,6 +1,7 @@
 package eu.kanade.domain
 
 import eu.kanade.domain.brightness.SmartBrightnessRepository
+import eu.kanade.domain.history.interactor.ReadingTimeEstimator
 import eu.kanade.domain.readingstats.ReadingStatsRepository
 import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.domain.search.SearchHistoryRepository
@@ -66,6 +67,7 @@ class KMKDomainModule : InjektModule {
         // KMK --> Feature repositories
         addSingletonFactory { SmartBrightnessRepository(get()) }
         addSingletonFactory { ReadingStatsRepository(get()) }
+        addSingletonFactory { ReadingTimeEstimator(get()) }
         addSingletonFactory { SearchHistoryRepository(get()) }
         addSingletonFactory { SearchSuggestionsRepository(get()) }
         addSingletonFactory { SavedSearchRepository(get()) }
