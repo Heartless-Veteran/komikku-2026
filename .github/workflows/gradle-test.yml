@@ -1,6 +1,18 @@
 name: Gradle Test
 
 on:
+  # Run tests on PRs to verify code doesn't break before merge
+  pull_request:
+    types: [opened, synchronize]
+    # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
+    branches: [master]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '**/build.gradle*'
+      - 'gradle/**'
+      - 'settings.gradle*'
   # Run tests after merge and collect coverage as canonical source of truth
   push:
     # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
@@ -15,9 +27,9 @@ on:
   # Allow manual trigger for debugging
   workflow_dispatch:
 
-# Cancel older runs when new commits are pushed to the same branch
+# Cancel older runs when new commits are pushed to the same PR/branch
 concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -50,10 +62,16 @@ jobs:
       - name: Generate moko resources
         run: ./gradlew :i18n:generateMRcommonMain --stacktrace
 
-      - name: Run tests with coverage
-        run: ./gradlew testReleaseUnitTest jacocoTestReport
+      - name: Run tests
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew testReleaseUnitTest
+          else
+            ./gradlew testReleaseUnitTest jacocoTestReport
+          fi
 
       - name: Convert JaCoCo XML to LCOV
+        if: github.event_name != 'pull_request'
         run: |
           pip install lcov_cobertura 2>/dev/null || true
           mkdir -p coverage
@@ -61,17 +79,14 @@ jobs:
           find . -path "*/jacocoTestReport/*.xml" -name "*.xml" | head -1 | while read xml; do
             python -m lcov_cobertura "$xml" -o coverage/lcov.info 2>/dev/null || true
           done
-          # Fallback: if no XML found, create minimal lcov from JaCoCo CSV
-          if [ ! -s coverage/lcov.info ]; then
-            find . -path "*/jacocoTestReport/*.csv" -name "*.csv" | head -1 | while read csv; do
-              echo "TN:" > coverage/lcov.info
-              echo "SF:$csv" >> coverage/lcov.info
-              echo "end_of_record" >> coverage/lcov.info
-            done
-          fi
+          # If no XML report is found or conversion fails, leave coverage/lcov.info absent
+          # so that later steps can detect the absence of coverage and skip upload.
+          :
 
       - name: Upload coverage report
+        if: github.event_name != 'pull_request' && hashFiles('coverage/lcov.info') != ''
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
           path: coverage/lcov.info
+          if-no-files-found: error
