@@ -355,17 +355,6 @@ class ReaderActivity : BaseActivity() {
                     )
                 }
 
-                // KMK --> Reading time indicator
-                if (!state.menuVisible) {
-                    ReadingTimeIndicator(
-                        minutesRemaining = state.minutesRemaining,
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(8.dp),
-                    )
-                }
-                // KMK <--
-
                 // KMK --> Reading timer overlay (goal tracking)
                 val goalEnabled by readingStatsRepository.readingGoalEnabled().collectAsState()
                 val goalMinutes by readingStatsRepository.readingGoalMinutes().collectAsState()

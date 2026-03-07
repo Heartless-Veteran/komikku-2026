@@ -63,7 +63,6 @@ import exh.util.defaultReaderType
 import exh.util.mangaType
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -167,11 +166,6 @@ class ReaderViewModel @JvmOverloads constructor(
 
     private val eventChannel = Channel<Event>()
     val eventFlow = eventChannel.receiveAsFlow()
-
-    // KMK --> Reading time estimation – cached reading speed in pages per minute
-    private var cachedReadingSpeedPpm: Float? = null
-    private var readingSpeedJob: Job? = null
-    // KMK <--
 
     /**
      * The manga loaded in the reader. It can be null when instantiated for a short time.
@@ -542,13 +536,6 @@ class ReaderViewModel @JvmOverloads constructor(
                         page,
                         // SY <--
                     )
-                    // KMK --> Prefetch reading speed for time estimation; cancel any previous job
-                    readingSpeedJob?.cancel()
-                    readingSpeedJob = viewModelScope.launchIO {
-                        readingTimeEstimator.getAverageReadingSpeed(mangaId)
-                            .collect { speed -> cachedReadingSpeedPpm = speed }
-                    }
-                    // KMK <--
                     Result.success(true)
                 } else {
                     // Unlikely but okay
@@ -889,7 +876,7 @@ class ReaderViewModel @JvmOverloads constructor(
         val totalPages = readerChapter.pages?.size ?: 0
         // KMK --> Update reading time estimate on each page change
         val minutesRemaining = readingTimeEstimator.estimateTimeRemaining(
-            readingSpeedPpm = cachedReadingSpeedPpm,
+            readingSpeedPpm = cachedReadingSpeed,
             currentPage = pageIndex + 1,
             totalPages = totalPages,
         )
