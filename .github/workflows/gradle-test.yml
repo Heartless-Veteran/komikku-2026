@@ -7,23 +7,23 @@ on:
     # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
     branches: [master]
     paths:
-      - '**/*.kt'
-      - '**/*.kts'
-      - '**/*.java'
-      - '**/build.gradle*'
-      - 'gradle/**'
-      - 'settings.gradle*'
+      - '**'
+      - '!**.md'
+      - '!i18n-kmk/src/commonMain/moko-resources/**/strings.xml'
+      - '!i18n-kmk/src/commonMain/moko-resources/**/plurals.xml'
+      - 'i18n-kmk/src/commonMain/moko-resources/base/strings.xml'
+      - 'i18n-kmk/src/commonMain/moko-resources/base/plurals.xml'
   # Run tests after merge and collect coverage as canonical source of truth
   push:
     # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
     branches: [master]
     paths:
-      - '**/*.kt'
-      - '**/*.kts'
-      - '**/*.java'
-      - '**/build.gradle*'
-      - 'gradle/**'
-      - 'settings.gradle*'
+      - '**'
+      - '!**.md'
+      - '!i18n-kmk/src/commonMain/moko-resources/**/strings.xml'
+      - '!i18n-kmk/src/commonMain/moko-resources/**/plurals.xml'
+      - 'i18n-kmk/src/commonMain/moko-resources/base/strings.xml'
+      - 'i18n-kmk/src/commonMain/moko-resources/base/plurals.xml'
   # Allow manual trigger for debugging
   workflow_dispatch:
 
@@ -48,7 +48,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
+        uses: gradle/actions/setup-gradle@ac638b010cf58a27ee1de5a1ae952d7b1ab1d3c0 # v4
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -94,4 +94,3 @@ jobs:
         with:
           name: coverage-report
           path: coverage/lcov.info
-          if-no-files-found: error
