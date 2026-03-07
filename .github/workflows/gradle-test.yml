@@ -1,6 +1,18 @@
 name: Gradle Test
 
 on:
+  # Run tests on PRs to verify code doesn't break before merge
+  pull_request:
+    types: [opened, synchronize]
+    # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
+    branches: [master]
+    paths:
+      - '**/*.kt'
+      - '**/*.kts'
+      - '**/*.java'
+      - '**/build.gradle*'
+      - 'gradle/**'
+      - 'settings.gradle*'
   # Run tests after merge and collect coverage as canonical source of truth
   push:
     # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
@@ -50,10 +62,16 @@ jobs:
       - name: Generate moko resources
         run: ./gradlew :i18n:generateMRcommonMain --stacktrace
 
-      - name: Run tests with coverage
-        run: ./gradlew testReleaseUnitTest jacocoTestReport
+      - name: Run tests
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew testReleaseUnitTest
+          else
+            ./gradlew testReleaseUnitTest jacocoTestReport
+          fi
 
       - name: Convert JaCoCo XML to LCOV
+        if: github.event_name != 'pull_request'
         run: |
           pip install lcov_cobertura 2>/dev/null || true
           mkdir -p coverage
@@ -71,6 +89,7 @@ jobs:
           fi
 
       - name: Upload coverage report
+        if: github.event_name != 'pull_request'
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: coverage-report
