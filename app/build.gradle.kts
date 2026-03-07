@@ -44,6 +44,7 @@ android {
             isPseudoLocalesEnabled = true
         }
         val release by getting {
+            enableUnitTestCoverage = true
             isMinifyEnabled = Config.enableCodeShrink
             isShrinkResources = Config.enableCodeShrink
 
