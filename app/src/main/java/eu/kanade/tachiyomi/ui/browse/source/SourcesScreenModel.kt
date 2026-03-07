@@ -20,8 +20,11 @@ import eu.kanade.domain.ui.UiPreferences
 import eu.kanade.presentation.browse.SourceUiModel
 import eu.kanade.presentation.components.SEARCH_DEBOUNCE_MILLIS
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.ImmutableMap
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.collections.immutable.toImmutableMap
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.catch
@@ -100,11 +103,9 @@ class SourcesScreenModel(
         // KMK --> Subscribe to source health data updates
         sourceHealthMonitor.healthData
             .onEach { healthMap ->
-                mutableState.update {
-                    it.copy(
-                        sourceHealthStatuses = healthMap.mapValues { (_, health) -> health.status },
-                    )
-                }
+                val statuses = healthMap.mapValues { (_, health) -> health.status }
+                    .toImmutableMap()
+                mutableState.update { it.copy(sourceHealthStatuses = statuses) }
             }
             .launchIn(screenModelScope)
         // KMK <--
@@ -260,7 +261,7 @@ class SourcesScreenModel(
         // KMK -->
         val searchQuery: String? = null,
         val nsfwOnly: Boolean = false,
-        val sourceHealthStatuses: Map<Long, SourceHealthMonitor.HealthStatus> = emptyMap(),
+        val sourceHealthStatuses: ImmutableMap<Long, SourceHealthMonitor.HealthStatus> = persistentMapOf(),
         // KMK <--
     ) {
         val isEmpty = items.isEmpty()

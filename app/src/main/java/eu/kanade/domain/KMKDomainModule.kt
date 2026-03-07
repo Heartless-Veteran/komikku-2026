@@ -7,6 +7,7 @@ import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.domain.search.SearchHistoryRepository
 import eu.kanade.domain.search.SearchRankingRepository
 import eu.kanade.domain.search.SearchSuggestionsRepository
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import mihon.domain.recommendation.interactor.ClearOldRecommendations
 import mihon.domain.recommendation.interactor.GetBecauseYouReadRecommendations
 import mihon.domain.recommendation.interactor.GetReadingHistory
@@ -72,6 +73,7 @@ class KMKDomainModule : InjektModule {
         addSingletonFactory { SearchSuggestionsRepository(get()) }
         addSingletonFactory { SavedSearchRepository(get()) }
         addSingletonFactory { SearchRankingRepository() }
+        addSingletonFactory { SourceHealthMonitor() }
         // KMK <--
     }
 }
