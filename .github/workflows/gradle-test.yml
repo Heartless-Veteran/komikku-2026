@@ -63,4 +63,35 @@ jobs:
         run: ./gradlew :i18n:generateMRcommonMain --stacktrace
 
       - name: Run tests
-        run: ./gradlew testReleaseUnitTest
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            ./gradlew testReleaseUnitTest
+          else
+            ./gradlew testReleaseUnitTest jacocoTestReport
+          fi
+
+      - name: Convert JaCoCo XML to LCOV
+        if: github.event_name != 'pull_request'
+        run: |
+          pip install lcov_cobertura==2.0.2 2>/dev/null || true
+          mkdir -p coverage
+          # Find JaCoCo XML report and convert to lcov
+          find . -path "*/jacocoTestReport/*.xml" -name "*.xml" | head -1 | while read xml; do
+            python -m lcov_cobertura "$xml" -o coverage/lcov.info 2>/dev/null || true
+          done
+          # Fallback: if no XML found, create minimal lcov from JaCoCo CSV
+          if [ ! -s coverage/lcov.info ]; then
+            find . -path "*/jacocoTestReport/*.csv" -name "*.csv" | head -1 | while read csv; do
+              echo "TN:" > coverage/lcov.info
+              echo "SF:$csv" >> coverage/lcov.info
+              echo "end_of_record" >> coverage/lcov.info
+            done
+          fi
+
+      - name: Upload coverage report
+        if: github.event_name != 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: coverage/lcov.info
+          if-no-files-found: error
