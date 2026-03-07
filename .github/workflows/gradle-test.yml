@@ -48,7 +48,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@ac638b010cf58a27ee1de5a1ae952d7b1ab1d3c0 # v4
+        uses: gradle/actions/setup-gradle@0723195856401067f7a2779048b490ace7a47d7c # v5
 
       - name: Make gradlew executable
         run: chmod +x gradlew
@@ -73,7 +73,7 @@ jobs:
       - name: Convert JaCoCo XML to LCOV
         if: github.event_name != 'pull_request'
         run: |
-          pip install lcov_cobertura==2.0.2 2>/dev/null || true
+          pip install lcov_cobertura 2>/dev/null || true
           mkdir -p coverage
           # Find JaCoCo XML report and convert to lcov
           find . -path "*/jacocoTestReport/*.xml" -name "*.xml" | head -1 | while read xml; do
