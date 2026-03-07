@@ -1,0 +1,69 @@
+name: Archive Stale Branches
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (list branches without renaming)'
+        required: false
+        default: 'true'
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  archive_stale_branches:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Identify and archive stale branches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO: ${{ github.repository }}
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          # Branches that are safe to archive:
+          # - Their associated PRs are closed (not merged) or they are identical to master
+          STALE_BRANCHES=(
+            "gitauto/setup-20260306-081754-5Vbu"
+            "gitauto/setup-20260306-082144-PoEp"
+            "gitauto/setup-20260306-082232-Wj99"
+            "gitauto/setup-20260306-090634-cWpp"
+            "gitauto/setup-20260306-091819-ldYN"
+            "copilot/install-kimi-script"
+            "copilot/fix-material-theme-padding-issue"
+            "copilot/sub-pr-59"
+            "refactor/viewmodels"
+          )
+
+          echo "=== Stale Branch Archival ==="
+          echo "Mode: $([ "$DRY_RUN" = "true" ] && echo "DRY RUN" || echo "LIVE")"
+          echo ""
+
+          for BRANCH in "${STALE_BRANCHES[@]}"; do
+            # Check if branch exists
+            STATUS=$(gh api "repos/$REPO/branches/$BRANCH" --jq '.name' 2>/dev/null || echo "")
+            if [ -z "$STATUS" ]; then
+              echo "  SKIP: $BRANCH (does not exist)"
+              continue
+            fi
+
+            NEW_NAME="deprecated/$BRANCH"
+            if [ "$DRY_RUN" = "true" ]; then
+              echo "  DRY RUN: Would rename '$BRANCH' -> '$NEW_NAME'"
+            else
+              echo "  Renaming '$BRANCH' -> '$NEW_NAME' ..."
+              if RESULT=$(gh api \
+                --method POST \
+                "repos/$REPO/branches/$BRANCH/rename" \
+                -f new_name="$NEW_NAME" \
+                --jq '.name' 2>&1); then
+                echo "    SUCCESS: renamed to '$RESULT'"
+              else
+                echo "    ERROR: $RESULT"
+              fi
+            fi
+          done
+
+          echo ""
+          echo "=== Done ==="
