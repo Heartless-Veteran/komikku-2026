@@ -63,30 +63,4 @@ jobs:
         run: ./gradlew :i18n:generateMRcommonMain --stacktrace
 
       - name: Run tests
-        run: |
-          if [ "${{ github.event_name }}" = "pull_request" ]; then
-            ./gradlew testReleaseUnitTest
-          else
-            ./gradlew testReleaseUnitTest jacocoTestReport
-          fi
-
-      - name: Convert JaCoCo XML to LCOV
-        if: github.event_name != 'pull_request'
-        run: |
-          pip install lcov_cobertura 2>/dev/null || true
-          mkdir -p coverage
-          # Find JaCoCo XML report and convert to lcov
-          find . -path "*/jacocoTestReport/*.xml" -name "*.xml" | head -1 | while read xml; do
-            python -m lcov_cobertura "$xml" -o coverage/lcov.info 2>/dev/null || true
-          done
-          # If no XML report is found or conversion fails, leave coverage/lcov.info absent
-          # so that later steps can detect the absence of coverage and skip upload.
-          :
-
-      - name: Upload coverage report
-        if: github.event_name != 'pull_request' && hashFiles('coverage/lcov.info') != ''
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: coverage/lcov.info
-          if-no-files-found: error
+        run: ./gradlew testReleaseUnitTest
