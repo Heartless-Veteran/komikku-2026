@@ -59,7 +59,7 @@ jobs:
           if [ "${{ github.event_name }}" = "pull_request" ]; then
             ./gradlew testReleaseUnitTest
           else
-            ./gradlew testReleaseUnitTest jacocoTestReport
+            ./gradlew testReleaseUnitTest
           fi
 
       - name: Convert JaCoCo XML to LCOV
