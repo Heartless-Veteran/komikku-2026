@@ -1,18 +1,6 @@
 name: Gradle Test
 
 on:
-  # Run tests on PRs to verify code doesn't break before merge
-  pull_request:
-    types: [opened, synchronize]
-    # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
-    branches: [master]
-    paths:
-      - '**/*.kt'
-      - '**/*.kts'
-      - '**/*.java'
-      - '**/build.gradle*'
-      - 'gradle/**'
-      - 'settings.gradle*'
   # Run tests after merge and collect coverage as canonical source of truth
   push:
     # Your production branch. If not the default, update here and set Target Branch at https://gitauto.ai/settings/rules to match
