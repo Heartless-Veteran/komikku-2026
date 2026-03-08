@@ -70,7 +70,9 @@ class Komga(id: Long) : BaseTracker(id, "Komga"), EnhancedTracker {
     }
 
     override suspend fun search(query: String): List<TrackSearch> {
-        TODO("Not yet implemented: search")
+        // KMK --> Komga uses EnhancedTracker pattern; manual search is not supported
+        return emptyList()
+        // KMK <--
     }
 
     override suspend fun refresh(track: Track): Track {

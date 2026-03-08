@@ -60,6 +60,8 @@ class ReadingTimeEstimator(
 
         return if (avgMinutesPerChapter > 0) {
             estimatedPagesPerChapter / avgMinutesPerChapter
-        } else null
+        } else {
+            null
+        }
     }
 }

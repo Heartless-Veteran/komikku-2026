@@ -42,7 +42,9 @@ enum class ScaleMode(
     /**
      * Smart fit - intelligently fits the page while preserving aspect ratio.
      */
-    SMART_FIT;
+    SMART_FIT,
+
+    ;
 
     /**
      * Convert ScaleMode to SubsamplingScaleImageView scale type

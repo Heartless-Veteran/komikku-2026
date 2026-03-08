@@ -5,9 +5,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.produceState
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
+import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.domain.search.SearchHistoryItem
 import eu.kanade.domain.search.SearchHistoryRepository
-import eu.kanade.domain.search.SavedSearchRepository
 import eu.kanade.domain.search.SearchSuggestionsRepository
 import eu.kanade.domain.source.service.SourcePreferences
 import eu.kanade.presentation.util.ioCoroutineScope

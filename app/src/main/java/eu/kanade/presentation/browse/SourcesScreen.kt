@@ -34,9 +34,11 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.times
 import eu.kanade.domain.source.model.installedExtension
+import eu.kanade.domain.source.service.SourceHealthMonitor
 import eu.kanade.presentation.browse.components.BaseSourceItem
 import eu.kanade.presentation.components.AnimatedFloatingSearchBox
 import eu.kanade.presentation.components.SOURCE_SEARCH_BOX_HEIGHT
+import eu.kanade.presentation.source.SourceHealthIndicator
 import eu.kanade.presentation.util.animateItemFastScroll
 import eu.kanade.tachiyomi.ui.browse.source.SourcesScreenModel
 import eu.kanade.tachiyomi.ui.browse.source.browse.BrowseSourceScreenModel.Listing
@@ -133,6 +135,9 @@ fun SourcesScreen(
                                     showLatest = state.showLatest,
                                     showPin = state.showPin,
                                     // SY <--
+                                    // KMK -->
+                                    healthStatus = state.sourceHealthStatuses[model.source.id],
+                                    // KMK <--
                                     onClickItem = onClickItem,
                                     onLongClickItem = onLongClickItem,
                                     onClickPin = onClickPin,
@@ -198,6 +203,9 @@ private fun SourceItem(
     onClickItem: (Source, Listing) -> Unit,
     onLongClickItem: (Source) -> Unit,
     onClickPin: (Source) -> Unit,
+    // KMK -->
+    healthStatus: SourceHealthMonitor.HealthStatus? = null,
+    // KMK <--
     modifier: Modifier = Modifier,
 ) {
     BaseSourceItem(
@@ -206,6 +214,14 @@ private fun SourceItem(
         onClickItem = { onClickItem(source, Listing.Popular) },
         onLongClickItem = { onLongClickItem(source) },
         action = {
+            // KMK --> Show health indicator when there is actual health data
+            if (healthStatus != null && healthStatus != SourceHealthMonitor.HealthStatus.UNKNOWN) {
+                SourceHealthIndicator(
+                    status = healthStatus,
+                    modifier = Modifier.padding(end = 4.dp),
+                )
+            }
+            // KMK <--
             if (source.supportsLatest /* SY --> */ && showLatest /* SY <-- */) {
                 TextButton(onClick = { onClickItem(source, Listing.Latest) }) {
                     Text(

@@ -28,19 +28,19 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.ui.graphics.Color
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import eu.kanade.presentation.manga.components.MangaCover
-import tachiyomi.i18n.MR
 import kotlinx.collections.immutable.ImmutableList
 import mihon.domain.recommendation.model.BecauseYouReadRecommendation
 import mihon.domain.recommendation.model.Recommendation
+import tachiyomi.i18n.MR
 import tachiyomi.presentation.core.components.material.padding
 import tachiyomi.presentation.core.i18n.stringResource
 
@@ -115,7 +115,7 @@ private fun RecommendationsList(
                 }
             }
         }
-        
+
         // "For You" section
         if (forYouRecommendations.isNotEmpty()) {
             item {
@@ -126,7 +126,7 @@ private fun RecommendationsList(
                     modifier = Modifier.padding(horizontal = MaterialTheme.padding.medium),
                 )
                 Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
-                
+
                 LazyRow(
                     contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
                     horizontalArrangement = Arrangement.spacedBy(MaterialTheme.padding.small),
@@ -143,7 +143,7 @@ private fun RecommendationsList(
                 }
             }
         }
-        
+
         // "Because you read" sections
         becauseYouReadRecommendations.forEach { group ->
             item {
@@ -154,7 +154,7 @@ private fun RecommendationsList(
                 )
             }
         }
-        
+
         // Bottom spacing
         item {
             Spacer(modifier = Modifier.height(MaterialTheme.padding.large))
@@ -322,9 +322,9 @@ private fun BecauseYouReadSection(
                 )
             }
         }
-        
+
         Spacer(modifier = Modifier.height(MaterialTheme.padding.small))
-        
+
         // Horizontal list of recommendations
         LazyRow(
             contentPadding = PaddingValues(horizontal = MaterialTheme.padding.medium),
@@ -363,7 +363,7 @@ private fun RecommendationSmallCard(
                     .height(150.dp),
                 scale = ContentScale.Crop,
             )
-            
+
             Column(
                 modifier = Modifier.padding(MaterialTheme.padding.small),
             ) {
@@ -373,7 +373,7 @@ private fun RecommendationSmallCard(
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis,
                 )
-                
+
                 Text(
                     text = recommendation.reason,
                     style = MaterialTheme.typography.labelSmall,

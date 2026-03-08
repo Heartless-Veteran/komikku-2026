@@ -2,7 +2,6 @@ package tachiyomi.data.recommendations
 
 import app.cash.sqldelight.coroutines.asFlow
 import app.cash.sqldelight.coroutines.mapToList
-import tachiyomi.data.DatabaseHandler
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mihon.domain.recommendation.model.BecauseYouReadRecommendation
@@ -13,6 +12,7 @@ import mihon.domain.recommendation.model.Recommendation
 import mihon.domain.recommendation.model.RecommendationCache
 import mihon.domain.recommendation.repository.RecommendationsRepository
 import tachiyomi.core.common.util.system.logcat
+import tachiyomi.data.DatabaseHandler
 import tachiyomi.data.manga.MangaMapper
 import java.util.Date
 import kotlin.coroutines.cancellation.CancellationException
@@ -23,16 +23,16 @@ class RecommendationsRepositoryImpl(
 ) : RecommendationsRepository {
 
     // Reading History operations
-    
+
     override suspend fun getReadingHistory(mangaId: Long): ReadingHistory? {
-        return handler.awaitOneOrNull { 
-            recommendationsQueries.getReadingHistoryByMangaId(mangaId, ::mapReadingHistory) 
+        return handler.awaitOneOrNull {
+            recommendationsQueries.getReadingHistoryByMangaId(mangaId, ::mapReadingHistory)
         }
     }
 
     override fun getAllReadingHistory(): Flow<List<ReadingHistory>> {
-        return handler.subscribeToList { 
-            recommendationsQueries.getAllReadingHistory(::mapReadingHistory) 
+        return handler.subscribeToList {
+            recommendationsQueries.getAllReadingHistory(::mapReadingHistory)
         }
     }
 
@@ -92,10 +92,10 @@ class RecommendationsRepositoryImpl(
     }
 
     // Manga Tags operations
-    
+
     override suspend fun getMangaTags(mangaId: Long): MangaTags? {
-        return handler.awaitOneOrNull { 
-            recommendationsQueries.getMangaTagsByMangaId(mangaId, ::mapMangaTags) 
+        return handler.awaitOneOrNull {
+            recommendationsQueries.getMangaTagsByMangaId(mangaId, ::mapMangaTags)
         }
     }
 
@@ -138,11 +138,10 @@ class RecommendationsRepositoryImpl(
     }
 
     // Recommendations Cache operations
-    
+
     override suspend fun getCachedRecommendations(mangaId: Long, limit: Int): List<RecommendationCache> {
         return handler.awaitList {
-            recommendationsQueries.getCachedRecommendations(mangaId, limit.toLong()) { 
-                id, _, recommendedMangaId, score, reason, generatedAt, _, _, _, _ ->
+            recommendationsQueries.getCachedRecommendations(mangaId, limit.toLong()) { id, _, recommendedMangaId, score, reason, generatedAt, _, _, _, _ ->
                 RecommendationCache(
                     id = id,
                     mangaId = mangaId,
@@ -188,13 +187,13 @@ class RecommendationsRepositoryImpl(
     override suspend fun isCacheFresh(mangaId: Long): Boolean {
         val cache = getCachedRecommendations(mangaId, 1)
         if (cache.isEmpty()) return false
-        
+
         val oneWeekAgo = Date(System.currentTimeMillis() - 7 * 24 * 60 * 60 * 1000)
         return cache.first().generatedAt.after(oneWeekAgo)
     }
 
     // Recommendation Algorithm
-    
+
     override suspend fun getPersonalizedRecommendations(limit: Int): List<Recommendation> {
         try {
             // Step 1: Get user's top genres from reading history
@@ -202,13 +201,13 @@ class RecommendationsRepositoryImpl(
             if (topGenres.isEmpty()) {
                 return getPopularRecommendations(limit)
             }
-            
+
             // Step 2: Get manga the user has already spent time on
             val readMangaIds = getMostReadMangaIds(minTimeSpent = 60000, limit = 100)
-            
+
             // Step 3: Find manga with similar genres not yet read
             val candidates = getRecommendationCandidates(limit * 3)
-            
+
             // Step 4: Score by genre overlap + popularity
             val scoredCandidates = candidates.map { candidate ->
                 val genreScore = calculateGenreSimilarity(
@@ -217,10 +216,10 @@ class RecommendationsRepositoryImpl(
                 )
                 val popularityScore = min(candidate.popularity / 1000f, 1f) // Normalize popularity
                 val finalScore = (genreScore * 0.7f) + (popularityScore * 0.3f)
-                
+
                 candidate to finalScore
             }.sortedByDescending { it.second }
-            
+
             // Step 5: Return top recommendations
             return scoredCandidates.take(limit).map { (candidate, score) ->
                 val reason = generateReason(topGenres.take(3).map { it.genre }, candidate.genres)
@@ -250,31 +249,31 @@ class RecommendationsRepositoryImpl(
             // Get recently read manga
             val oneMonthAgo = Date(System.currentTimeMillis() - 30L * 24 * 60 * 60 * 1000)
             val recentMangaIds = getRecentlyReadMangaIds(oneMonthAgo, limit = 5)
-            
+
             return recentMangaIds.mapNotNull { mangaId ->
                 val sourceTags = getMangaTags(mangaId) ?: return@mapNotNull null
-                
+
                 // Find similar manga
                 val similarManga = getMangaWithSimilarGenres(
                     genres = sourceTags.genres,
                     excludeMangaIds = recentMangaIds,
                     limit = limitPerSource,
                 )
-                
+
                 if (similarManga.isEmpty()) return@mapNotNull null
-                
+
                 // Get source manga details
                 val sourceManga = handler.awaitOneOrNull {
                     mangasQueries.getMangaById(mangaId, MangaMapper::mapManga)
                 }
-                
+
                 val sourceTitle = sourceManga?.title ?: return@mapNotNull null
                 val sourceThumbnail = sourceManga?.thumbnailUrl
-                
+
                 val recommendations = similarManga.map { tags ->
                     val similarity = calculateGenreSimilarity(sourceTags.genres, tags.genres)
-                    val reason = "Similar to ${sourceTitle}"
-                    
+                    val reason = "Similar to $sourceTitle"
+
                     Recommendation(
                         mangaId = tags.mangaId,
                         title = "", // Will be populated by UI layer
@@ -286,7 +285,7 @@ class RecommendationsRepositoryImpl(
                         status = tags.status,
                     )
                 }
-                
+
                 BecauseYouReadRecommendation(
                     sourceMangaId = mangaId,
                     sourceMangaTitle = sourceTitle,
@@ -304,8 +303,7 @@ class RecommendationsRepositoryImpl(
 
     override suspend fun getRecommendationCandidates(limit: Int): List<MangaTags> {
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
-                mangaId, genres, themes, author, popularity, _, _, _, _ ->
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { mangaId, genres, themes, author, popularity, _, _, _, _ ->
                 MangaTags(
                     id = 0,
                     mangaId = mangaId,
@@ -320,24 +318,24 @@ class RecommendationsRepositoryImpl(
     }
 
     // Helper methods
-    
+
     private fun calculateGenreSimilarity(genres1: List<String>, genres2: List<String>): Float {
         if (genres1.isEmpty() || genres2.isEmpty()) return 0f
-        
+
         val set1 = genres1.map { it.lowercase() }.toSet()
         val set2 = genres2.map { it.lowercase() }.toSet()
-        
+
         val intersection = set1.intersect(set2).size
         val union = set1.union(set2).size
-        
+
         return if (union > 0) intersection.toFloat() / union.toFloat() else 0f
     }
-    
+
     private fun generateReason(userGenres: List<String>, mangaGenres: List<String>): String {
         val matchingGenres = userGenres.filter { userGenre ->
             mangaGenres.any { it.lowercase() == userGenre.lowercase() }
         }
-        
+
         return when {
             matchingGenres.isEmpty() -> "Popular in your reading list"
             matchingGenres.size == 1 -> "Because you like ${matchingGenres.first()}"
@@ -345,12 +343,11 @@ class RecommendationsRepositoryImpl(
             else -> "Matches your taste: ${matchingGenres.take(2).joinToString(", ")}, and more"
         }
     }
-    
+
     private suspend fun getPopularRecommendations(limit: Int): List<Recommendation> {
         // Fallback: return popular manga
         return handler.awaitList {
-            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { 
-                mangaId, genres, _, author, popularity, _, _, _, _ ->
+            recommendationsQueries.getRecommendationCandidates(limit.toLong(), 30000L) { mangaId, genres, _, author, popularity, _, _, _, _ ->
                 Recommendation(
                     mangaId = mangaId,
                     title = "",
@@ -364,7 +361,7 @@ class RecommendationsRepositoryImpl(
             }
         }
     }
-    
+
     private fun mapReadingHistory(
         id: Long,
         mangaId: Long,
@@ -384,7 +381,7 @@ class RecommendationsRepositoryImpl(
             rating = rating?.toFloat(),
         )
     }
-    
+
     private fun mapMangaTags(
         id: Long,
         mangaId: Long,

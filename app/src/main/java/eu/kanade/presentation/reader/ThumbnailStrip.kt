@@ -234,7 +234,7 @@ private fun ThumbnailItem(
         contentAlignment = Alignment.Center,
     ) {
         val imageModel = page.imageUrl ?: page.url
-        
+
         if (imageModel != null) {
             AsyncImage(
                 model = imageModel,
@@ -243,7 +243,7 @@ private fun ThumbnailItem(
                 contentScale = ContentScale.Crop,
             )
         }
-        
+
         Text(
             text = "${page.number}",
             modifier = Modifier
@@ -278,7 +278,7 @@ private fun VerticalThumbnailItem(
         contentAlignment = Alignment.Center,
     ) {
         val imageModel = page.imageUrl ?: page.url
-        
+
         if (imageModel != null) {
             AsyncImage(
                 model = imageModel,
@@ -287,7 +287,7 @@ private fun VerticalThumbnailItem(
                 contentScale = ContentScale.Crop,
             )
         }
-        
+
         Text(
             text = "${page.number}",
             modifier = Modifier

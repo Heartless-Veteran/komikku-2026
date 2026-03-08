@@ -103,7 +103,9 @@ class ReadingStatsRepository(
     fun getCurrentSessionDuration(): Long {
         return if (isTracking && sessionStartTime > 0) {
             System.currentTimeMillis() - sessionStartTime
-        } else 0
+        } else {
+            0
+        }
     }
 
     // Reset daily stats (call at midnight)

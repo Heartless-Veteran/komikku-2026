@@ -66,7 +66,9 @@ class Suwayomi(id: Long) : BaseTracker(id, "Suwayomi"), EnhancedTracker {
     }
 
     override suspend fun search(query: String): List<TrackSearch> {
-        TODO("Not yet implemented")
+        // KMK --> Suwayomi uses EnhancedTracker pattern; manual search is not supported
+        return emptyList()
+        // KMK <--
     }
 
     override suspend fun refresh(track: Track): Track {
