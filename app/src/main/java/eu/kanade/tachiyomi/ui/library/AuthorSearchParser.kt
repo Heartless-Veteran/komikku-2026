@@ -15,7 +15,7 @@ object AuthorSearchParser {
 
     fun parse(query: String): AuthorQuery? {
         val trimmed = query.trim()
-        
+
         return when {
             trimmed.startsWith("author:", ignoreCase = true) -> {
                 val term = trimmed.removePrefix("author:").trim()
@@ -39,7 +39,7 @@ object AuthorSearchParser {
             "author" -> manga.author?.contains(query.searchTerm, ignoreCase = true) == true
             "artist" -> manga.artist?.contains(query.searchTerm, ignoreCase = true) == true
             "both" -> manga.author?.contains(query.searchTerm, ignoreCase = true) == true ||
-                    manga.artist?.contains(query.searchTerm, ignoreCase = true) == true
+                manga.artist?.contains(query.searchTerm, ignoreCase = true) == true
             else -> false
         }
     }

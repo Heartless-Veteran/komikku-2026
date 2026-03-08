@@ -29,10 +29,10 @@ fun SmartSearchBar(
 ) {
     var query by remember { mutableStateOf("") }
     val smartSearch = remember { SmartMangaSearch() }
-    
+
     // Parse query once and remember result
     var parsedParams by remember { mutableStateOf<SmartMangaSearch.SearchParameters?>(null) }
-    
+
     // Update parsed params when query changes
     if (query.isNotBlank()) {
         val newParams = smartSearch.parseQuery(query)
@@ -42,33 +42,33 @@ fun SmartSearchBar(
     } else {
         parsedParams = null
     }
-    
+
     Column(modifier = modifier.fillMaxWidth()) {
         OutlinedTextField(
             value = query,
             onValueChange = { query = it },
             modifier = Modifier.fillMaxWidth(),
-            placeholder = { 
+            placeholder = {
                 Text(
                     "Try: 'action with female lead' or 'like One Piece but shorter'",
-                    style = MaterialTheme.typography.bodySmall
+                    style = MaterialTheme.typography.bodySmall,
                 )
             },
             trailingIcon = {
                 IconButton(
                     onClick = {
                         parsedParams?.let { onSearch(it) }
-                    }
+                    },
                 ) {
                     Icon(
                         imageVector = Icons.Outlined.Search,
-                        contentDescription = "Search"
+                        contentDescription = "Search",
                     )
                 }
             },
             singleLine = true,
         )
-        
+
         // Show parsed interpretation
         parsedParams?.let { params ->
             if (!params.isEmpty()) {
@@ -76,7 +76,7 @@ fun SmartSearchBar(
                     text = formatParsedQuery(params),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.padding(top = 4.dp, start = 16.dp)
+                    modifier = Modifier.padding(top = 4.dp, start = 16.dp),
                 )
             }
         }
@@ -85,7 +85,7 @@ fun SmartSearchBar(
 
 private fun formatParsedQuery(params: SmartMangaSearch.SearchParameters): String {
     val parts = mutableListOf<String>()
-    
+
     if (params.genres.isNotEmpty()) {
         parts.add("Genres: ${params.genres.joinToString(", ")}")
     }
@@ -107,7 +107,10 @@ private fun formatParsedQuery(params: SmartMangaSearch.SearchParameters): String
     if (params.similarTo != null) {
         parts.add("Similar to: ${params.similarTo}")
     }
-    
-    return if (parts.isEmpty()) "Searching for: ${params.keywords.joinToString(" ")}"
-    else parts.joinToString(" • ")
+
+    return if (parts.isEmpty()) {
+        "Searching for: ${params.keywords.joinToString(" ")}"
+    } else {
+        parts.joinToString(" • ")
+    }
 }

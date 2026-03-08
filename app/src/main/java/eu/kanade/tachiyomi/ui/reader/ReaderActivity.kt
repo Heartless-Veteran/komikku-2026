@@ -31,6 +31,8 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -74,7 +76,9 @@ import eu.kanade.presentation.reader.ReaderContentOverlay
 import eu.kanade.presentation.reader.ReaderPageActionsDialog
 import eu.kanade.presentation.reader.ReaderPageIndicator
 import eu.kanade.presentation.reader.ReadingModeSelectDialog
+import eu.kanade.presentation.reader.ReadingTimeIndicator
 import eu.kanade.presentation.reader.ThumbnailStrip
+import eu.kanade.presentation.reader.stats.ReadingTimerOverlay
 import eu.kanade.presentation.reader.appbars.NavBarType
 import eu.kanade.presentation.reader.appbars.ReaderAppBars
 import eu.kanade.presentation.reader.settings.ReaderSettingsDialog
@@ -173,6 +177,7 @@ class ReaderActivity : BaseActivity() {
 
     // KMK -->
     val themeCoverBased = Injekt.get<UiPreferences>().themeCoverBased().get()
+    private val readingStatsRepository = Injekt.get<eu.kanade.domain.readingstats.ReadingStatsRepository>()
     // KMK <--
 
     // AM (CONNECTIONS) -->
@@ -350,6 +355,32 @@ class ReaderActivity : BaseActivity() {
                     )
                 }
 
+                // KMK --> Reading timer overlay (goal tracking)
+                val goalEnabled by readingStatsRepository.readingGoalEnabled().collectAsState()
+                val goalMinutes by readingStatsRepository.readingGoalMinutes().collectAsState()
+                val streakEnabled by readingStatsRepository.readingStreakEnabled().collectAsState()
+                val dailyTime by readingStatsRepository.getDailyReadingTime().collectAsState(initial = 0L)
+                val readingStreak by readingStatsRepository.getReadingStreak().collectAsState(initial = 0)
+                if (!state.menuVisible && goalEnabled) {
+                    // Capture session start once so the overlay's LaunchedEffect key is stable
+                    // across recompositions and the per-second ticker is not interrupted.
+                    val sessionDuration = remember { readingStatsRepository.getCurrentSessionDuration() }
+                    ReadingTimerOverlay(
+                        sessionDuration = sessionDuration,
+                        dailyReadingTime = dailyTime,
+                        goalMinutes = goalMinutes,
+                        streak = if (streakEnabled) readingStreak else 0,
+                        // Include the current session in goalReached so the overlay shows the
+                        // celebration state consistently with the progress it displays.
+                        goalReached = goalMinutes > 0 &&
+                            (dailyTime + sessionDuration) >= goalMinutes * 60_000L,
+                        modifier = Modifier
+                            .align(Alignment.TopEnd)
+                            .padding(8.dp),
+                    )
+                }
+                // KMK <--
+
                 // Thumbnail Strip - Perfect Viewer style
                 // KMK --> Show permanently if useThumbnailStripForNavigation is enabled
                 val useThumbnailStripNav by readerPreferences.useThumbnailStripForNavigation().collectAsState()
@@ -364,7 +395,11 @@ class ReaderActivity : BaseActivity() {
                         }
                     },
                     visible = state.thumbnailStripVisible || useThumbnailStripNav,
-                    onDismiss = if (useThumbnailStripNav) {{}} else viewModel::hideThumbnailStrip,
+                    onDismiss = if (useThumbnailStripNav) {
+                        {}
+                    } else {
+                        viewModel::hideThumbnailStrip
+                    },
                     modifier = Modifier.align(Alignment.BottomCenter),
                 )
                 // KMK <--
@@ -372,6 +407,18 @@ class ReaderActivity : BaseActivity() {
                 ContentOverlay(state = state)
 
                 AppBars(state = state)
+
+                // KMK --> Reading time estimate overlay (top-start, only when menu is hidden)
+                if (!state.menuVisible && state.minutesRemaining != null) {
+                    ReadingTimeIndicator(
+                        minutesRemaining = state.minutesRemaining,
+                        modifier = Modifier
+                            .align(Alignment.TopStart)
+                            .statusBarsPadding()
+                            .padding(start = 16.dp, top = 8.dp),
+                    )
+                }
+                // KMK <--
 
                 // KMK --> Full-screen chapter gallery
                 if (state.galleryVisible) {
@@ -571,6 +618,12 @@ class ReaderActivity : BaseActivity() {
             viewModel.updateHistory()
         }
 
+        // KMK --> End reading session for stats tracking
+        lifecycleScope.launchNonCancellable {
+            readingStatsRepository.endSession()
+        }
+        // KMK <--
+
         // AM (DISCORD) -->
         updateDiscordRPC(exitingReader = true)
         // <-- AM (DISCORD)
@@ -585,6 +638,10 @@ class ReaderActivity : BaseActivity() {
     override fun onResume() {
         super.onResume()
         viewModel.restartReadTimer()
+
+        // KMK --> Start reading session for stats tracking
+        readingStatsRepository.startSession()
+        // KMK <--
 
         // AM (DISCORD) -->
         updateDiscordRPC(exitingReader = false)

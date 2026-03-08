@@ -237,11 +237,15 @@ internal fun GeneralPage(screenModel: ReaderSettingsScreenModel) {
         value = galleryAutoHideDelay,
         valueRange = 1..30,
         label = stringResource(KMR.strings.gallery_auto_hide_delay_title),
-        valueString = if (galleryAutoHideDelay >= 30) stringResource(KMR.strings.never) else pluralStringResource(
-            MR.plurals.pref_pages,
-            galleryAutoHideDelay,
-            galleryAutoHideDelay,
-        ),
+        valueString = if (galleryAutoHideDelay >= 30) {
+            stringResource(KMR.strings.never)
+        } else {
+            pluralStringResource(
+                MR.plurals.pref_pages,
+                galleryAutoHideDelay,
+                galleryAutoHideDelay,
+            )
+        },
         onChange = { screenModel.preferences.galleryAutoHideDelay().set(it) },
         pillColor = MaterialTheme.colorScheme.surfaceContainerHighest,
     )

@@ -29,14 +29,14 @@ class RecommendationsScreenModel(
 
     private suspend fun loadRecommendations() {
         mutableState.update { it.copy(isLoading = true) }
-        
+
         try {
             // Load "For You" recommendations
             val forYouRecommendations = getRecommendations.await(limit = 10)
-            
+
             // Load "Because you read" recommendations
             val becauseYouRead = getBecauseYouReadRecommendations.await(limitPerSource = 5)
-            
+
             mutableState.update {
                 it.copy(
                     forYouRecommendations = forYouRecommendations.toImmutableList(),
