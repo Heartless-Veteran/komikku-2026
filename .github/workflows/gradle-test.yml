@@ -65,7 +65,7 @@ jobs:
       - name: Convert JaCoCo XML to LCOV
         if: github.event_name != 'pull_request'
         run: |
-          pip install lcov_cobertura 2>/dev/null || true
+          pip install lcov_cobertura==2.0.2 2>/dev/null || true
           mkdir -p coverage
           find . -path "*/reports/jacoco/*.xml" -o -path "*/jacocoTestReport/*.xml" | head -1 | while read xml; do
             python -m lcov_cobertura "$xml" -o coverage/lcov.info 2>/dev/null || true
